@@ -1,6 +1,6 @@
-const { PairV2, Bin } = require('../../dist')
-const { ChainId, Token, WAVAX: _WAVAX } = require('@traderjoe-xyz/sdk')
-const { ethers } = require('ethers')
+import { PairV2, Bin } from '../../dist'
+import { ChainId, Token, WAVAX as _WAVAX } from '@traderjoe-xyz/sdk'
+import { ethers } from 'ethers'
 
 const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')

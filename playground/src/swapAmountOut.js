@@ -1,14 +1,8 @@
-const { PairV2, RouteV2, TradeV2 } = require('../../dist')
-const {
-  Token,
-  ChainId,
-  WNATIVE,
-  TokenAmount,
-  Trade
-} = require('@traderjoe-xyz/sdk')
-const { parseUnits } = require('@ethersproject/units')
-const { JsonRpcProvider } = require('@ethersproject/providers')
-const JSBI = require('JSBI')
+import { PairV2, RouteV2, TradeV2 } from '../../dist'
+import { Token, ChainId, WNATIVE, TokenAmount, Trade } from '@traderjoe-xyz/sdk'
+import { parseUnits } from '@ethersproject/units'
+import { JsonRpcProvider } from '@ethersproject/providers'
+import JSBI from 'jsbi'
 
 const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')

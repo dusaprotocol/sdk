@@ -1,4 +1,4 @@
-const { Bin } = require('../../dist')
+import { Bin } from '../../dist'
 
 const pricesAndBinsRelations = async () => {
   console.log('\n------- pricesAndBinsRelations() called -------\n')
