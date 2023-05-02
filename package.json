@@ -1,21 +1,17 @@
 {
-  "name": "@traderjoe-xyz/sdk-v2",
+  "name": "@dusalabs/sdk",
   "license": "MIT",
-  "version": "1.4.4",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "repository": "https://github.com/traderjoe-xyz/joe-sdk-v2",
-  "keywords": [
-    "traderjoe-xyz",
-    "avalanche"
-  ],
+  "repository": "https://github.com/dusaprotocol/sdk",
   "module": "dist/sdk.esm.js",
   "scripts": {
     "lint": "eslint --ext .ts --ext .tsx src/",
-    "lint:fix": "yarn lint --fix",
+    "lint:fix": "npx lint --fix",
     "build": "tsdx build",
     "start": "tsdx watch",
     "test": "tsdx test",

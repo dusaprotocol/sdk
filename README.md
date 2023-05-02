@@ -9,30 +9,30 @@ For more details:
 
 ## Running
 
-This project uses standard npm and yarn workflows.
+This project uses standard npm workflows.
 
 Install dependencies
 
 ```sh
-yarn
+npm install
 ```
 
 Compile
 
 ```sh
-yarn build
+npm run build
 ```
 
 Run uni tests (WIP)
 
 ```sh
-yarn test
+npm test
 ```
 
 ## Installation
 
-This project is available as an npm package. Add to your project with `npm install @traderjoe-xyz/sdk-v2`
+This project is available as an npm package. Add to your project with `npm install @dusalabs/sdk`
 
 ## Attribution
 
-This code was adapted from this Uniswap repo: [uniswap-sdk](https://github.com/Uniswap/sdk).
+This code was adapted from this TraderJoe repo: [joe-sdk-v2](https://github.com/traderjoe-xyz/joe-sdk-v2).
