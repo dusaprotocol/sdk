@@ -1,22 +1,21 @@
-import { PairV2, Bin } from '../../dist'
 import { ChainId, Token, WAVAX as _WAVAX } from '@traderjoe-xyz/sdk'
-import { ethers } from 'ethers'
+import { PairV2 } from '../../src'
 
-const getLBPairsAndActiveIds = async () => {
+export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const FUJI_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const provider = new ethers.providers.JsonRpcProvider(FUJI_URL)
-  const chainId = ChainId.FUJI
+  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const provider = new ethers.providers.JsonRpcProvider(DUSANET_URL)
+  const chainId = ChainId.DUSANET
   const USDC = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
-  const WAVAX = _WAVAX[ChainId.FUJI]
+  const WAVAX = _WAVAX[ChainId.DUSANET]
 
   // fetch LBPairs
   const pair = new PairV2(USDC, WAVAX)
@@ -59,5 +58,3 @@ const getLBPairsAndActiveIds = async () => {
     '\n'
   )
 }
-
-module.exports = getLBPairsAndActiveIds

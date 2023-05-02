@@ -5,20 +5,20 @@ import { RouteV2 } from './route'
 describe('RouteV2.createAllRoute()', () => {
   // init tokens and route bases
   const USDC = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
   const USDT = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
     6,
     'USDT.e',
     'Tether USD'
   )
-  const AVAX = WNATIVE[ChainId.FUJI]
+  const AVAX = WNATIVE[ChainId.DUSANET]
   const BASES = [AVAX, USDC, USDT]
 
   // init input / output

@@ -11,31 +11,30 @@ import { parseUnits } from '@ethersproject/units'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
-import { LBPairABI } from '../abis/json'
 
 describe('TradeV2 entity', () => {
-  const FUJI_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const PROVIDER = new ethers.providers.JsonRpcProvider(FUJI_URL)
-  const CHAIN_ID = ChainId.FUJI
+  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const PROVIDER = new ethers.providers.JsonRpcProvider(DUSANET_URL)
+  const CHAIN_ID = ChainId.DUSANET
 
   // init tokens and route bases
   const lbPairAddress = '0x88F36a6B0e37E78d0Fb1d41B07A47BAD3D995453'
-  const lbPairContract = new Contract(lbPairAddress, LBPairABI, PROVIDER)
+  const lbPairContract = new Contract(lbPairAddress, PROVIDER)
   const USDC = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
   const USDT = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
     6,
     'USDT.e',
     'Tether USD'
   )
-  const WNATIVE = _WNATIVE[ChainId.FUJI]
+  const WNATIVE = _WNATIVE[ChainId.DUSANET]
   const BASES = [WNATIVE, USDC, USDT]
 
   // init input / output

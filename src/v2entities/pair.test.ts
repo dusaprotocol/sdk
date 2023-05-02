@@ -4,26 +4,26 @@ import { ChainId, WAVAX, Token } from '@traderjoe-xyz/sdk'
 import { PairV2 } from './pair'
 
 describe('PairV2 entity', () => {
-  const FUJI_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const PROVIDER = new ethers.providers.JsonRpcProvider(FUJI_URL)
-  const CHAIN_ID = ChainId.FUJI
+  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const PROVIDER = new ethers.providers.JsonRpcProvider(DUSANET_URL)
+  const CHAIN_ID = ChainId.DUSANET
 
   // init tokens
   const USDC = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
   const USDT = new Token(
-    ChainId.FUJI,
+    ChainId.DUSANET,
     '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
     6,
     'USDT.e',
     'Tether USD'
   )
-  const AVAX = WAVAX[ChainId.FUJI]
+  const AVAX = WAVAX[ChainId.DUSANET]
 
   // init pairs
   const pair1 = new PairV2(USDC, AVAX)
@@ -70,14 +70,14 @@ describe('PairV2 entity', () => {
   describe('PairV2.createAllTokenPairs() / PairV2.initPairs()', () => {
     it('creates all possible combination of token pairs', () => {
       const TOKEN1 = new Token(
-        ChainId.FUJI,
+        ChainId.DUSANET,
         '0x0000000000000000000000000000000000000001',
         6,
         'TOKEN1',
         'TOKEN1'
       )
       const TOKEN2 = new Token(
-        ChainId.FUJI,
+        ChainId.DUSANET,
         '0x0000000000000000000000000000000000000002',
         6,
         'TOKEN2',
@@ -96,28 +96,10 @@ describe('PairV2 entity', () => {
   describe('PairV2.getLBPairReservesAndId()', () => {
     it('can fetch LBPair v2 reserves and activeId', async () => {
       const binStep = 10
-      const isV21 = false
-      const LBPair = await pair1.fetchLBPair(binStep, isV21, PROVIDER, CHAIN_ID)
+      const LBPair = await pair1.fetchLBPair(binStep, PROVIDER, CHAIN_ID)
 
       const lbPairData = await PairV2.getLBPairReservesAndId(
         LBPair.LBPair,
-        isV21,
-        PROVIDER
-      )
-
-      expect(lbPairData.activeId).not.toBeUndefined()
-      expect(lbPairData.reserveX).not.toBeUndefined()
-      expect(lbPairData.reserveY).not.toBeUndefined()
-    })
-
-    it('can fetch LBPair v2.1 reserves and activeId', async () => {
-      const binStep = 20
-      const isV21 = true
-      const LBPair = await pair1.fetchLBPair(binStep, isV21, PROVIDER, CHAIN_ID)
-
-      const lbPairData = await PairV2.getLBPairReservesAndId(
-        LBPair.LBPair,
-        isV21,
         PROVIDER
       )
 

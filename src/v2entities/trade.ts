@@ -16,14 +16,7 @@ import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
 import { RouteV2 } from './route'
-import {
-  LB_QUOTER_V21_ADDRESS,
-  LB_ROUTER_V21_ADDRESS,
-  MULTICALL_ADDRESS,
-  ONE,
-  ZERO,
-  ZERO_HEX
-} from '../constants'
+import { MULTICALL_ADDRESS, ONE, ZERO, ZERO_HEX } from '../constants'
 import { toHex, validateAndParseAddress, isZero } from '../utils'
 import {
   TradeOptions,
@@ -34,8 +27,6 @@ import {
   RouterPathParameters
 } from '../types'
 
-import LBQuoterV21ABI from '../abis/json/LBQuoterV21.json'
-import LBRouterV21ABI from '../abis/json/LBRouterV21.json'
 import MulticallABI from '../abis/json/Multicall.json'
 import { MulticallCall, MulticallResult } from 'types/multicall'
 

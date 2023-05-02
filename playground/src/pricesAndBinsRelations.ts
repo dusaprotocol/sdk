@@ -1,4 +1,4 @@
-import { Bin } from '../../dist'
+import { Bin } from '../../src'
 
 const pricesAndBinsRelations = async () => {
   console.log('\n------- pricesAndBinsRelations() called -------\n')
