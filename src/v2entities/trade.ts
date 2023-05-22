@@ -1,6 +1,3 @@
-import { Contract, utils, Signer, Wallet, BigNumber } from 'ethers'
-import { Provider } from '@ethersproject/abstract-provider'
-import { Web3Provider } from '@ethersproject/providers'
 import {
   Token,
   TokenAmount,
@@ -16,8 +13,14 @@ import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 
 import { RouteV2 } from './route'
-import { MULTICALL_ADDRESS, ONE, ZERO, ZERO_HEX } from '../constants'
-import { toHex, validateAndParseAddress, isZero } from '../utils'
+import {
+  LB_QUOTER_ADDRESS,
+  MULTICALL_ADDRESS,
+  ONE,
+  ZERO,
+  ZERO_HEX
+} from '../constants'
+import { toHex } from '../utils'
 import {
   TradeOptions,
   TradeOptionsDeadline,
@@ -29,6 +32,7 @@ import {
 
 import MulticallABI from '../abis/json/Multicall.json'
 import { MulticallCall, MulticallResult } from 'types/multicall'
+import { IProvider } from '@massalabs/massa-web3'
 
 /** Class representing a trade */
 export class TradeV2 {
@@ -152,7 +156,7 @@ export class TradeV2 {
     invariant(!(nativeIn && nativeOut), 'AVAX_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
-    const to: string = validateAndParseAddress(options.recipient)
+    const to: string = options.recipient
     const amountIn: string = toHex(
       this.maximumAmountIn(options.allowedSlippage)
     )
@@ -164,7 +168,6 @@ export class TradeV2 {
     )
     const path: RouterPathParameters = {
       pairBinSteps: binSteps,
-      versions: this.quote.versions,
       tokenPath: this.quote.route
     }
     const deadline =
@@ -176,9 +179,9 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    let methodName: string
-    let args: (string | string[] | RouterPathParameters)[]
-    let value: string
+    let methodName: string = ''
+    let args: (string | string[] | RouterPathParameters)[] = []
+    let value: string = ''
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
         if (nativeIn) {
@@ -232,22 +235,22 @@ export class TradeV2 {
    */
   public async getTradeFee(): Promise<TradeFee> {
     // amounts for each step of the swap returned from quoter contract
-    // e.g. [10 WAVAX, 20 USDC, 19.9 USDT ] when inputAmount is 10 WAVAX and resulting outputToken is USDT
+    // e.g. [10 WMAS, 20 USDC, 19.9 USDT ] when inputAmount is 10 WMAS and resulting outputToken is USDT
     const amounts = this.quote.amounts
 
     // pool fee % for each step of the swap from quoter contract
-    // e.g. [WAVAX-USDC pool 0.05%, USDC-USDT pool 0.01%]
+    // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
     const feesPct = this.quote.fees.map(
       (bn) => new Percent(JSBI.BigInt(bn.toString()), JSBI.BigInt(1e18))
     )
 
-    // actual fee amounts paid at each step of the swap; e.g. [0.005 WAVAX, 0.002 USDC]
+    // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
       const amount = amounts[i].toString()
       return pct.multiply(JSBI.BigInt(amount)).quotient
     })
 
-    // change each fees in terms of the inputToken; e.g. [0.005 WAVAX, 0.0001 WAVAX]
+    // change each fees in terms of the inputToken; e.g. [0.005 WMAS, 0.0001 WMAS]
     const feesTokenIn = fees.map((fee, i) => {
       // first fee will always be in terms of inputToken
       if (i === 0) {
@@ -261,7 +264,7 @@ export class TradeV2 {
       return midPrice.multiply(fee).quotient
     })
 
-    // sum of all fees; e.g. 0.0051 WAVAX
+    // sum of all fees; e.g. 0.0051 WMAS
     const totalFee = feesTokenIn.reduce(
       (a, b) => JSBI.add(a, b),
       JSBI.BigInt('0')
@@ -279,47 +282,47 @@ export class TradeV2 {
     }
   }
 
-  /**
-   * Returns an estimate of the gas cost for the trade
-   *
-   * @param {Signer} signer - The signer such as the wallet
-   * @param {ChainId} chainId - The network chain id
-   * @param {Percent} slippageTolerance - The slippage tolerance
-   * @returns {Promise<BigNumber>}
-   */
-  public async estimateGas(
-    signer: Signer,
-    chainId: ChainId,
-    slippageTolerance: Percent
-  ): Promise<BigNumber> {
-    const routerInterface = new utils.Interface(LBRouterV21ABI)
-    const router = new Contract(
-      LB_ROUTER_V21_ADDRESS[chainId],
-      routerInterface,
-      signer
-    )
+  // /**
+  //  * Returns an estimate of the gas cost for the trade
+  //  *
+  //  * @param {Signer} signer - The signer such as the wallet
+  //  * @param {ChainId} chainId - The network chain id
+  //  * @param {Percent} slippageTolerance - The slippage tolerance
+  //  * @returns {Promise<BigInt>}
+  //  */
+  // public async estimateGas(
+  //   signer: Signer,
+  //   chainId: ChainId,
+  //   slippageTolerance: Percent
+  // ): Promise<BigInt> {
+  //   const routerInterface = new utils.Interface(LBRouterV21ABI)
+  //   const router = new Contract(
+  //     LB_ROUTER_V21_ADDRESS[chainId],
+  //     routerInterface,
+  //     signer
+  //   )
 
-    const currentBlockTimestamp = (
-      await (signer as Wallet).provider.getBlock('latest')
-    ).timestamp
-    const userAddr = await signer.getAddress()
+  //   const currentBlockTimestamp = (
+  //     await (signer as Wallet).provider.getBlock('latest')
+  //   ).timestamp
+  //   const userAddr = await signer.getAddress()
 
-    const options: TradeOptionsDeadline = {
-      allowedSlippage: slippageTolerance,
-      recipient: userAddr,
-      deadline: currentBlockTimestamp + 120
-    }
+  //   const options: TradeOptionsDeadline = {
+  //     allowedSlippage: slippageTolerance,
+  //     recipient: userAddr,
+  //     deadline: currentBlockTimestamp + 120
+  //   }
 
-    const { methodName, args, value }: SwapParameters =
-      this.swapCallParameters(options)
-    const msgOptions = !value || isZero(value) ? {} : { value }
+  //   const { methodName, args, value }: SwapParameters =
+  //     this.swapCallParameters(options)
+  //   const msgOptions = !value || isZero(value) ? {} : { value }
 
-    const gasPrice = await signer.getGasPrice()
+  //   const gasPrice = await signer.getGasPrice()
 
-    const response = await router.estimateGas[methodName](...args, msgOptions)
+  //   const response = await router.estimateGas[methodName](...args, msgOptions)
 
-    return response.mul(gasPrice)
-  }
+  //   return response.mul(gasPrice)
+  // }
 
   /**
    * @static
@@ -340,7 +343,7 @@ export class TradeV2 {
     tokenOut: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    provider: Provider | Web3Provider | any,
+    provider: IProvider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = true
@@ -356,7 +359,7 @@ export class TradeV2 {
 
     const amountIn = tokenAmountIn.raw.toString()
 
-    const quoterAddress = LB_QUOTER_V21_ADDRESS[chainId]
+    const quoterAddress = LB_QUOTER_ADDRESS[chainId]
     const quoterInterface = new utils.Interface(LBQuoterV21ABI)
 
     const multicallInterface = new utils.Interface(MulticallABI)
@@ -539,20 +542,20 @@ export class TradeV2 {
    * Selects the best trade given trades and gas
    *
    * @param {TradeV2[]} trades
-   * @param {BigNumber[]} estimatedGas
-   * @returns {bestTrade: TradeV2, estimatedGas: BigNumber}
+   * @param {BigInt[]} estimatedGas
+   * @returns {bestTrade: TradeV2, estimatedGas: BigInt}
    */
   public static chooseBestTradeWithGas(
     trades: TradeV2[],
-    estimatedGas: BigNumber[]
+    estimatedGas: BigInt[]
   ): {
     bestTrade: TradeV2
-    estimatedGas: BigNumber
+    estimatedGas: BigInt
   } {
     const tradeType = trades[0].tradeType
     // The biggest tradeValueAVAX will be the most accurate
     // If we haven't found any equivalent of the trade in AVAX, we won't take gas cost into account
-    const tradeValueAVAX = BigNumber.from(0)
+    const tradeValueAVAX = BigInt.from(0)
 
     const tradesWithGas = trades.map((trade, index) => {
       return {
@@ -631,7 +634,6 @@ export class TradeV2 {
         route: this.quote.route.join(', '),
         pairs: this.quote.pairs.join(', '),
         binSteps: this.quote.binSteps.map((el) => el.toString()).join(', '),
-        versions: this.quote.versions.join(', '),
         amounts: this.quote.amounts.map((el) => el.toString()).join(', '),
         fees: this.quote.fees.map((el) => el.toString()).join(', '),
         virtualAmountsWithoutSlippage: this.quote.virtualAmountsWithoutSlippage

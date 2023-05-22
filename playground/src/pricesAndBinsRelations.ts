@@ -1,6 +1,6 @@
 import { Bin } from '../../src'
 
-const pricesAndBinsRelations = async () => {
+export const pricesAndBinsRelations = async () => {
   console.log('\n------- pricesAndBinsRelations() called -------\n')
 
   // This returns 1 because we're in the center bin
@@ -18,5 +18,3 @@ const pricesAndBinsRelations = async () => {
   // We find the correct slippage
   console.log('5% slippage', Bin.getPriceFromId(8388608 + idSlippage, 100))
 }
-
-module.exports = pricesAndBinsRelations

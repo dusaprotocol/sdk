@@ -1,7 +1,7 @@
 // import {Bin} from './bin'
-import { BigNumber, ethers } from 'ethers'
-import { ChainId, WAVAX, Token } from '@traderjoe-xyz/sdk'
+import { ChainId } from 'constants'
 import { PairV2 } from './pair'
+import { Token } from 'v1entities'
 
 describe('PairV2 entity', () => {
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
@@ -23,7 +23,7 @@ describe('PairV2 entity', () => {
     'USDT.e',
     'Tether USD'
   )
-  const AVAX = WAVAX[ChainId.DUSANET]
+  const AVAX = WMAS[ChainId.DUSANET]
 
   // init pairs
   const pair1 = new PairV2(USDC, AVAX)
@@ -143,11 +143,11 @@ describe('PairV2 entity', () => {
           reserveY: '0'
         }
       ].map((el) => ({
-        reserveX: BigNumber.from(el.reserveX),
-        reserveY: BigNumber.from(el.reserveY)
+        reserveX: BigInt.from(el.reserveX),
+        reserveY: BigInt.from(el.reserveY)
       }))
       const totalSupplies = ['420588467', '421669945', '422789291'].map((el) =>
-        BigNumber.from(el)
+        BigInt.from(el)
       )
 
       const { amountX, amountY } = PairV2.calculateAmounts(
@@ -171,10 +171,10 @@ describe('PairV2 entity', () => {
           reserveY: '420588469'
         }
       ].map((el) => ({
-        reserveX: BigNumber.from(el.reserveX),
-        reserveY: BigNumber.from(el.reserveY)
+        reserveX: BigInt.from(el.reserveX),
+        reserveY: BigInt.from(el.reserveY)
       }))
-      const totalSupplies = ['420588467'].map((el) => BigNumber.from(el))
+      const totalSupplies = ['420588467'].map((el) => BigInt.from(el))
 
       const { amountX, amountY } = PairV2.calculateAmounts(
         binIds,
@@ -197,10 +197,10 @@ describe('PairV2 entity', () => {
           reserveY: '0'
         }
       ].map((el) => ({
-        reserveX: BigNumber.from(el.reserveX),
-        reserveY: BigNumber.from(el.reserveY)
+        reserveX: BigInt.from(el.reserveX),
+        reserveY: BigInt.from(el.reserveY)
       }))
-      const totalSupplies = ['422789291'].map((el) => BigNumber.from(el))
+      const totalSupplies = ['422789291'].map((el) => BigInt.from(el))
 
       const { amountX, amountY } = PairV2.calculateAmounts(
         binIds,

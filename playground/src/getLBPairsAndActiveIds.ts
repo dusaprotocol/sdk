@@ -1,12 +1,12 @@
-import { ChainId, Token, WAVAX as _WAVAX } from '@traderjoe-xyz/sdk'
-import { PairV2 } from '../../src'
+import { Bin, PairV2, Token } from '../../src'
+import { ChainId } from '../../src/constants'
+import { WMAS as _WMAS } from '../../src'
 
 export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const provider = new ethers.providers.JsonRpcProvider(DUSANET_URL)
   const chainId = ChainId.DUSANET
   const USDC = new Token(
     ChainId.DUSANET,
@@ -15,10 +15,10 @@ export const getLBPairsAndActiveIds = async () => {
     'USDC',
     'USD Coin'
   )
-  const WAVAX = _WAVAX[ChainId.DUSANET]
+  const WMAS = [ChainId.DUSANET]
 
   // fetch LBPairs
-  const pair = new PairV2(USDC, WAVAX)
+  const pair = new PairV2(USDC, WMAS)
   const LBPairs = await pair.fetchAvailableLBPairs(provider, chainId)
 
   // fetch reserves and activeIds for each LBPair

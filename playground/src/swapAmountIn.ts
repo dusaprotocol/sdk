@@ -1,15 +1,13 @@
-import { PairV2, RouteV2, TradeV2 } from '../../src'
-import { Token, ChainId, WNATIVE, TokenAmount } from '@traderjoe-xyz/sdk'
-import { parseUnits } from '@ethersproject/units'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { PairV2, RouteV2, Token, TradeV2, WNATIVE } from '../../src'
 import JSBI from 'jsbi'
+import { ChainId } from '../../src/constants'
 
 export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const WAVAX = WNATIVE[ChainId.DUSANET]
+  const WMAS = WNATIVE[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
@@ -24,11 +22,11 @@ export const swapAmountIn = async () => {
     'USDT.e',
     'Tether USD'
   )
-  const BASES = [WAVAX, USDC, USDT]
+  const BASES = [WMAS, USDC, USDT]
 
   // Init: user inputs
   const inputToken = USDC
-  const outputToken = WAVAX
+  const outputToken = WMAS
   const typedValueIn = '20' // user string input
   const typedValueInParsed = parseUnits(
     typedValueIn,

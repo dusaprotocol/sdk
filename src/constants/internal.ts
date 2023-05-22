@@ -24,5 +24,3 @@ export const SOLIDITY_TYPE_MAXIMA = {
 }
 
 export const ZERO_HEX = '0x0'
-
-export { ChainId } from '@traderjoe-xyz/sdk'

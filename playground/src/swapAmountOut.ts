@@ -1,15 +1,13 @@
-import { PairV2, RouteV2, TradeV2 } from '../../src'
-import { Token, ChainId, WNATIVE, TokenAmount, Trade } from '@traderjoe-xyz/sdk'
-import { parseUnits } from '@ethersproject/units'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { PairV2, RouteV2, Token, TradeV2, WNATIVE } from '../../src'
 import JSBI from 'jsbi'
+import { ChainId } from '../../src/constants'
 
-const swapAmountOut = async () => {
+export const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const WAVAX = WNATIVE[ChainId.DUSANET]
+  const WMAS = WNATIVE[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
@@ -24,11 +22,11 @@ const swapAmountOut = async () => {
     'USDT.e',
     'Tether USD'
   )
-  const BASES = [WAVAX, USDC, USDT]
+  const BASES = [WMAS, USDC, USDT]
 
   // Init: user inputs
   const inputToken = USDC
-  const outputToken = WAVAX
+  const outputToken = WMAS
   const typedValueOut = '1' // user string input
   const typedValueOutParsed = parseUnits(
     typedValueOut,
@@ -91,5 +89,3 @@ const swapAmountOut = async () => {
   // console.log('bestTrade', bestTrade.toLog())
   // console.log('swapGasCostEstimate', estimatedGas.toString())
 }
-
-module.exports = swapAmountOut

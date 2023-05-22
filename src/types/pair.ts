@@ -1,5 +1,6 @@
-import { Percent } from '@traderjoe-xyz/sdk'
-import { BigNumber, BigNumberish } from 'ethers'
+import { Percent } from 'v1entities/fractions'
+
+export type BigNumberish = BigInt | string | number
 
 export interface LBPair {
   binStep: BigNumberish
@@ -52,8 +53,8 @@ export interface LiquidityParametersStruct {
 }
 
 export interface BinReserves {
-  reserveX: BigNumber
-  reserveY: BigNumber
+  reserveX: BigInt
+  reserveY: BigInt
 }
 
 export enum LiquidityDistribution {
@@ -64,6 +65,6 @@ export enum LiquidityDistribution {
 
 export interface LiquidityDistributionParams {
   deltaIds: number[]
-  distributionX: BigNumber[]
-  distributionY: BigNumber[]
+  distributionX: BigInt[]
+  distributionY: BigInt[]
 }

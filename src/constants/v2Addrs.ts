@@ -1,9 +1,7 @@
-import { ChainId } from './internal'
-
 /**
  * DEX v2 SDK
  */
-export const MULTICALL_ADDRESS: { [chainId in ChainId]: string } = {
+export const MULTICALL_ADDRESS: { [chainId in hainId]: string } = {
   [ChainId.DUSANET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
   [ChainId.BUILDNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
   [ChainId.MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11'

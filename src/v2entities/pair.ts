@@ -1,13 +1,5 @@
-import { BigNumber, Contract, utils } from 'ethers'
 import flatMap from 'lodash.flatmap'
 import JSBI from 'jsbi'
-import {
-  Token,
-  Percent,
-  TokenAmount,
-  Fraction,
-  ChainId
-} from '@traderjoe-xyz/sdk'
 
 import {
   LBPair,
@@ -16,9 +8,12 @@ import {
   LiquidityDistribution,
   BinReserves
 } from '../types'
-import { LB_FACTORY_ADDRESS, ONE } from '../constants'
+import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
+import { LBFactoryABI } from 'abis/ts'
+import { Token } from 'v1entities'
+import { IClient } from '@massalabs/massa-web3'
 
 /** Class representing a pair of tokens. */
 export class PairV2 {
@@ -42,17 +37,21 @@ export class PairV2 {
    * @param {ChainId} chainId
    * @returns {Promise<LBPair[]>}
    */
-  public async fetchAvailableLBPairs(chainId: ChainId): Promise<LBPair[]> {
-    const factoryInterface = new utils.Interface(LBFactoryABI)
-    const factory = new Contract(
-      LB_FACTORY_ADDRESS[chainId],
-      factoryInterface,
-      provider
-    )
-    const LBPairs: LBPair[] = await factory.getAllLBPairs(
-      this.token0.address,
-      this.token1.address
-    )
+  public async fetchAvailableLBPairs(
+    provider: IClient,
+    chainId: ChainId
+  ): Promise<LBPair[]> {
+    // const factoryInterface = new utils.Interface(LBFactoryABI)
+    // const factory = new Contract(
+    //   LB_FACTORY_ADDRESS[chainId],
+    //   factoryInterface,
+    //   provider
+    // )
+    // const LBPairs: LBPair[] = await factory.getAllLBPairs(
+    //   this.token0.address,
+    //   this.token1.address
+    // )
+    const LBPairs: LBPair[] = await provider.setNewDefaultProvider()
     return LBPairs
   }
 
@@ -202,7 +201,7 @@ export class PairV2 {
    * @param {number[]} binIds
    * @param {number[]} activeBin
    * @param {BinReserves[]} bins
-   * @param {BigNumber[]} totalSupplies
+   * @param {BigInt[]} totalSupplies
    * @param {string[]} liquidity
    * @returns
    */
@@ -210,7 +209,7 @@ export class PairV2 {
     binIds: number[],
     activeBin: number,
     bins: BinReserves[],
-    totalSupplies: BigNumber[],
+    totalSupplies: BigInt[],
     liquidity: string[]
   ): {
     amountX: JSBI
@@ -279,8 +278,8 @@ export class PairV2 {
     amountYMin: string
     idSlippage: number
     deltaIds: number[]
-    distributionX: BigNumber[]
-    distributionY: BigNumber[]
+    distributionX: BigInt[]
+    distributionY: BigInt[]
   } {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const tokenX = token0isX ? token0Amount.token : token1Amount.token
@@ -331,7 +330,7 @@ export class PairV2 {
    * @param {number[]} userPositionIds - List of binIds that user has position
    * @param {number} activeBin - The active bin id for the LBPair
    * @param {Bin[]} bins - List of bins whose indices match those of userPositionIds
-   * @param {BigNumber[]} totalSupplies - List of bin's total supplies whose indices match those of userPositionIds
+   * @param {BigInt[]} totalSupplies - List of bin's total supplies whose indices match those of userPositionIds
    * @param {string[]} amountsToRemove - List of amounts specified by the user to remove in each of their position
    * @param {Percent} amountSlippage - The amounts slippage used to calculate amountXMin and amountYMin
    * @returns
@@ -340,7 +339,7 @@ export class PairV2 {
     userPositionIds: number[],
     activeBin: number,
     bins: BinReserves[],
-    totalSupplies: BigNumber[],
+    totalSupplies: BigInt[],
     amountsToRemove: string[],
     amountSlippage: Percent
   ): {

@@ -1,12 +1,10 @@
-import { parseEther } from 'ethers/lib/utils'
-import { CurrencyAmount } from '@traderjoe-xyz/sdk'
-
 import { spotUniform, curve, bidAsk, wide } from '../constants'
 import {
   LiquidityDistribution,
   LiquidityDistributionParams
 } from '../types/pair'
-import { BigNumber } from 'ethers'
+import { parseEther } from '../../lib/ethers/parse'
+import { CurrencyAmount } from 'v1entities/fractions'
 
 /**
  * Returns distribution params for on-chain addLiquidity() call
@@ -55,16 +53,16 @@ export const getDistributionFromTargetBin = (
  * @returns
  */
 export const normalizeDist = (
-  dist: BigNumber[],
-  sumTo: BigNumber,
-  precision: BigNumber
-): BigNumber[] => {
-  const sumDist = dist.reduce((sum, cur) => sum.add(cur), BigNumber.from(0))
-  if (sumDist.eq(0)) {
+  dist: bigint[],
+  sumTo: bigint,
+  precision: bigint
+): bigint[] => {
+  const sumDist = dist.reduce((sum, cur) => sum + cur, BigInt(0))
+  if (sumDist == BigInt(0)) {
     return dist
   }
-  const factor = sumDist.mul(precision).div(sumTo)
-  const normalized = dist.map((d) => d.mul(precision).div(factor))
+  const factor = (sumDist * precision) / sumTo
+  const normalized = dist.map((d) => (d * precision) / factor)
   return normalized
 }
 

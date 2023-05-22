@@ -1,21 +1,13 @@
-import { Percent, TokenAmount } from '@traderjoe-xyz/sdk'
-import { BigNumber } from 'ethers'
-
-export enum PoolVersion {
-  V1 = 0,
-  V2 = 1,
-  V2_1 = 2
-}
+import { Percent, TokenAmount } from 'v1entities/fractions'
 
 /** Interface representing a quote */
 export interface Quote {
   route: string[]
   pairs: string[]
-  binSteps: BigNumber[]
-  versions: PoolVersion[]
-  amounts: BigNumber[]
-  virtualAmountsWithoutSlippage: BigNumber[]
-  fees: BigNumber[]
+  binSteps: BigInt[]
+  amounts: BigInt[]
+  virtualAmountsWithoutSlippage: BigInt[]
+  fees: BigInt[]
 }
 
 /** Options for producing the arguments to send call to the router. */
@@ -37,7 +29,6 @@ export interface TradeOptionsDeadline extends Omit<TradeOptions, 'ttl'> {
 
 export interface RouterPathParameters {
   pairBinSteps: string[]
-  versions: number[]
   tokenPath: string[]
 }
 
