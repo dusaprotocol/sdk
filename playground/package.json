@@ -1,12 +1,14 @@
 {
   "name": "@dusalabs/sdk-playground",
   "license": "MIT",
+  "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "ts-node": "^10.9.1"
   },
   "engines": {
     "node": ">=10"

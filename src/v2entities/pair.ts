@@ -11,9 +11,10 @@ import {
 import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
-import { LBFactoryABI } from 'abis/ts'
-import { Token } from 'v1entities'
-import { IClient } from '@massalabs/massa-web3'
+import { LBFactoryABI, LBPairABI } from 'abis/ts'
+import { Fraction, Percent, Token, TokenAmount } from 'v1entities'
+import { IClient, IProvider } from '@massalabs/massa-web3'
+import { utils } from '../../lib/ethers'
 
 /** Class representing a pair of tokens. */
 export class PairV2 {
@@ -38,7 +39,8 @@ export class PairV2 {
    * @returns {Promise<LBPair[]>}
    */
   public async fetchAvailableLBPairs(
-    provider: IClient,
+    client: IClient,
+    provider: IProvider,
     chainId: ChainId
   ): Promise<LBPair[]> {
     // const factoryInterface = new utils.Interface(LBFactoryABI)
@@ -51,7 +53,8 @@ export class PairV2 {
     //   this.token0.address,
     //   this.token1.address
     // )
-    const LBPairs: LBPair[] = await provider.setNewDefaultProvider()
+    client.setCustomProviders([provider])
+    const LBPairs: LBPair[] = await client
     return LBPairs
   }
 
@@ -184,10 +187,14 @@ export class PairV2 {
    */
   public static async getFeeParameters(
     LBPairAddr: string,
-    provider: Provider | Web3Provider | any
+    provider: IProvider
   ): Promise<LBPairFeeParameters> {
     const LBPairInterface = new utils.Interface(LBPairABI)
-    const pairContract = new Contract(LBPairAddr, LBPairInterface, provider)
+    const pairContract = new utils.Contract(
+      LBPairAddr,
+      LBPairInterface,
+      provider
+    )
 
     const feeParametersData: LBPairFeeParameters =
       await pairContract.feeParameters()

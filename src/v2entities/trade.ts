@@ -1,22 +1,13 @@
-import {
-  Token,
-  TokenAmount,
-  Price,
-  Percent,
-  Fraction,
-  CurrencyAmount,
-  TradeType,
-  ChainId,
-  WNATIVE
-} from '@traderjoe-xyz/sdk'
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
-
+import { utils } from '../../lib/ethers'
 import { RouteV2 } from './route'
 import {
+  ChainId,
   LB_QUOTER_ADDRESS,
   MULTICALL_ADDRESS,
   ONE,
+  TradeType,
   ZERO,
   ZERO_HEX
 } from '../constants'
@@ -30,9 +21,19 @@ import {
   RouterPathParameters
 } from '../types'
 
-import MulticallABI from '../abis/json/Multicall.json'
+import { MulticallABI } from '../abis/ts/Multicall'
 import { MulticallCall, MulticallResult } from 'types/multicall'
 import { IProvider } from '@massalabs/massa-web3'
+import {
+  CurrencyAmount,
+  Fraction,
+  Percent,
+  Price,
+  Token,
+  TokenAmount,
+  WNATIVE
+} from 'v1entities'
+import { LBQuoterABI } from 'abis/ts'
 
 /** Class representing a trade */
 export class TradeV2 {
@@ -163,9 +164,7 @@ export class TradeV2 {
     const amountOut: string = toHex(
       this.minimumAmountOut(options.allowedSlippage)
     )
-    const binSteps: string[] = this.quote.binSteps.map((bin) =>
-      bin.toHexString()
-    )
+    const binSteps: string[] = this.quote.binSteps.map((bin) => bin.toString())
     const path: RouterPathParameters = {
       pairBinSteps: binSteps,
       tokenPath: this.quote.route
@@ -333,7 +332,7 @@ export class TradeV2 {
    * @param {Token} tokenOut
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Provider | Web3Provider | any} provider
+   * @param {Provider} provider
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -360,10 +359,10 @@ export class TradeV2 {
     const amountIn = tokenAmountIn.raw.toString()
 
     const quoterAddress = LB_QUOTER_ADDRESS[chainId]
-    const quoterInterface = new utils.Interface(LBQuoterV21ABI)
+    const quoterInterface = new utils.Interface(LBQuoterABI)
 
     const multicallInterface = new utils.Interface(MulticallABI)
-    const multicall = new Contract(
+    const multicall = new utils.Contract(
       MULTICALL_ADDRESS[chainId],
       multicallInterface,
       provider
@@ -421,7 +420,7 @@ export class TradeV2 {
    * @param {Token} tokenIn
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Provider | Web3Provider | any} provider
+   * @param {IProvider} provider
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -431,7 +430,7 @@ export class TradeV2 {
     tokenIn: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    provider: Provider | Web3Provider | any,
+    provider: IProvider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = false
@@ -448,11 +447,11 @@ export class TradeV2 {
 
     const amountOut = tokenAmountOut.raw.toString()
 
-    const quoterAddress = LB_QUOTER_V21_ADDRESS[chainId]
-    const quoterInterface = new utils.Interface(LBQuoterV21ABI)
+    const quoterAddress = LB_QUOTER_ADDRESS[chainId]
+    const quoterInterface = new utils.Interface(LBQuoterABI)
 
     const multicallInterface = new utils.Interface(MulticallABI)
-    const multicall = new Contract(
+    const multicall = new utils.Contract(
       MULTICALL_ADDRESS[chainId],
       multicallInterface,
       provider
@@ -555,7 +554,7 @@ export class TradeV2 {
     const tradeType = trades[0].tradeType
     // The biggest tradeValueAVAX will be the most accurate
     // If we haven't found any equivalent of the trade in AVAX, we won't take gas cost into account
-    const tradeValueAVAX = BigInt.from(0)
+    const tradeValueAVAX = BigInt(0)
 
     const tradesWithGas = trades.map((trade, index) => {
       return {
@@ -567,22 +566,22 @@ export class TradeV2 {
                 trade.outputAmount.numerator,
                 trade.outputAmount.denominator
               ).subtract(
-                tradeValueAVAX.eq(0)
+                tradeValueAVAX === BigInt(0)
                   ? BigInt(0)
                   : // Cross product to get the gas price against the output token
                     trade.outputAmount
                       .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX.toBigInt())
+                      .divide(tradeValueAVAX)
               )
             : new Fraction(
                 trade.inputAmount.numerator,
                 trade.inputAmount.denominator
               ).add(
-                tradeValueAVAX.eq(0)
+                tradeValueAVAX === BigInt(0)
                   ? BigInt(0)
                   : trade.inputAmount
                       .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX.toBigInt())
+                      .divide(tradeValueAVAX)
               )
       }
     })

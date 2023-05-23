@@ -1,6 +1,15 @@
-import { PairV2, RouteV2, Token, TradeV2, WNATIVE } from '../../src'
+import {
+  PairV2,
+  RouteV2,
+  Token,
+  TokenAmount,
+  TradeV2,
+  WNATIVE
+} from '../../src'
 import JSBI from 'jsbi'
 import { ChainId } from '../../src/constants'
+import { parseUnits } from '../../lib/ethers'
+import { ProviderType } from '@massalabs/massa-web3'
 
 export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
@@ -54,7 +63,7 @@ export const swapAmountIn = async () => {
 
   // get trades
   const chainId = ChainId.DUSANET
-  const provider = new JsonRpcProvider(DUSANET_URL)
+  const provider = { url: DUSANET_URL, type: ProviderType.PUBLIC }
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
@@ -66,8 +75,10 @@ export const swapAmountIn = async () => {
   ) // console.log('trades', trades.map(el=>el.toLog()))
 
   for (let trade of trades) {
+    if (!trade) return
+
     console.log('\n', trade.toLog())
-    const { totalFeePct, feeAmountIn } = await trade.getTradeFee(provider)
+    const { totalFeePct, feeAmountIn } = await trade.getTradeFee()
     console.debug('Total fees percentage', totalFeePct.toSignificant(6), '%')
     console.debug(
       `Fee: ${feeAmountIn.toSignificant(6)} ${feeAmountIn.token.symbol}`
