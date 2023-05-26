@@ -1,4 +1,6 @@
-export const LBQuoterABI = [
+import { ABI } from '.'
+
+export const LBQuoterABI: ABI[] = [
   {
     inputs: [
       {
@@ -271,4 +273,4 @@ export const LBQuoterABI = [
     stateMutability: 'view',
     type: 'function'
   }
-] as const
+]

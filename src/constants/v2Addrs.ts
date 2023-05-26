@@ -1,12 +1,8 @@
+import { ChainId } from '.'
+
 /**
  * DEX v2 SDK
  */
-export const MULTICALL_ADDRESS: { [chainId in hainId]: string } = {
-  [ChainId.DUSANET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
-  [ChainId.BUILDNET]: '0xcA11bde05977b3631167028862bE2a173976CA11',
-  [ChainId.MAINNET]: '0xcA11bde05977b3631167028862bE2a173976CA11'
-}
-
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '0x2644fE413b8Fe94D69c4706455108368fa36354F',
   [ChainId.BUILDNET]: '0x9dbf1706577636941ab5f443d2aebe251ccd1648',
@@ -23,16 +19,4 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '0x6B8E020098cd1B3Ec9f811024bc24e51C660F768',
   [ChainId.BUILDNET]: '0x6E77932A92582f504FF6c4BdbCef7Da6c198aEEf',
   [ChainId.MAINNET]: '0x1886D09C9Ade0c5DB822D85D21678Db67B6c2982'
-}
-
-export const DEXLENS_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.DUSANET]: '0x441eF20e39DfE886AAb99a6E1bb64f43E45bD973',
-  [ChainId.BUILDNET]: '0x441eF20e39DfE886AAb99a6E1bb64f43E45bD973',
-  [ChainId.MAINNET]: '0x441eF20e39DfE886AAb99a6E1bb64f43E45bD973'
-}
-
-export const LB_REWARDER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.DUSANET]: '0x3e031f1486a27c997e85c5a2af2638ee3a4c28a1',
-  [ChainId.BUILDNET]: '0x624C5b9BEB13af6893e715932c26e2b7A59c410a',
-  [ChainId.MAINNET]: '0x624C5b9BEB13af6893e715932c26e2b7A59c410a'
 }

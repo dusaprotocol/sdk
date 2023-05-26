@@ -5,7 +5,6 @@ import { RouteV2 } from './route'
 import {
   ChainId,
   LB_QUOTER_ADDRESS,
-  MULTICALL_ADDRESS,
   ONE,
   TradeType,
   ZERO,
@@ -21,8 +20,6 @@ import {
   RouterPathParameters
 } from '../types'
 
-import { MulticallABI } from '../abis/ts/Multicall'
-import { MulticallCall, MulticallResult } from 'types/multicall'
 import { IProvider } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
@@ -358,57 +355,42 @@ export class TradeV2 {
 
     const amountIn = tokenAmountIn.raw.toString()
 
-    const quoterAddress = LB_QUOTER_ADDRESS[chainId]
     const quoterInterface = new utils.Interface(LBQuoterABI)
-
-    const multicallInterface = new utils.Interface(MulticallABI)
-    const multicall = new utils.Contract(
-      MULTICALL_ADDRESS[chainId],
-      multicallInterface,
+    const quoter = new utils.Contract(
+      LB_QUOTER_ADDRESS[chainId],
+      quoterInterface,
       provider
     )
 
-    try {
-      const calls: MulticallCall[] = routes.map((route) => {
-        const routeStrArr = route.pathToStrArr()
-        const callData = quoterInterface.encodeFunctionData(
-          'findBestPathFromAmountIn',
-          [routeStrArr, amountIn]
-        )
-        return {
-          target: quoterAddress,
-          allowFailure: true,
-          callData
+    const trades: Array<TradeV2 | undefined> = await Promise.all(
+      routes.map(async (route) => {
+        try {
+          const routeStrArr = route.pathToStrArr()
+          const quote: Quote = await quoter.findBestPathFromAmountIn(
+            routeStrArr,
+            amountIn.toString()
+          )
+          const trade: TradeV2 = new TradeV2(
+            route,
+            tokenAmountIn.token,
+            tokenOut,
+            quote,
+            isExactIn,
+            isNativeIn,
+            isNativeOut
+          )
+          return trade
+        } catch (e) {
+          console.debug('Error fetching quote:', e)
+          return undefined
         }
       })
+    )
 
-      const reads: MulticallResult[] = await multicall.aggregate3(calls)
-
-      const trades = reads.map((read, i) => {
-        if (!read.success) return undefined
-        const quote: Quote = quoterInterface.decodeFunctionResult(
-          'findBestPathFromAmountIn',
-          read.returnData
-        )[0]
-        return new TradeV2(
-          routes[i],
-          tokenAmountIn.token,
-          tokenOut,
-          quote,
-          isExactIn,
-          isNativeIn,
-          isNativeOut
-        )
-      })
-
-      return trades.filter(
-        (trade) =>
-          !!trade && JSBI.greaterThan(trade.outputAmount.raw, JSBI.BigInt(0))
-      )
-    } catch (e) {
-      console.debug('Error fetching quotes:', e)
-      return []
-    }
+    return trades.filter(
+      (trade) =>
+        !!trade && JSBI.greaterThan(trade.outputAmount.raw, JSBI.BigInt(0))
+    )
   }
 
   /**

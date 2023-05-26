@@ -83,7 +83,8 @@ export const WNATIVE = {
     9,
     'WMAS',
     'Wrapped Massa'
-  )
+  ),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 9, 'WMAS', 'Wrapped Massa')
 }
 
 export const WMAS = WNATIVE
