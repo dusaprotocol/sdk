@@ -9,13 +9,29 @@ import {
 import JSBI from 'jsbi'
 import { ChainId } from '../../src/constants'
 import { parseUnits } from '../../lib/ethers'
-import { ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  ProviderType,
+  WalletClient
+} from '@massalabs/massa-web3'
 
 export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
+  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const client = await ClientFactory.createCustomClient(
+    [
+      { url: DUSANET_URL, type: ProviderType.PUBLIC },
+      { url: DUSANET_URL, type: ProviderType.PUBLIC }
+    ],
+    true,
+    account
+  )
+
   const WMAS = WNATIVE[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
@@ -63,14 +79,13 @@ export const swapAmountIn = async () => {
 
   // get trades
   const chainId = ChainId.DUSANET
-  const provider = { url: DUSANET_URL, type: ProviderType.PUBLIC }
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
     outputToken,
     false,
     false,
-    provider,
+    client,
     chainId
   ) // console.log('trades', trades.map(el=>el.toLog()))
 
@@ -85,8 +100,11 @@ export const swapAmountIn = async () => {
     )
   }
 
-  const bestTrade = TradeV2.chooseBestTrade(trades, true)
-  console.log('bestTrade', bestTrade.toLog())
+  const filteredTrades = trades.filter(
+    (trade): trade is TradeV2 => trade !== undefined
+  )
+  const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
+  console.log('bestTrade', bestTrade?.toLog())
 
   // get gas estimates for each trade
   // const WALLET_PK = process.env.PRIVATE_KEY

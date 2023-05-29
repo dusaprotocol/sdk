@@ -2,33 +2,38 @@ export * from './LBFactory'
 export * from './LBPair'
 export * from './LBQuoter'
 export * from './LBRouter'
-export * from './LBRewarder'
-export * from './Vault'
-export * from './VaultFactory'
 
-export interface ABI {
-  inputs: { internalType: string; name: string; type: Arg | Arg[] }[]
-  type: ABIType
-  stateMutability?: 'nonpayable' | 'payable' | 'view'
-  name?: string
-  outputs?: {
-    components?: any
-    internalType: string
-    name: string
-    type: Arg
-  }[]
+// ======== Own code ========
+
+interface FunctionInput {
+  name: string
+  type: string
+  // type: Arg | Arg[]
 }
 
-// type Arg = 'u8' | 'u64' | 'u128' | 'string' | 'address'
-type Arg =
-  | 'uint8'
-  | 'uint64'
-  | 'uint128'
-  | 'uint256'
-  | 'int256'
-  | 'string'
-  | 'address'
-  | 'tuple'
-  | 'address[]'
+interface FunctionOutput {
+  type: string
+  name: string
+}
 
-type ABIType = 'function' | 'event' | 'constructor' | 'fallback' | 'error'
+const nativeASTypes = [
+  'bool',
+  'u8',
+  'u32',
+  'u64',
+  'i64',
+  'u128',
+  'i128',
+  'string',
+  'void'
+] as const
+export type NativeASTypes = (typeof nativeASTypes)[number]
+
+interface ABIItem {
+  inputs: FunctionInput[]
+  stateMutability?: 'nonpayable' | 'payable' | 'view'
+  name: string
+  outputs?: FunctionOutput
+}
+
+export type ABI = ABIItem[]

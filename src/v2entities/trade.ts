@@ -20,7 +20,7 @@ import {
   RouterPathParameters
 } from '../types'
 
-import { IProvider } from '@massalabs/massa-web3'
+import { Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -329,7 +329,7 @@ export class TradeV2 {
    * @param {Token} tokenOut
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Provider} provider
+   * @param {Client} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -339,7 +339,7 @@ export class TradeV2 {
     tokenOut: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    provider: IProvider,
+    client: Client,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = true
@@ -355,17 +355,19 @@ export class TradeV2 {
 
     const amountIn = tokenAmountIn.raw.toString()
 
-    const quoterInterface = new utils.Interface(LBQuoterABI)
+    // const quoterInterface = new utils.Interface(LBQuoterABI)
     const quoter = new utils.Contract(
       LB_QUOTER_ADDRESS[chainId],
-      quoterInterface,
-      provider
+      // quoterInterface,
+      LBQuoterABI,
+      client
     )
 
     const trades: Array<TradeV2 | undefined> = await Promise.all(
       routes.map(async (route) => {
         try {
           const routeStrArr = route.pathToStrArr()
+          // @ts-ignore
           const quote: Quote = await quoter.findBestPathFromAmountIn(
             routeStrArr,
             amountIn.toString()
@@ -402,7 +404,7 @@ export class TradeV2 {
    * @param {Token} tokenIn
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {IProvider} provider
+   * @param {Client} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -412,7 +414,7 @@ export class TradeV2 {
     tokenIn: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    provider: IProvider,
+    client: Client,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = false
@@ -429,57 +431,44 @@ export class TradeV2 {
 
     const amountOut = tokenAmountOut.raw.toString()
 
-    const quoterAddress = LB_QUOTER_ADDRESS[chainId]
-    const quoterInterface = new utils.Interface(LBQuoterABI)
-
-    const multicallInterface = new utils.Interface(MulticallABI)
-    const multicall = new utils.Contract(
-      MULTICALL_ADDRESS[chainId],
-      multicallInterface,
-      provider
+    // const quoterInterface = new utils.Interface(LBQuoterABI)
+    const quoter = new utils.Contract(
+      LB_QUOTER_ADDRESS[chainId],
+      // quoterInterface,
+      LBQuoterABI,
+      client
     )
 
-    try {
-      const calls: MulticallCall[] = routes.map((route) => {
-        const routeStrArr = route.pathToStrArr()
-        const callData = quoterInterface.encodeFunctionData(
-          'findBestPathFromAmountOut',
-          [routeStrArr, amountOut]
-        )
-        return {
-          target: quoterAddress,
-          allowFailure: true,
-          callData
+    const trades: Array<TradeV2 | undefined> = await Promise.all(
+      routes.map(async (route) => {
+        try {
+          const routeStrArr = route.pathToStrArr()
+          // @ts-ignore
+          const quote: Quote = await quoter.findBestPathFromAmountIn(
+            routeStrArr,
+            amountOut.toString()
+          )
+          const trade: TradeV2 = new TradeV2(
+            route,
+            tokenAmountOut.token,
+            tokenIn,
+            quote,
+            isExactIn,
+            isNativeIn,
+            isNativeOut
+          )
+          return trade
+        } catch (e) {
+          console.debug('Error fetching quote:', e)
+          return undefined
         }
       })
+    )
 
-      const reads: MulticallResult[] = await multicall.aggregate3(calls)
-
-      const trades = reads.map((read, i) => {
-        if (!read.success) return undefined
-        const quote: Quote = quoterInterface.decodeFunctionResult(
-          'findBestPathFromAmountOut',
-          read.returnData
-        )[0]
-        return new TradeV2(
-          routes[i],
-          tokenIn,
-          tokenAmountOut.token,
-          quote,
-          isExactIn,
-          isNativeIn,
-          isNativeOut
-        )
-      })
-
-      return trades.filter(
-        (trade) =>
-          !!trade && JSBI.greaterThan(trade.inputAmount.raw, JSBI.BigInt(0))
-      )
-    } catch (e) {
-      console.debug('Error fetching quotes:', e)
-      return []
-    }
+    return trades.filter(
+      (trade) =>
+        !!trade && JSBI.greaterThan(trade.outputAmount.raw, JSBI.BigInt(0))
+    )
   }
 
   /**

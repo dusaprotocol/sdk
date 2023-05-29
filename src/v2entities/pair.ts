@@ -13,7 +13,7 @@ import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
 import { LBFactoryABI, LBPairABI } from 'abis/ts'
 import { Fraction, Percent, Token, TokenAmount } from 'v1entities'
-import { IClient, IProvider } from '@massalabs/massa-web3'
+import { Client } from '@massalabs/massa-web3'
 import { utils } from '../../lib/ethers'
 
 /** Class representing a pair of tokens. */
@@ -39,22 +39,20 @@ export class PairV2 {
    * @returns {Promise<LBPair[]>}
    */
   public async fetchAvailableLBPairs(
-    client: IClient,
-    provider: IProvider,
+    client: Client,
     chainId: ChainId
   ): Promise<LBPair[]> {
     // const factoryInterface = new utils.Interface(LBFactoryABI)
-    // const factory = new Contract(
-    //   LB_FACTORY_ADDRESS[chainId],
-    //   factoryInterface,
-    //   provider
-    // )
-    // const LBPairs: LBPair[] = await factory.getAllLBPairs(
-    //   this.token0.address,
-    //   this.token1.address
-    // )
-    client.setCustomProviders([provider])
-    const LBPairs: LBPair[] = await client
+    const factory = new utils.Contract(
+      LB_FACTORY_ADDRESS[chainId],
+      // factoryInterface,
+      LBFactoryABI,
+      client
+    )
+    const LBPairs: LBPair[] = await factory.getAllLBPairs(
+      this.token0.address,
+      this.token1.address
+    )
     return LBPairs
   }
 
@@ -62,20 +60,21 @@ export class PairV2 {
    * Fetches LBPair for token0, token1, and given binStep
    *
    * @param {number} binStep
-   * @param {Provider} provider
+   * @param {Client} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair>}
    */
   public async fetchLBPair(
     binStep: number,
-    provider: Provider,
+    client: Client,
     chainId: ChainId
   ): Promise<LBPair> {
-    const factoryInterface = new utils.Interface(LBFactoryABI)
-    const factory = new Contract(
+    // const factoryInterface = new utils.Interface(LBFactoryABI)
+    const factory = new utils.Contract(
       LB_FACTORY_ADDRESS[chainId],
-      factoryInterface,
-      provider
+      // factoryInterface,
+      LBFactoryABI,
+      client
     )
     const LBPair: LBPair = await factory.getLBPairInformation(
       this.token0.address,
@@ -163,15 +162,15 @@ export class PairV2 {
    * Fetches the reserves active bin id for the LBPair
    *
    * @param {string} LBPairAddr
-   * @param {Provider} provider
+   * @param {Client} client
    * @returns {Promise<LBPairReservesAndId>}
    */
   public static async getLBPairReservesAndId(
     LBPairAddr: string,
-    provider: Provider
+    client: Client
   ): Promise<LBPairReservesAndId> {
-    const LBPairInterface = new utils.Interface(LBPairABI)
-    const pairContract = new Contract(LBPairAddr, LBPairInterface, provider)
+    // const LBPairInterface = new utils.Interface(LBPairABI)
+    const pairContract = new utils.Contract(LBPairAddr, LBPairABI, client)
 
     const pairData: LBPairReservesAndId = await pairContract.getReservesAndId()
 
@@ -187,13 +186,14 @@ export class PairV2 {
    */
   public static async getFeeParameters(
     LBPairAddr: string,
-    provider: IProvider
+    client: Client
   ): Promise<LBPairFeeParameters> {
-    const LBPairInterface = new utils.Interface(LBPairABI)
+    // const LBPairInterface = new utils.Interface(LBPairABI)
     const pairContract = new utils.Contract(
       LBPairAddr,
-      LBPairInterface,
-      provider
+      // LBPairInterface,
+      LBPairABI,
+      client
     )
 
     const feeParametersData: LBPairFeeParameters =

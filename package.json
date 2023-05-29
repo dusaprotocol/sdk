@@ -8,6 +8,7 @@
     "dist"
   ],
   "repository": "https://github.com/dusaprotocol/sdk",
+  "type": "module",
   "module": "dist/sdk.esm.js",
   "scripts": {
     "lint": "eslint --ext .ts --ext .tsx src/",
