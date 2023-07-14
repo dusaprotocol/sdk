@@ -481,9 +481,9 @@ export class TradeV2 {
   public static chooseBestTrade(
     trades: TradeV2[],
     isExactIn: boolean
-  ): TradeV2 | undefined {
+  ): TradeV2 {
     if (trades.length === 0) {
-      return undefined
+      throw new Error('No trades')
     }
 
     let bestTrade = trades[0]

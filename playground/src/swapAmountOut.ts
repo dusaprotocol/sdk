@@ -1,12 +1,37 @@
-import { PairV2, RouteV2, Token, TradeV2, WMAS } from '../../src'
+import {
+  PairV2,
+  RouteV2,
+  Token,
+  TokenAmount,
+  TradeV2,
+  WMAS as _WMAS
+} from '../../src'
 import JSBI from 'jsbi'
 import { ChainId } from '../../src/constants'
+import { parseUnits } from '../../lib/ethers'
+import {
+  ClientFactory,
+  ProviderType,
+  WalletClient
+} from '@massalabs/massa-web3'
 
 export const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
   const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
+  const privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
+  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const client = await ClientFactory.createCustomClient(
+    [
+      { url: DUSANET_URL, type: ProviderType.PUBLIC },
+      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+    ],
+    true,
+    account
+  )
+
   const WMAS = _WMAS[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
@@ -52,40 +77,31 @@ export const swapAmountOut = async () => {
 
   // get tradess
   const chainId = ChainId.DUSANET
-  const provider = new JsonRpcProvider(DUSANET_URL)
   const trades = await TradeV2.getTradesExactOut(
     allRoutes,
     amountOut,
     inputToken,
     false,
     false,
-    provider,
+    client,
     chainId
   )
 
   // console.log('trades', trades)
   for (let trade of trades) {
+    if (!trade) return
+
     console.log('\n', trade.toLog())
-    const { totalFeePct, feeAmountIn } = await trade.getTradeFee(provider)
+    const { totalFeePct, feeAmountIn } = await trade.getTradeFee()
     console.debug('Total fees percentage', totalFeePct.toSignificant(6), '%')
     console.debug(
       `Fee: ${feeAmountIn.toSignificant(6)} ${feeAmountIn.token.symbol}`
     ) // in token's decimals
   }
 
-  const bestTrade = TradeV2.chooseBestTrade(trades, false)
+  const filteredTrades = trades.filter(
+    (trade): trade is TradeV2 => trade !== undefined
+  )
+  const bestTrade = TradeV2.chooseBestTrade(filteredTrades, false)
   console.log('bestTrade', bestTrade.toLog())
-
-  // get gas estimates for each trade
-  // const WALLET_PK = process.env.PRIVATE_KEY
-  // const userSlippageTolerance = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000)) // 0.1%
-  // const signer = new ethers.Wallet(WALLET_PK, provider)
-  // const estimatedGasCosts = await Promise.all(
-  //   trades.map((trade) => trade.estimateGas(signer, chainId, userSlippageTolerance))
-  // )
-
-  // // get best trade
-  // const { bestTrade, estimatedGas } = TradeV2.chooseBestTrade(trades, estimatedGasCosts)
-  // console.log('bestTrade', bestTrade.toLog())
-  // console.log('swapGasCostEstimate', estimatedGas.toString())
 }

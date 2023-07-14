@@ -12,6 +12,7 @@ import {
 } from '@massalabs/massa-web3'
 import { WMAS as _WMAS } from 'v1entities'
 import JSBI from 'jsbi'
+import { ILBPair } from 'contracts'
 
 describe('TradeV2 entity', async () => {
   const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
@@ -30,7 +31,7 @@ describe('TradeV2 entity', async () => {
 
   // init tokens and route bases
   const lbPairAddress = '0x88F36a6B0e37E78d0Fb1d41B07A47BAD3D995453'
-  const lbPairContract = new utils.Contract(lbPairAddress, LBPairABI, client)
+  const lbPairContract = new ILBPair(lbPairAddress, client)
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',

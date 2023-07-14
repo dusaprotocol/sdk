@@ -113,9 +113,4 @@ export const swapAmountIn = async () => {
   // const estimatedGasCosts = await Promise.all(
   //   trades.map((trade) => trade.estimateGas(signer, chainId, userSlippageTolerance))
   // )
-
-  // // get best trade
-  // const { bestTrade, estimatedGas } = TradeV2.chooseBestTrade(trades, estimatedGasCosts)
-  // console.log('bestTrade', bestTrade.toLog())
-  // console.log('swapGasCostEstimate', estimatedGas.toString())
 }

@@ -2,11 +2,10 @@ import flatMap from 'lodash.flatmap'
 import JSBI from 'jsbi'
 
 import {
-  LBPair,
   LBPairReservesAndId,
-  LBPairFeeParameters,
   LiquidityDistribution,
-  BinReserves
+  BinReserves,
+  LBPair
 } from '../types'
 import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
 import { Bin } from './bin'
@@ -15,6 +14,7 @@ import { LBFactoryABI, LBPairABI } from '../abis/ts'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Client } from '@massalabs/massa-web3'
 import { utils } from '../../lib/ethers'
+import { IFactory, ILBPair } from 'contracts'
 
 /** Class representing a pair of tokens. */
 export class PairV2 {
@@ -42,13 +42,7 @@ export class PairV2 {
     client: Client,
     chainId: ChainId
   ): Promise<LBPair[]> {
-    // const factoryInterface = new utils.Interface(LBFactoryABI)
-    const factory = new utils.Contract(
-      LB_FACTORY_ADDRESS[chainId],
-      // factoryInterface,
-      LBFactoryABI,
-      client
-    )
+    const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
 
     const LBPairs: LBPair[] = await factory.getAllLBPairs(
       this.token0.address,
@@ -70,13 +64,7 @@ export class PairV2 {
     client: Client,
     chainId: ChainId
   ): Promise<LBPair> {
-    // const factoryInterface = new utils.Interface(LBFactoryABI)
-    const factory = new utils.Contract(
-      LB_FACTORY_ADDRESS[chainId],
-      // factoryInterface,
-      LBFactoryABI,
-      client
-    )
+    const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
     const LBPair: LBPair = await factory.getLBPairInformation(
       this.token0.address,
       this.token1.address,
@@ -91,7 +79,7 @@ export class PairV2 {
    * @param {PairV2} pair
    * @returns {boolean} true if equal, otherwise false
    */
-  public equals(pair: PairV2) {
+  public equals(pair: PairV2): boolean {
     if (
       this.token0.address === pair.token0.address &&
       this.token1.address === pair.token1.address
@@ -170,37 +158,11 @@ export class PairV2 {
     LBPairAddr: string,
     client: Client
   ): Promise<LBPairReservesAndId> {
-    // const LBPairInterface = new utils.Interface(LBPairABI)
-    const pairContract = new utils.Contract(LBPairAddr, LBPairABI, client)
+    const pairContract = new ILBPair(LBPairAddr, client)
 
     const pairData: LBPairReservesAndId = await pairContract.getReservesAndId()
 
     return pairData
-  }
-
-  /**
-   * Fetches the fee parameters for the LBPair
-   *
-   * @param {string} LBPairAddr
-   * @param {Client} client
-   * @returns {Promise<LBPairFeeParameters>}
-   */
-  public static async getFeeParameters(
-    LBPairAddr: string,
-    client: Client
-  ): Promise<LBPairFeeParameters> {
-    // const LBPairInterface = new utils.Interface(LBPairABI)
-    const pairContract = new utils.Contract(
-      LBPairAddr,
-      // LBPairInterface,
-      LBPairABI,
-      client
-    )
-
-    const feeParametersData: LBPairFeeParameters =
-      await pairContract.feeParameters()
-
-    return feeParametersData
   }
 
   /**
