@@ -1,6 +1,5 @@
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
-import { utils } from '../../lib/ethers'
 import { RouteV2 } from './route'
 import {
   ChainId,
@@ -29,7 +28,7 @@ import {
   TokenAmount,
   WMAS as _WMAS
 } from '../v1entities'
-import { LBQuoterABI } from '../abis/ts'
+import { IQuoter } from 'contracts'
 
 /** Class representing a trade */
 export class TradeV2 {
@@ -278,48 +277,6 @@ export class TradeV2 {
     }
   }
 
-  // /**
-  //  * Returns an estimate of the gas cost for the trade
-  //  *
-  //  * @param {Signer} signer - The signer such as the wallet
-  //  * @param {ChainId} chainId - The network chain id
-  //  * @param {Percent} slippageTolerance - The slippage tolerance
-  //  * @returns {Promise<BigInt>}
-  //  */
-  // public async estimateGas(
-  //   signer: Signer,
-  //   chainId: ChainId,
-  //   slippageTolerance: Percent
-  // ): Promise<BigInt> {
-  //   const routerInterface = new utils.Interface(LBRouterV21ABI)
-  //   const router = new Contract(
-  //     LB_ROUTER_V21_ADDRESS[chainId],
-  //     routerInterface,
-  //     signer
-  //   )
-
-  //   const currentBlockTimestamp = (
-  //     await (signer as Wallet).provider.getBlock('latest')
-  //   ).timestamp
-  //   const userAddr = await signer.getAddress()
-
-  //   const options: TradeOptionsDeadline = {
-  //     allowedSlippage: slippageTolerance,
-  //     recipient: userAddr,
-  //     deadline: currentBlockTimestamp + 120
-  //   }
-
-  //   const { methodName, args, value }: SwapParameters =
-  //     this.swapCallParameters(options)
-  //   const msgOptions = !value || isZero(value) ? {} : { value }
-
-  //   const gasPrice = await signer.getGasPrice()
-
-  //   const response = await router.estimateGas[methodName](...args, msgOptions)
-
-  //   return response.mul(gasPrice)
-  // }
-
   /**
    * @static
    * Returns the list of trades, given a list of routes and a fixed amount of the input token
@@ -355,22 +312,15 @@ export class TradeV2 {
 
     const amountIn = tokenAmountIn.raw.toString()
 
-    // const quoterInterface = new utils.Interface(LBQuoterABI)
-    const quoter = new utils.Contract(
-      LB_QUOTER_ADDRESS[chainId],
-      // quoterInterface,
-      LBQuoterABI,
-      client
-    )
+    const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], client)
 
     const trades: Array<TradeV2 | undefined> = await Promise.all(
       routes.map(async (route) => {
         try {
           const routeStrArr = route.pathToStrArr()
-          // @ts-ignore
           const quote: Quote = await quoter.findBestPathFromAmountIn(
             routeStrArr,
-            amountIn.toString()
+            amountIn
           )
           const trade: TradeV2 = new TradeV2(
             route,
@@ -430,22 +380,15 @@ export class TradeV2 {
 
     const amountOut = tokenAmountOut.raw.toString()
 
-    // const quoterInterface = new utils.Interface(LBQuoterABI)
-    const quoter = new utils.Contract(
-      LB_QUOTER_ADDRESS[chainId],
-      // quoterInterface,
-      LBQuoterABI,
-      client
-    )
+    const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], client)
 
     const trades: Array<TradeV2 | undefined> = await Promise.all(
       routes.map(async (route) => {
         try {
           const routeStrArr = route.pathToStrArr()
-          // @ts-ignore
-          const quote: Quote = await quoter.findBestPathFromAmountIn(
+          const quote: Quote = await quoter.findBestPathFromAmountOut(
             routeStrArr,
-            amountOut.toString()
+            amountOut
           )
           const trade: TradeV2 = new TradeV2(
             route,

@@ -19,29 +19,29 @@ export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
-  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
-      { url: DUSANET_URL, type: ProviderType.PUBLIC },
-      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
+      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
     true,
     account
   )
 
-  const WMAS = _WMAS[ChainId.DUSANET]
+  const WMAS = _WMAS[ChainId.BUILDNET]
   const USDC = new Token(
-    ChainId.DUSANET,
+    ChainId.BUILDNET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
   const USDT = new Token(
-    ChainId.DUSANET,
+    ChainId.BUILDNET,
     '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
     6,
     'USDT.e',
@@ -78,7 +78,7 @@ export const swapAmountIn = async () => {
   ) // console.log('allRoutes', allRoutes)
 
   // get trades
-  const chainId = ChainId.DUSANET
+  const chainId = ChainId.BUILDNET
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
@@ -105,12 +105,4 @@ export const swapAmountIn = async () => {
   )
   const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
   console.log('bestTrade', bestTrade?.toLog())
-
-  // get gas estimates for each trade
-  // const WALLET_PK = process.env.PRIVATE_KEY
-  // const userSlippageTolerance = new Percent(JSBI.BigInt(50), JSBI.BigInt(10000)) // 0.5%
-  // const signer = new ethers.Wallet(WALLET_PK, provider)
-  // const estimatedGasCosts = await Promise.all(
-  //   trades.map((trade) => trade.estimateGas(signer, chainId, userSlippageTolerance))
-  // )
 }

@@ -11,28 +11,28 @@ export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
-      { url: DUSANET_URL, type: ProviderType.PUBLIC },
-      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
+      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
     true,
     account
   )
 
-  const chainId = ChainId.DUSANET
+  const chainId = ChainId.BUILDNET
   const USDC = new Token(
-    ChainId.DUSANET,
+    ChainId.BUILDNET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
-  const WMAS = _WMAS[ChainId.DUSANET]
+  const WMAS = _WMAS[ChainId.BUILDNET]
 
   // fetch LBPairs
   const pair = new PairV2(USDC, WMAS)

@@ -10,10 +10,8 @@ import {
 import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
-import { LBFactoryABI, LBPairABI } from '../abis/ts'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Client } from '@massalabs/massa-web3'
-import { utils } from '../../lib/ethers'
 import { IFactory, ILBPair } from 'contracts'
 
 /** Class representing a pair of tokens. */

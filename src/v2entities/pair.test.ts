@@ -10,15 +10,15 @@ import {
 } from '@massalabs/massa-web3'
 
 describe('PairV2 entity', async () => {
-  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
-  const CHAIN_ID = ChainId.DUSANET
+  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const CHAIN_ID = ChainId.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
-      { url: DUSANET_URL, type: ProviderType.PUBLIC },
-      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
+      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
     true,
     account
@@ -26,20 +26,20 @@ describe('PairV2 entity', async () => {
 
   // init tokens
   const USDC = new Token(
-    ChainId.DUSANET,
+    ChainId.BUILDNET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
     6,
     'USDC',
     'USD Coin'
   )
   const USDT = new Token(
-    ChainId.DUSANET,
+    ChainId.BUILDNET,
     '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
     6,
     'USDT.e',
     'Tether USD'
   )
-  const MAS = _WMAS[ChainId.DUSANET]
+  const MAS = _WMAS[ChainId.BUILDNET]
 
   // init pairs
   const pair1 = new PairV2(USDC, MAS)
@@ -86,14 +86,14 @@ describe('PairV2 entity', async () => {
   describe('PairV2.createAllTokenPairs() / PairV2.initPairs()', () => {
     it('creates all possible combination of token pairs', () => {
       const TOKEN1 = new Token(
-        ChainId.DUSANET,
+        ChainId.BUILDNET,
         '0x0000000000000000000000000000000000000001',
         6,
         'TOKEN1',
         'TOKEN1'
       )
       const TOKEN2 = new Token(
-        ChainId.DUSANET,
+        ChainId.BUILDNET,
         '0x0000000000000000000000000000000000000002',
         6,
         'TOKEN2',
