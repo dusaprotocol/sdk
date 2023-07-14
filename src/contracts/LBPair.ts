@@ -1,5 +1,5 @@
 import { Args, Client, strToBytes } from '@massalabs/massa-web3'
-import { LBPairReservesAndId } from 'types'
+import { LBPairReservesAndId } from '../types'
 
 export class ILBPair {
   constructor(public address: string, public client: Client) {}

@@ -1,5 +1,5 @@
 import { Args, Client } from '@massalabs/massa-web3'
-import { LBPair } from 'types'
+import { LBPair } from '../types'
 
 export class IFactory {
   constructor(public address: string, public client: Client) {}
@@ -15,7 +15,6 @@ export class IFactory {
         .addString(token0Address)
         .addString(token1Address)
         .serialize(),
-      fee: BigInt(100000000),
       maxGas: BigInt(100000000)
     })
     const pairs: LBPair[] = []
@@ -35,7 +34,6 @@ export class IFactory {
         .addString(token1Address)
         .addU32(binStep)
         .serialize(),
-      fee: BigInt(100000000),
       maxGas: BigInt(100000000)
     })
     return { binStep, createdByOwner: true, isBlacklisted: false, LBPair: '' }

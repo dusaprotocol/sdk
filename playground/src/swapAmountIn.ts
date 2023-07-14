@@ -35,19 +35,19 @@ export const swapAmountIn = async () => {
   const WMAS = _WMAS[ChainId.BUILDNET]
   const USDC = new Token(
     ChainId.BUILDNET,
-    '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
-    6,
+    'AS1r1GapqdNx5qMDR2KybLtRWup4xFvtyRzacJXCa3hSJkb6PtSR',
+    9,
     'USDC',
     'USD Coin'
   )
-  const USDT = new Token(
+  const WETH = new Token(
     ChainId.BUILDNET,
-    '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
-    6,
-    'USDT.e',
-    'Tether USD'
+    'AS1qFJRAbdPHUjVqgECNQ9dHeF6y8WfSVMPSTHk1QVtpsHppDNES',
+    9,
+    'WETH',
+    'Wrapped Ether'
   )
-  const BASES = [WMAS, USDC, USDT]
+  const BASES = [WMAS, USDC, WETH]
 
   // Init: user inputs
   const inputToken = USDC

@@ -27,24 +27,24 @@ describe('PairV2 entity', async () => {
   // init tokens
   const USDC = new Token(
     ChainId.BUILDNET,
-    '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
-    6,
+    'AS1r1GapqdNx5qMDR2KybLtRWup4xFvtyRzacJXCa3hSJkb6PtSR',
+    9,
     'USDC',
     'USD Coin'
   )
-  const USDT = new Token(
+  const WETH = new Token(
     ChainId.BUILDNET,
-    '0xAb231A5744C8E6c45481754928cCfFFFD4aa0732',
-    6,
-    'USDT.e',
-    'Tether USD'
+    'AS1qFJRAbdPHUjVqgECNQ9dHeF6y8WfSVMPSTHk1QVtpsHppDNES',
+    9,
+    'WETH',
+    'Wrapped Ether'
   )
   const MAS = _WMAS[ChainId.BUILDNET]
 
   // init pairs
   const pair1 = new PairV2(USDC, MAS)
   const pair2 = new PairV2(MAS, USDC)
-  const pair3 = new PairV2(USDC, USDT)
+  const pair3 = new PairV2(USDC, WETH)
 
   it('can be initialized in any order of tokens', async () => {
     expect(pair1.equals(pair2)).toEqual(true)

@@ -1,6 +1,5 @@
 import { Args, ArrayType, Client } from '@massalabs/massa-web3'
-import { Quote } from 'types'
-import { Address } from 'types/serializable'
+import { Address, Quote } from '../types'
 
 export class IQuoter {
   constructor(public address: string, public client: Client) {}

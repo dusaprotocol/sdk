@@ -12,7 +12,7 @@ import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Client } from '@massalabs/massa-web3'
-import { IFactory, ILBPair } from 'contracts'
+import { IFactory, ILBPair } from '../contracts'
 
 /** Class representing a pair of tokens. */
 export class PairV2 {

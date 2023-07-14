@@ -28,7 +28,7 @@ import {
   TokenAmount,
   WMAS as _WMAS
 } from '../v1entities'
-import { IQuoter } from 'contracts'
+import { IQuoter } from '../contracts'
 
 /** Class representing a trade */
 export class TradeV2 {

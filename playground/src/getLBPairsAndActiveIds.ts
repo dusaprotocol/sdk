@@ -27,8 +27,8 @@ export const getLBPairsAndActiveIds = async () => {
   const chainId = ChainId.BUILDNET
   const USDC = new Token(
     ChainId.BUILDNET,
-    '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
-    6,
+    'AS1r1GapqdNx5qMDR2KybLtRWup4xFvtyRzacJXCa3hSJkb6PtSR',
+    9,
     'USDC',
     'USD Coin'
   )
