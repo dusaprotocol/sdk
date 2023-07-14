@@ -1,12 +1,28 @@
 // import {Bin} from './bin'
-import { ChainId } from 'constants'
+import { ChainId } from '../constants'
 import { PairV2 } from './pair'
 import { Token } from '../v1entities'
+import { WMAS as _WMAS } from '../'
+import {
+  ClientFactory,
+  ProviderType,
+  WalletClient
+} from '@massalabs/massa-web3'
 
-describe('PairV2 entity', () => {
-  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const PROVIDER = new ethers.providers.JsonRpcProvider(DUSANET_URL)
+describe('PairV2 entity', async () => {
+  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
   const CHAIN_ID = ChainId.DUSANET
+  const privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
+  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const client = await ClientFactory.createCustomClient(
+    [
+      { url: DUSANET_URL, type: ProviderType.PUBLIC },
+      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+    ],
+    true,
+    account
+  )
 
   // init tokens
   const USDC = new Token(
@@ -23,11 +39,11 @@ describe('PairV2 entity', () => {
     'USDT.e',
     'Tether USD'
   )
-  const AVAX = WMAS[ChainId.DUSANET]
+  const MAS = _WMAS[ChainId.DUSANET]
 
   // init pairs
-  const pair1 = new PairV2(USDC, AVAX)
-  const pair2 = new PairV2(AVAX, USDC)
+  const pair1 = new PairV2(USDC, MAS)
+  const pair2 = new PairV2(MAS, USDC)
   const pair3 = new PairV2(USDC, USDT)
 
   it('can be initialized in any order of tokens', async () => {
@@ -35,25 +51,25 @@ describe('PairV2 entity', () => {
   })
 
   it('can fetch all available v2 LBPairs', async () => {
-    const LBPairs = await pair1.fetchAvailableLBPairs(false, PROVIDER, CHAIN_ID)
+    const LBPairs = await pair1.fetchAvailableLBPairs(client, CHAIN_ID)
     expect(LBPairs.length).toBeGreaterThan(0)
   })
 
   it('can fetch single v2 LBPair given the bin step', async () => {
     const binStep = 10
-    const LBPair = await pair1.fetchLBPair(binStep, false, PROVIDER, CHAIN_ID)
+    const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
     expect(LBPair.binStep).toEqual(binStep)
     expect(LBPair.LBPair).not.toBeUndefined()
   })
 
   it('can fetch all available v2.1 LBPairs', async () => {
-    const LBPairs = await pair1.fetchAvailableLBPairs(true, PROVIDER, CHAIN_ID)
+    const LBPairs = await pair1.fetchAvailableLBPairs(client, CHAIN_ID)
     expect(LBPairs.length).toBeGreaterThan(0)
   })
 
   it('can fetch single v2.1 LBPair given the bin step', async () => {
     const binStep = 10
-    const LBPair = await pair1.fetchLBPair(binStep, false, PROVIDER, CHAIN_ID)
+    const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
     expect(LBPair.binStep).toEqual(binStep)
     expect(LBPair.LBPair).not.toBeUndefined()
   })
@@ -85,7 +101,7 @@ describe('PairV2 entity', () => {
       )
       const BASES = [TOKEN1, TOKEN2]
 
-      const allTokenPairs = PairV2.createAllTokenPairs(USDC, AVAX, BASES)
+      const allTokenPairs = PairV2.createAllTokenPairs(USDC, MAS, BASES)
       expect(allTokenPairs.length).toEqual(7)
 
       const allUniquePairs = PairV2.initPairs(allTokenPairs)
@@ -96,11 +112,11 @@ describe('PairV2 entity', () => {
   describe('PairV2.getLBPairReservesAndId()', () => {
     it('can fetch LBPair v2 reserves and activeId', async () => {
       const binStep = 10
-      const LBPair = await pair1.fetchLBPair(binStep, PROVIDER, CHAIN_ID)
+      const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
 
       const lbPairData = await PairV2.getLBPairReservesAndId(
         LBPair.LBPair,
-        PROVIDER
+        client
       )
 
       expect(lbPairData.activeId).not.toBeUndefined()
@@ -112,11 +128,11 @@ describe('PairV2 entity', () => {
   describe('PairV2.getFeeParameters()', () => {
     it('can fetch LBPair fee parameters', async () => {
       const binStep = 10
-      const LBPair = await pair1.fetchLBPair(binStep, false, PROVIDER, CHAIN_ID)
+      const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
 
       const lbPairFeeParams = await PairV2.getFeeParameters(
         LBPair.LBPair,
-        PROVIDER
+        client
       )
 
       expect(lbPairFeeParams.baseFactor).not.toBeUndefined()
@@ -143,11 +159,11 @@ describe('PairV2 entity', () => {
           reserveY: '0'
         }
       ].map((el) => ({
-        reserveX: BigInt.from(el.reserveX),
-        reserveY: BigInt.from(el.reserveY)
+        reserveX: BigInt(el.reserveX),
+        reserveY: BigInt(el.reserveY)
       }))
       const totalSupplies = ['420588467', '421669945', '422789291'].map((el) =>
-        BigInt.from(el)
+        BigInt(el)
       )
 
       const { amountX, amountY } = PairV2.calculateAmounts(
@@ -171,10 +187,10 @@ describe('PairV2 entity', () => {
           reserveY: '420588469'
         }
       ].map((el) => ({
-        reserveX: BigInt.from(el.reserveX),
-        reserveY: BigInt.from(el.reserveY)
+        reserveX: BigInt(el.reserveX),
+        reserveY: BigInt(el.reserveY)
       }))
-      const totalSupplies = ['420588467'].map((el) => BigInt.from(el))
+      const totalSupplies = ['420588467'].map((el) => BigInt(el))
 
       const { amountX, amountY } = PairV2.calculateAmounts(
         binIds,
@@ -197,10 +213,10 @@ describe('PairV2 entity', () => {
           reserveY: '0'
         }
       ].map((el) => ({
-        reserveX: BigInt.from(el.reserveX),
-        reserveY: BigInt.from(el.reserveY)
+        reserveX: BigInt(el.reserveX),
+        reserveY: BigInt(el.reserveY)
       }))
-      const totalSupplies = ['422789291'].map((el) => BigInt.from(el))
+      const totalSupplies = ['422789291'].map((el) => BigInt(el))
 
       const { amountX, amountY } = PairV2.calculateAmounts(
         binIds,

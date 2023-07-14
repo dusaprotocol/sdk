@@ -1,4 +1,4 @@
-import { PairV2, RouteV2, Token, TradeV2, WNATIVE } from '../../src'
+import { PairV2, RouteV2, Token, TradeV2, WMAS } from '../../src'
 import JSBI from 'jsbi'
 import { ChainId } from '../../src/constants'
 
@@ -6,8 +6,8 @@ export const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
-  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const WMAS = WNATIVE[ChainId.DUSANET]
+  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
+  const WMAS = _WMAS[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',

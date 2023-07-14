@@ -7,7 +7,11 @@ export class Contract {
       const methodName = func.name
       Object.defineProperty(this, methodName, {
         value: () => {
-          console.log(`Calling method: ${methodName}`)
+          console.log(
+            `Calling method: ${methodName} with arguments: ${func.inputs.map(
+              (input) => `${input.name}: ${input.type}`
+            )}`
+          )
           // Implement method logic here
         },
         writable: true,

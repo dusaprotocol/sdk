@@ -1,25 +1,36 @@
-import { Contract, ethers } from 'ethers'
-import {
-  ChainId,
-  WNATIVE as _WNATIVE,
-  Token,
-  TokenAmount,
-  JSBI,
-  Percent
-} from '@traderjoe-xyz/sdk'
-import { parseUnits } from '@ethersproject/units'
+import { Percent, Token, TokenAmount } from 'v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
+import { parseUnits, utils } from '../../lib/ethers'
+import { LBPairABI } from 'abis/ts'
+import { ChainId } from '../constants'
+import {
+  ClientFactory,
+  ProviderType,
+  WalletClient
+} from '@massalabs/massa-web3'
+import { WMAS as _WMAS } from 'v1entities'
+import JSBI from 'jsbi'
 
-describe('TradeV2 entity', () => {
-  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
-  const PROVIDER = new ethers.providers.JsonRpcProvider(DUSANET_URL)
+describe('TradeV2 entity', async () => {
+  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
   const CHAIN_ID = ChainId.DUSANET
+  const privateKey = process.env.PRIVATE_KEY
+  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
+  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const client = await ClientFactory.createCustomClient(
+    [
+      { url: DUSANET_URL, type: ProviderType.PUBLIC },
+      { url: DUSANET_URL, type: ProviderType.PRIVATE }
+    ],
+    true,
+    account
+  )
 
   // init tokens and route bases
   const lbPairAddress = '0x88F36a6B0e37E78d0Fb1d41B07A47BAD3D995453'
-  const lbPairContract = new Contract(lbPairAddress, PROVIDER)
+  const lbPairContract = new utils.Contract(lbPairAddress, LBPairABI, client)
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',
@@ -34,12 +45,12 @@ describe('TradeV2 entity', () => {
     'USDT.e',
     'Tether USD'
   )
-  const WNATIVE = _WNATIVE[ChainId.DUSANET]
-  const BASES = [WNATIVE, USDC, USDT]
+  const WMAS = _WMAS[ChainId.DUSANET]
+  const BASES = [WMAS, USDC, USDT]
 
   // init input / output
   const inputToken = USDC
-  const outputToken = WNATIVE
+  const outputToken = WMAS
 
   // token pairs
   const allTokenPairs = PairV2.createAllTokenPairs(
@@ -85,7 +96,7 @@ describe('TradeV2 entity', () => {
         outputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -100,7 +111,7 @@ describe('TradeV2 entity', () => {
         inputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -120,7 +131,7 @@ describe('TradeV2 entity', () => {
         inputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -139,7 +150,7 @@ describe('TradeV2 entity', () => {
         outputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -168,7 +179,7 @@ describe('TradeV2 entity', () => {
         inputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -199,7 +210,7 @@ describe('TradeV2 entity', () => {
         outputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -209,7 +220,7 @@ describe('TradeV2 entity', () => {
         inputToken,
         false,
         false,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -245,7 +256,7 @@ describe('TradeV2 entity', () => {
         outputToken,
         false,
         isNativeOut,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 
@@ -269,7 +280,7 @@ describe('TradeV2 entity', () => {
         outputToken,
         false,
         isNativeOut,
-        PROVIDER,
+        client,
         CHAIN_ID
       )
 

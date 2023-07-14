@@ -11,14 +11,14 @@ export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
       { url: DUSANET_URL, type: ProviderType.PUBLIC },
-      { url: DUSANET_URL, type: ProviderType.PUBLIC }
+      { url: DUSANET_URL, type: ProviderType.PRIVATE }
     ],
     true,
     account
@@ -32,7 +32,7 @@ export const getLBPairsAndActiveIds = async () => {
     'USDC',
     'USD Coin'
   )
-  const WMAS = [ChainId.DUSANET]
+  const WMAS = _WMAS[ChainId.DUSANET]
 
   // fetch LBPairs
   const pair = new PairV2(USDC, WMAS)

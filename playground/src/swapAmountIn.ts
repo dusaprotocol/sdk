@@ -4,7 +4,7 @@ import {
   Token,
   TokenAmount,
   TradeV2,
-  WNATIVE
+  WMAS as _WMAS
 } from '../../src'
 import JSBI from 'jsbi'
 import { ChainId } from '../../src/constants'
@@ -19,20 +19,20 @@ export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
-  const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'
+  const DUSANET_URL = 'https://buildnet.massa.net/api/v2'
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
       { url: DUSANET_URL, type: ProviderType.PUBLIC },
-      { url: DUSANET_URL, type: ProviderType.PUBLIC }
+      { url: DUSANET_URL, type: ProviderType.PRIVATE }
     ],
     true,
     account
   )
 
-  const WMAS = WNATIVE[ChainId.DUSANET]
+  const WMAS = _WMAS[ChainId.DUSANET]
   const USDC = new Token(
     ChainId.DUSANET,
     '0xB6076C93701D6a07266c31066B298AeC6dd65c2d',

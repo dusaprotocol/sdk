@@ -19,7 +19,6 @@ import {
   Quote,
   RouterPathParameters
 } from '../types'
-
 import { Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
@@ -28,7 +27,7 @@ import {
   Price,
   Token,
   TokenAmount,
-  WNATIVE
+  WMAS as _WMAS
 } from '../v1entities'
 import { LBQuoterABI } from '../abis/ts'
 
@@ -54,6 +53,7 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean
   ) {
+    console.log({ quote })
     const inputAmount = new TokenAmount(
       tokenIn,
       JSBI.BigInt(quote.amounts[0].toString())
@@ -346,8 +346,8 @@ export class TradeV2 {
 
     // handle wavax<->avax wrap swaps
     const isWrapSwap =
-      (isNativeIn && tokenOut.address === WNATIVE[chainId].address) ||
-      (isNativeOut && tokenAmountIn.token.address === WNATIVE[chainId].address)
+      (isNativeIn && tokenOut.address === _WMAS[chainId].address) ||
+      (isNativeOut && tokenAmountIn.token.address === _WMAS[chainId].address)
 
     if (isWrapSwap) {
       return []
@@ -421,9 +421,8 @@ export class TradeV2 {
 
     // handle wavax<->avax wrap swaps
     const isWrapSwap =
-      (isNativeIn &&
-        tokenAmountOut.token.address === WNATIVE[chainId].address) ||
-      (isNativeOut && tokenIn.address === WNATIVE[chainId].address)
+      (isNativeIn && tokenAmountOut.token.address === _WMAS[chainId].address) ||
+      (isNativeOut && tokenIn.address === _WMAS[chainId].address)
 
     if (isWrapSwap) {
       return []

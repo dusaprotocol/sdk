@@ -75,7 +75,7 @@ export function currencyEquals(
   }
 }
 
-export const WNATIVE = {
+export const WMAS = {
   [ChainId.DUSANET]: new Token(ChainId.DUSANET, '', 9, 'WMAS', 'Wrapped Massa'),
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
@@ -86,5 +86,3 @@ export const WNATIVE = {
   ),
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '', 9, 'WMAS', 'Wrapped Massa')
 }
-
-export const WMAS = WNATIVE

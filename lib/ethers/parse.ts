@@ -1,7 +1,8 @@
 import JSBI from 'jsbi'
 import { BigintIsh } from '../../src/constants'
 
-export const parseEther = (ether: string): BigInt => BigInt(ether)
+export const parseEther = (ether: string): BigInt =>
+  BigInt(parseFloat(ether) * 10 ** 18)
 export const parseUnits = (units: string, decimals: number): BigInt =>
   BigInt(units) / BigInt(10 ** decimals)
 

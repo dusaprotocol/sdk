@@ -1,4 +1,5 @@
-import { ChainId, WNATIVE, Token } from '@traderjoe-xyz/sdk'
+import { ChainId } from '../constants'
+import { WMAS as _WMAS, Token } from '../'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 
@@ -18,12 +19,12 @@ describe('RouteV2.createAllRoute()', () => {
     'USDT.e',
     'Tether USD'
   )
-  const AVAX = WNATIVE[ChainId.DUSANET]
-  const BASES = [AVAX, USDC, USDT]
+  const MAS = _WMAS[ChainId.DUSANET]
+  const BASES = [MAS, USDC, USDT]
 
   // init input / output
   const inputToken = USDC
-  const outputToken = AVAX
+  const outputToken = MAS
 
   // token pairs
   const allTokenPairs = PairV2.createAllTokenPairs(
