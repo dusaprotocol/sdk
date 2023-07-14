@@ -1,4 +1,4 @@
-import { Percent, TokenAmount } from 'v1entities/fractions'
+import { Percent, TokenAmount } from '../v1entities/fractions'
 
 /** Interface representing a quote */
 export interface Quote {

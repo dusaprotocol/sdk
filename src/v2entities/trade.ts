@@ -29,8 +29,8 @@ import {
   Token,
   TokenAmount,
   WNATIVE
-} from 'v1entities'
-import { LBQuoterABI } from 'abis/ts'
+} from '../v1entities'
+import { LBQuoterABI } from '../abis/ts'
 
 /** Class representing a trade */
 export class TradeV2 {

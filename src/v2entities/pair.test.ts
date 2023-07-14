@@ -1,7 +1,7 @@
 // import {Bin} from './bin'
 import { ChainId } from 'constants'
 import { PairV2 } from './pair'
-import { Token } from 'v1entities'
+import { Token } from '../v1entities'
 
 describe('PairV2 entity', () => {
   const DUSANET_URL = 'https://api.avax-test.network/ext/bc/C/rpc'

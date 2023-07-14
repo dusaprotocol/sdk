@@ -1,4 +1,4 @@
-import { Token } from 'v1entities'
+import { Token } from '../v1entities'
 import { PairV2 } from './pair'
 
 /** Class representing a trade route. */

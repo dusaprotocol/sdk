@@ -29,7 +29,7 @@ const nativeASTypes = [
 ] as const
 export type NativeASTypes = (typeof nativeASTypes)[number]
 
-interface ABIItem {
+export interface ABIItem {
   inputs: FunctionInput[]
   stateMutability?: 'nonpayable' | 'payable' | 'view'
   name: string

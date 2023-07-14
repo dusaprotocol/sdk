@@ -1,4 +1,4 @@
-import { Percent } from 'v1entities/fractions'
+import { Percent } from '../v1entities/fractions'
 
 export type BigNumberish = BigInt | string | number
 

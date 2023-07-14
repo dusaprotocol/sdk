@@ -11,8 +11,8 @@ import {
 import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
-import { LBFactoryABI, LBPairABI } from 'abis/ts'
-import { Fraction, Percent, Token, TokenAmount } from 'v1entities'
+import { LBFactoryABI, LBPairABI } from '../abis/ts'
+import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Client } from '@massalabs/massa-web3'
 import { utils } from '../../lib/ethers'
 
@@ -34,7 +34,7 @@ export class PairV2 {
   /**
    * Returns all available LBPairs for this pair
    *
-   * @param {Provider} provider
+   * @param {Client} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair[]>}
    */
@@ -49,6 +49,7 @@ export class PairV2 {
       LBFactoryABI,
       client
     )
+
     const LBPairs: LBPair[] = await factory.getAllLBPairs(
       this.token0.address,
       this.token1.address
@@ -181,7 +182,7 @@ export class PairV2 {
    * Fetches the fee parameters for the LBPair
    *
    * @param {string} LBPairAddr
-   * @param {Provider} provider
+   * @param {Client} client
    * @returns {Promise<LBPairFeeParameters>}
    */
   public static async getFeeParameters(

@@ -1,3 +1,5 @@
+import { CurrencyAmount } from '../v1entities'
+
 /**
  * Converts currency amount into hex encoding
  *

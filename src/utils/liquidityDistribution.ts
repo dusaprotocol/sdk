@@ -4,7 +4,7 @@ import {
   LiquidityDistributionParams
 } from '../types/pair'
 import { parseEther } from '../../lib/ethers/parse'
-import { CurrencyAmount } from 'v1entities/fractions'
+import { CurrencyAmount } from '../v1entities/fractions'
 
 /**
  * Returns distribution params for on-chain addLiquidity() call

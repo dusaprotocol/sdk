@@ -1,4 +1,8 @@
-import { ChainId } from '.'
+enum ChainId {
+  DUSANET,
+  BUILDNET,
+  MAINNET
+}
 
 /**
  * DEX v2 SDK
