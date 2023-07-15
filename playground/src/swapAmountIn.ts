@@ -12,6 +12,7 @@ import { ChainId, LB_ROUTER_ADDRESS } from '../../src/constants'
 import { parseUnits } from '../../lib/ethers'
 import {
   ClientFactory,
+  EOperationStatus,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
@@ -111,7 +112,7 @@ export const swapAmountIn = async () => {
 
   // execute trade
   const params = bestTrade.swapCallParameters({
-    ttl: 1000,
+    ttl: 1000 * 60 * 10, // 10 minutes
     recipient: account.address,
     allowedSlippage: new Percent('5')
   })
@@ -120,8 +121,25 @@ export const swapAmountIn = async () => {
     functionName: params.methodName,
     coins: BigInt(params.value),
     parameter: params.args,
-    fee: BigInt(1_000_000),
-    maxGas: BigInt(1_000_000)
+    fee: BigInt(100_000_000),
+    maxGas: BigInt(100_000_000)
   })
   console.log('txId', txId)
+
+  // await tx confirmation and log events
+  const status = await client
+    .smartContracts()
+    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL)
+  console.log('status', status)
+  await client
+    .smartContracts()
+    .getFilteredScOutputEvents({
+      emitter_address: null,
+      start: null,
+      end: null,
+      original_caller_address: null,
+      is_final: null,
+      original_operation_id: txId
+    })
+    .then((r) => r.forEach((e) => console.log(e.data)))
 }

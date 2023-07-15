@@ -15,7 +15,7 @@ export interface Quote {
 export interface TradeOptions {
   // How much the execution price is allowed to move unfavorably from the trade execution price.
   allowedSlippage: Percent
-  // How long the swap is valid until it expires, in seconds. Used to produce a `deadline` parameter which is computed from when the swap call parameters are generated
+  // How long the swap is valid until it expires, in milliseconds. Used to produce a `deadline` parameter which is computed from when the swap call parameters are generated
   ttl: number
   // The account that should receive the output of the swap.
   recipient: string

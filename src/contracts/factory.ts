@@ -15,7 +15,8 @@ export class IFactory {
         .addString(token0Address)
         .addString(token1Address)
         .serialize(),
-      maxGas: BigInt(100000000)
+      maxGas: BigInt(100_000_000),
+      fee: BigInt(0)
     })
     const pairs: LBPair[] = []
     return pairs
@@ -34,7 +35,8 @@ export class IFactory {
         .addString(token1Address)
         .addU32(binStep)
         .serialize(),
-      maxGas: BigInt(100000000)
+      maxGas: BigInt(100_000_000),
+      fee: BigInt(0)
     })
     return { binStep, createdByOwner: true, isBlacklisted: false, LBPair: '' }
   }

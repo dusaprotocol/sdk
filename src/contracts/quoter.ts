@@ -1,4 +1,4 @@
-import { Args, ArrayType, Client } from '@massalabs/massa-web3'
+import { Args, TypedArrayUnit, Client } from '@massalabs/massa-web3'
 import { Address, Quote } from '../types'
 
 export class IQuoter {
@@ -17,7 +17,8 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountIn))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: BigInt(100_000_000),
+        fee: BigInt(0)
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -27,12 +28,11 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
-        const amounts: bigint[] = args.nextArray(ArrayType.U64)
-        const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
-          ArrayType.U64
-        )
-        const fees: bigint[] = args.nextArray(ArrayType.U64)
+        const binSteps: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const amounts: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const virtualAmountsWithoutSlippage: bigint[] =
+          args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const fees: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
         return {
           route,
           pairs,
@@ -57,7 +57,8 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountOut))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: BigInt(100_000_000),
+        fee: BigInt(0)
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -67,12 +68,11 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
-        const amounts: bigint[] = args.nextArray(ArrayType.U64)
-        const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
-          ArrayType.U64
-        )
-        const fees: bigint[] = args.nextArray(ArrayType.U64)
+        const binSteps: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const amounts: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const virtualAmountsWithoutSlippage: bigint[] =
+          args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const fees: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
         return {
           route,
           pairs,
