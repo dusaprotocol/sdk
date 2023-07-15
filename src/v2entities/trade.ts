@@ -16,9 +16,10 @@ import {
   TradeFee,
   SwapParameters,
   Quote,
-  RouterPathParameters
+  RouterPathParameters,
+  Address
 } from '../types'
-import { Client } from '@massalabs/massa-web3'
+import { Args, ArrayType, Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -153,28 +154,27 @@ export class TradeV2 {
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = options.recipient
-    const amountIn: string = toHex(
-      this.maximumAmountIn(options.allowedSlippage)
-    )
-    const amountOut: string = toHex(
-      this.minimumAmountOut(options.allowedSlippage)
-    )
+    const amountIn: string = this.maximumAmountIn(
+      options.allowedSlippage
+    ).raw.toString()
+    const amountOut: string = this.minimumAmountOut(
+      options.allowedSlippage
+    ).raw.toString()
+
     const binSteps: string[] = this.quote.binSteps.map((bin) => bin.toString())
     const path: RouterPathParameters = {
       pairBinSteps: binSteps,
-      tokenPath: this.quote.route
+      tokenPath: this.quote.route.map((t) => new Address(t))
     }
     const deadline =
       'ttl' in options
-        ? `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(
-            16
-          )}`
-        : `0x${options.deadline.toString(16)}`
+        ? Math.floor(new Date().getTime() / 1000) + options.ttl
+        : options.deadline
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
     let methodName: string = ''
-    let args: (string | string[] | RouterPathParameters)[] = []
+    let args: Args = new Args()
     let value: string = ''
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
@@ -182,19 +182,36 @@ export class TradeV2 {
           methodName = useFeeOnTransfer
             ? 'swapExactNATIVEForTokensSupportingFeeOnTransferTokens'
             : 'swapExactNATIVEForTokens'
-          args = [amountOut, path, to, deadline]
+          args
+            .addU64(BigInt(amountOut))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = amountIn
         } else if (nativeOut) {
           methodName = useFeeOnTransfer
             ? 'swapExactTokensForNATIVESupportingFeeOnTransferTokens'
             : 'swapExactTokensForNATIVE'
-          args = [amountIn, amountOut, path, to, deadline]
+          args
+            .addU64(BigInt(amountIn))
+            .addU64(BigInt(amountOut))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = ZERO_HEX
         } else {
           methodName = useFeeOnTransfer
             ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
             : 'swapExactTokensForTokens'
-          args = [amountIn, amountOut, path, to, deadline]
+          args
+            .addU64(BigInt(amountIn))
+            .addU64(BigInt(amountOut))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = ZERO_HEX
         }
         break
@@ -202,22 +219,39 @@ export class TradeV2 {
         invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
         if (nativeIn) {
           methodName = 'swapNATIVEForExactTokens'
-          args = [amountOut, path, to, deadline]
+          args
+            .addU64(BigInt(amountOut))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = amountIn
         } else if (nativeOut) {
           methodName = 'swapTokensForExactNATIVE'
-          args = [amountOut, amountIn, path, to, deadline]
+          args
+            .addU64(BigInt(amountOut))
+            .addU64(BigInt(amountIn))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = ZERO_HEX
         } else {
           methodName = 'swapTokensForExactTokens'
-          args = [amountOut, amountIn, path, to, deadline]
+          args
+            .addU64(BigInt(amountOut))
+            .addU64(BigInt(amountIn))
+            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addSerializableObjectArray(path.tokenPath)
+            .addString(to)
+            .addU64(BigInt(deadline))
           value = ZERO_HEX
         }
         break
     }
     return {
       methodName,
-      args,
+      args: args.serialize(),
       value
     }
   }

@@ -1,5 +1,6 @@
 import {
   PairV2,
+  Percent,
   RouteV2,
   Token,
   TokenAmount,
@@ -7,7 +8,7 @@ import {
   WMAS as _WMAS
 } from '../../src'
 import JSBI from 'jsbi'
-import { ChainId } from '../../src/constants'
+import { ChainId, LB_ROUTER_ADDRESS } from '../../src/constants'
 import { parseUnits } from '../../lib/ethers'
 import {
   ClientFactory,
@@ -23,6 +24,8 @@ export const swapAmountIn = async () => {
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  if (!account.address) throw new Error('Missing address in account')
+
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
@@ -105,4 +108,20 @@ export const swapAmountIn = async () => {
   )
   const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
   console.log('bestTrade', bestTrade?.toLog())
+
+  // execute trade
+  const params = bestTrade.swapCallParameters({
+    ttl: 1000,
+    recipient: account.address,
+    allowedSlippage: new Percent('5')
+  })
+  const txId = await client.smartContracts().callSmartContract({
+    targetAddress: LB_ROUTER_ADDRESS[chainId],
+    functionName: params.methodName,
+    coins: BigInt(params.value),
+    parameter: params.args,
+    fee: BigInt(1_000_000),
+    maxGas: BigInt(1_000_000)
+  })
+  console.log('txId', txId)
 }

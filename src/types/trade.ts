@@ -1,4 +1,5 @@
 import { Percent, TokenAmount } from '../v1entities/fractions'
+import { Address } from './serializable'
 
 /** Interface representing a quote */
 export interface Quote {
@@ -29,7 +30,7 @@ export interface TradeOptionsDeadline extends Omit<TradeOptions, 'ttl'> {
 
 export interface RouterPathParameters {
   pairBinSteps: string[]
-  tokenPath: string[]
+  tokenPath: Address[]
 }
 
 /** The parameters to use in the call to the DEX V2 Router to execute a trade. */
@@ -37,7 +38,7 @@ export interface SwapParameters {
   // The method to call on LBRouter
   methodName: string
   // The arguments to pass to the method, all hex encoded.
-  args: (string | string[] | RouterPathParameters)[]
+  args: number[]
   // The amount of wei to send in hex.
   value: string
 }
