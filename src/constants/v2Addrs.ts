@@ -9,7 +9,7 @@ enum ChainId {
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1EDmiY75REwW4jXmruvXhR57APgRWgJ2ZZCk8tRHkgEtTUBmoh',
+  [ChainId.BUILDNET]: 'AS12MTcKENa9eD22984GRGZg8zSH4pi5aApMA36fzU4j9ZzC3BuxC',
   [ChainId.MAINNET]: ''
 }
 

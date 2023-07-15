@@ -52,7 +52,6 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean
   ) {
-    console.log({ quote })
     const inputAmount = new TokenAmount(
       tokenIn,
       JSBI.BigInt(quote.amounts[0].toString())
@@ -514,7 +513,7 @@ export class TradeV2 {
   }
 
   /**
-   * Returns an object representing this trade for a readable cosole.log
+   * Returns an object representing this trade for a readable console.log
    *
    * @returns {Object}
    */
