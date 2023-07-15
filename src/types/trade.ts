@@ -5,10 +5,10 @@ import { Address } from './serializable'
 export interface Quote {
   route: string[]
   pairs: string[]
-  binSteps: BigInt[]
-  amounts: BigInt[]
-  virtualAmountsWithoutSlippage: BigInt[]
-  fees: BigInt[]
+  binSteps: bigint[]
+  amounts: bigint[]
+  virtualAmountsWithoutSlippage: bigint[]
+  fees: bigint[]
 }
 
 /** Options for producing the arguments to send call to the router. */

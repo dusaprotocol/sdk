@@ -177,7 +177,7 @@ export class PairV2 {
     binIds: number[],
     activeBin: number,
     bins: BinReserves[],
-    totalSupplies: BigInt[],
+    totalSupplies: bigint[],
     liquidity: string[]
   ): {
     amountX: JSBI
@@ -246,8 +246,8 @@ export class PairV2 {
     amountYMin: string
     idSlippage: number
     deltaIds: number[]
-    distributionX: BigInt[]
-    distributionY: BigInt[]
+    distributionX: bigint[]
+    distributionY: bigint[]
   } {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const tokenX = token0isX ? token0Amount.token : token1Amount.token
@@ -307,7 +307,7 @@ export class PairV2 {
     userPositionIds: number[],
     activeBin: number,
     bins: BinReserves[],
-    totalSupplies: BigInt[],
+    totalSupplies: bigint[],
     amountsToRemove: string[],
     amountSlippage: Percent
   ): {

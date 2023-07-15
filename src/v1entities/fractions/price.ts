@@ -78,7 +78,7 @@ export class Price extends Fraction {
   }
 
   public toSignificant(
-    significantDigits: number = 6,
+    significantDigits = 6,
     format?: object,
     rounding?: Rounding
   ): string {
@@ -86,7 +86,7 @@ export class Price extends Fraction {
   }
 
   public toFixed(
-    decimalPlaces: number = 4,
+    decimalPlaces = 4,
     format?: object,
     rounding?: Rounding
   ): string {

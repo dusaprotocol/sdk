@@ -7,8 +7,8 @@ export class NativeCurrency {
   public readonly decimals: number
   public readonly symbol?: string
   public readonly name?: string
-  public readonly isNative: true = true
-  public readonly isToken: false = false
+  public readonly isNative: true = true as const
+  public readonly isToken: false = false as const
   public readonly chainId: number
 
   /**

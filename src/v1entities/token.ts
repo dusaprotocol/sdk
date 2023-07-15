@@ -9,8 +9,8 @@ export class Token {
   public readonly decimals: number
   public readonly symbol?: string
   public readonly name?: string
-  public readonly isNative: false = false
-  public readonly isToken: true = true
+  public readonly isNative: false = false as const
+  public readonly isToken: true = true as const
   public readonly chainId: number
 
   /**

@@ -172,9 +172,9 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    let methodName: string = ''
-    let args: Args = new Args()
-    let value: string = ''
+    let methodName = ''
+    const args: Args = new Args()
+    let value = ''
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
         if (nativeIn) {
@@ -491,10 +491,10 @@ export class TradeV2 {
    */
   public static chooseBestTradeWithGas(
     trades: TradeV2[],
-    estimatedGas: BigInt[]
+    estimatedGas: bigint[]
   ): {
     bestTrade: TradeV2
-    estimatedGas: BigInt
+    estimatedGas: bigint
   } {
     const tradeType = trades[0].tradeType
     // The biggest tradeValueAVAX will be the most accurate

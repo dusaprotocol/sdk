@@ -1,6 +1,6 @@
 import { Percent } from '../v1entities/fractions'
 
-export type BigNumberish = BigInt | string | number
+export type BigNumberish = bigint | string | number
 
 export interface LBPair {
   binStep: BigNumberish
@@ -53,8 +53,8 @@ export interface LiquidityParametersStruct {
 }
 
 export interface BinReserves {
-  reserveX: BigInt
-  reserveY: BigInt
+  reserveX: bigint
+  reserveY: bigint
 }
 
 export enum LiquidityDistribution {
@@ -65,6 +65,6 @@ export enum LiquidityDistribution {
 
 export interface LiquidityDistributionParams {
   deltaIds: number[]
-  distributionX: BigInt[]
-  distributionY: BigInt[]
+  distributionX: bigint[]
+  distributionY: bigint[]
 }
