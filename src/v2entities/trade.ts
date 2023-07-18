@@ -18,7 +18,7 @@ import {
   RouterPathParameters,
   Address
 } from '../types'
-import { Args, TypedArrayUnit, Client } from '@massalabs/massa-web3'
+import { Args, ArrayType, Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -183,7 +183,7 @@ export class TradeV2 {
             : 'swapExactNATIVEForTokens'
           args
             .addU64(BigInt(amountOut))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -195,7 +195,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountIn))
             .addU64(BigInt(amountOut))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -207,7 +207,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountIn))
             .addU64(BigInt(amountOut))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -220,7 +220,7 @@ export class TradeV2 {
           methodName = 'swapNATIVEForExactTokens'
           args
             .addU64(BigInt(amountOut))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -230,7 +230,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountOut))
             .addU64(BigInt(amountIn))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -240,7 +240,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountOut))
             .addU64(BigInt(amountIn))
-            .addNativeTypeArray(path.pairBinSteps, TypedArrayUnit.U64)
+            .addArray(path.pairBinSteps, ArrayType.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))

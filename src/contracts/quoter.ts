@@ -1,4 +1,4 @@
-import { Args, TypedArrayUnit, Client } from '@massalabs/massa-web3'
+import { Args, ArrayType, Client } from '@massalabs/massa-web3'
 import { Address, Quote } from '../types'
 
 export class IQuoter {
@@ -28,11 +28,12 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const amounts: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const virtualAmountsWithoutSlippage: bigint[] =
-          args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const fees: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
+        const amounts: bigint[] = args.nextArray(ArrayType.U64)
+        const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
+          ArrayType.U64
+        )
+        const fees: bigint[] = args.nextArray(ArrayType.U64)
         return {
           route,
           pairs,
@@ -68,11 +69,12 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const amounts: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const virtualAmountsWithoutSlippage: bigint[] =
-          args.nextNativeTypeArray(TypedArrayUnit.U64)
-        const fees: bigint[] = args.nextNativeTypeArray(TypedArrayUnit.U64)
+        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
+        const amounts: bigint[] = args.nextArray(ArrayType.U64)
+        const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
+          ArrayType.U64
+        )
+        const fees: bigint[] = args.nextArray(ArrayType.U64)
         return {
           route,
           pairs,
