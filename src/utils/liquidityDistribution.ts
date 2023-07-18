@@ -3,7 +3,7 @@ import {
   LiquidityDistribution,
   LiquidityDistributionParams
 } from '../types/pair'
-import { parseEther } from '../../lib/ethers/parse'
+import { parseEther } from '../'
 import { CurrencyAmount } from '../v1entities/fractions'
 
 /**

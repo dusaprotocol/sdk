@@ -5,11 +5,11 @@ import {
   Token,
   TokenAmount,
   TradeV2,
+  parseUnits,
   WMAS as _WMAS
 } from '../../src'
 import JSBI from 'jsbi'
 import { ChainId, LB_ROUTER_ADDRESS } from '../../src/constants'
-import { parseUnits } from '../../lib/ethers'
 import {
   ClientFactory,
   EOperationStatus,

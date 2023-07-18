@@ -1,5 +1,5 @@
+import { BigintIsh } from './../../constants'
 import JSBI from 'jsbi'
-import { BigintIsh } from '../../src/constants'
 
 export const parseEther = (ether: string): bigint => parseUnits(ether, 9)
 export const parseUnits = (units: string, decimals: number): bigint =>

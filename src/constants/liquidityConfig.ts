@@ -1,4 +1,4 @@
-import { parseEther } from '../../lib/ethers'
+import { parseEther } from '../'
 
 /**
  * Configurations for Adding Liquidity Presets
