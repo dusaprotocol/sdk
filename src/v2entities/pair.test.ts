@@ -2,7 +2,7 @@
 import { ChainId } from '../constants'
 import { PairV2 } from './pair'
 import { Token } from '../v1entities'
-import { WMAS as _WMAS } from '../'
+import { WMAS as _WMAS } from '../v1entities'
 import {
   ClientFactory,
   ProviderType,

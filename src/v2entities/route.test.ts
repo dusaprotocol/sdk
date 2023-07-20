@@ -1,5 +1,5 @@
 import { ChainId } from '../constants'
-import { WMAS as _WMAS, Token } from '../'
+import { WMAS as _WMAS, Token } from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 
