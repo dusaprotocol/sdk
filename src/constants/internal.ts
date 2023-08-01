@@ -1,5 +1,22 @@
 import JSBI from 'jsbi'
 
+export enum ChainId {
+  DUSANET,
+  BUILDNET,
+  MAINNET
+}
+
+export enum TradeType {
+  EXACT_INPUT,
+  EXACT_OUTPUT
+}
+
+export enum Rounding {
+  ROUND_DOWN,
+  ROUND_HALF_UP,
+  ROUND_UP
+}
+
 // exports for internal consumption
 export const ZERO = JSBI.BigInt(0)
 export const ONE = JSBI.BigInt(1)

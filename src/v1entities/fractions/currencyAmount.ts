@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 
 import { BigintIsh, Rounding, TEN } from '../../constants'
-import { parseBigintIsh } from '../..'
+import { parseBigintIsh } from '../../lib/ethers'
 import { Fraction } from './fraction'
 
 export class CurrencyAmount extends Fraction {

@@ -1,4 +1,4 @@
-import { ChainId } from './'
+import { ChainId } from './internal'
 
 /**
  * DEX v2 SDK
