@@ -8,6 +8,7 @@ import {
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
   const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'

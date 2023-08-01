@@ -1,4 +1,5 @@
 import { bidAsk, curve, spotUniform, wide } from './liquidityConfig'
+import { describe, it, expect } from 'vitest'
 
 describe('LiquidityConfig', () => {
   it('delta ids, distribution X and distribution Y have same length', () => {

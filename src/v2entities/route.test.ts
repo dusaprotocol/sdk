@@ -2,6 +2,7 @@ import { ChainId } from '../constants'
 import { WMAS as _WMAS, Token } from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
+import { describe, it, expect } from 'vitest'
 
 describe('RouteV2.createAllRoute()', () => {
   // init tokens and route bases
