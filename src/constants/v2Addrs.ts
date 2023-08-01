@@ -5,18 +5,18 @@ import { ChainId } from './internal'
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS12MTcKENa9eD22984GRGZg8zSH4pi5aApMA36fzU4j9ZzC3BuxC',
+  [ChainId.BUILDNET]: 'AS12jpqNB3a5cz1U9xY9Yc1RSoVdFk5LdKwiTz8BmUCEtgG49AXhj',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS135wTPuB4rNVn97Gv5og4bZHUD54b21QDiCyaS5to1R9Zj2mAy',
+  [ChainId.BUILDNET]: 'AS12HLXHZFixwTZDvuYUfdaZi6Uo54Qkks3ifmiqMhrSiLdNLAaF4',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1Vo2Xceh6fjGyjJKn46KC3iqEM5x9waUBFhMNCGQq5FEWCKBWu',
+  [ChainId.BUILDNET]: 'AS12PKQQxUtvbUmKvXaiFC1xjbAyQkABenoxLk1LrGEakjiZJcneT',
   [ChainId.MAINNET]: ''
 }

@@ -20,18 +20,18 @@ describe('TradeV2 entity', async () => {
   )
 
   // init tokens and route bases
-  const lbPairAddress = 'AS1aqPPZGHzZQ4cFvKFuWRwrfV3czsiwXdPazLyWLaBZLj2U9yKd'
+  const lbPairAddress = 'AS12f7gb15ZC2ei4Eu3FdeY7K7NUZn1nfnjf6Y44QNhMuTbJaK94f'
   const lbPairContract = new ILBPair(lbPairAddress, client)
   const USDC = new Token(
     ChainId.BUILDNET,
-    'AS1r1GapqdNx5qMDR2KybLtRWup4xFvtyRzacJXCa3hSJkb6PtSR',
+    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
     ChainId.BUILDNET,
-    'AS1qFJRAbdPHUjVqgECNQ9dHeF6y8WfSVMPSTHk1QVtpsHppDNES',
+    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
     'Wrapped Ether'

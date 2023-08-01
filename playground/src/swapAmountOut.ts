@@ -35,14 +35,14 @@ export const swapAmountOut = async () => {
   const WMAS = _WMAS[ChainId.BUILDNET]
   const USDC = new Token(
     ChainId.BUILDNET,
-    'AS1r1GapqdNx5qMDR2KybLtRWup4xFvtyRzacJXCa3hSJkb6PtSR',
+    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
     ChainId.BUILDNET,
-    'AS1qFJRAbdPHUjVqgECNQ9dHeF6y8WfSVMPSTHk1QVtpsHppDNES',
+    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
     'Wrapped Ether'
