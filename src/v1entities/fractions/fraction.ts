@@ -1,7 +1,16 @@
 import invariant from 'tiny-invariant'
 import JSBI from 'jsbi'
 import _Decimal from 'decimal.js-light'
-import _Big, { RoundingMode } from 'big.js'
+
+import _Big from 'big.js'
+// import from 'big.js' doesnt work
+enum RoundingMode {
+  RoundDown = 0,
+  RoundHalfUp = 1,
+  RoundHalfEven = 2,
+  RoundUp = 3
+}
+
 import toFormat from 'toformat'
 
 import { BigintIsh, Rounding } from '../../constants'

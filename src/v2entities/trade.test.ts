@@ -1,31 +1,22 @@
-import { Percent, Token, TokenAmount } from 'v1entities'
+import { Percent, Token, TokenAmount, WMAS as _WMAS } from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
-import { parseUnits } from '../../lib/ethers'
+import { parseUnits } from '../lib/ethers'
 import { ChainId } from '../constants'
-import {
-  ClientFactory,
-  ProviderType,
-  WalletClient
-} from '@massalabs/massa-web3'
-import { WMAS as _WMAS } from 'v1entities'
+import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
 import JSBI from 'jsbi'
-import { ILBPair } from 'contracts'
+import { ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
   const CHAIN_ID = ChainId.BUILDNET
-  const privateKey = process.env.PRIVATE_KEY
-  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
-  const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
-    true,
-    account
+    true
   )
 
   // init tokens and route bases

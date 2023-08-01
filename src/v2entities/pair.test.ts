@@ -3,26 +3,18 @@ import { ChainId } from '../constants'
 import { PairV2 } from './pair'
 import { Token } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
-import {
-  ClientFactory,
-  ProviderType,
-  WalletClient
-} from '@massalabs/massa-web3'
+import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
   const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
   const CHAIN_ID = ChainId.BUILDNET
-  const privateKey = process.env.PRIVATE_KEY
-  if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
-  const account = await WalletClient.getAccountFromSecretKey(privateKey)
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
-    true,
-    account
+    true
   )
 
   // init tokens
