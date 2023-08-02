@@ -401,7 +401,7 @@ export class TradeV2 {
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = false
 
-    // handle wavax<->avax wrap swaps
+    // handle wmas<->mas wrap swaps
     const isWrapSwap =
       (isNativeIn && tokenAmountOut.token.address === _WMAS[chainId].address) ||
       (isNativeOut && tokenIn.address === _WMAS[chainId].address)
