@@ -1,14 +1,14 @@
 import {
+  ChainId,
+  JSBI,
   PairV2,
   RouteV2,
   Token,
   TokenAmount,
   TradeV2,
-  parseUnits,
-  WMAS as _WMAS
-} from '../../src'
-import JSBI from 'jsbi'
-import { ChainId } from '../../src/constants'
+  WMAS as _WMAS,
+  parseUnits
+} from '@dusalabs/sdk'
 import {
   ClientFactory,
   ProviderType,

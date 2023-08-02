@@ -1,6 +1,4 @@
-import { Bin, PairV2, Token } from '../../src'
-import { ChainId } from '../../src/constants'
-import { WMAS as _WMAS } from '../../src'
+import { Bin, ChainId, PairV2, Token, WMAS as _WMAS } from '@dusalabs/sdk'
 import {
   WalletClient,
   ClientFactory,
