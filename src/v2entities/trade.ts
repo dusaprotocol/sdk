@@ -249,7 +249,7 @@ export class TradeV2 {
    *
    * @returns {TradeFee}
    */
-  public async getTradeFee(): Promise<TradeFee> {
+  public getTradeFee(): TradeFee {
     // amounts for each step of the swap returned from quoter contract
     // e.g. [10 WMAS, 20 USDC, 19.9 USDT ] when inputAmount is 10 WMAS and resulting outputToken is USDT
     const amounts = this.quote.amounts

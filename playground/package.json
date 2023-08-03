@@ -2,9 +2,9 @@
   "name": "@dusalabs/sdk-playground",
   "license": "MIT",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
-    "postinstall": "cd .. && npm link && cd playground && npm link @dusalabs/sdk",
+    "postinstall": "cd .. && npm run build && npm link && cd playground && npm link @dusalabs/sdk",
     "start": "ts-node src/index.ts"
   },
   "dependencies": {

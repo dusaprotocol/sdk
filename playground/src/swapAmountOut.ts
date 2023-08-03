@@ -88,7 +88,7 @@ export const swapAmountOut = async () => {
     if (!trade) return
 
     console.log('\n', trade.toLog())
-    const { totalFeePct, feeAmountIn } = await trade.getTradeFee()
+    const { totalFeePct, feeAmountIn } = trade.getTradeFee()
     console.debug('Total fees percentage', totalFeePct.toSignificant(6), '%')
     console.debug(
       `Fee: ${feeAmountIn.toSignificant(6)} ${feeAmountIn.token.symbol}`
