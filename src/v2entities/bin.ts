@@ -1,6 +1,6 @@
 /** Class with helper functions related to bin id and price */
 
-const REAL_ID_SHIFT = 2 ** 17
+export const REAL_ID_SHIFT = 2 ** 17
 
 export class Bin {
   /**

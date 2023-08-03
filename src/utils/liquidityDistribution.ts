@@ -57,8 +57,8 @@ export const normalizeDist = (
   sumTo: bigint,
   precision: bigint
 ): bigint[] => {
-  const sumDist = dist.reduce((sum, cur) => sum + cur, BigInt(0))
-  if (sumDist == BigInt(0)) {
+  const sumDist = dist.reduce((sum, cur) => sum + cur, 0n)
+  if (sumDist == 0n) {
     return dist
   }
   const factor = (sumDist * precision) / sumTo

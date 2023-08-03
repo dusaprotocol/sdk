@@ -472,7 +472,7 @@ export class TradeV2 {
     const tradeType = trades[0].tradeType
     // The biggest tradeValueAVAX will be the most accurate
     // If we haven't found any equivalent of the trade in AVAX, we won't take gas cost into account
-    const tradeValueAVAX = BigInt(0)
+    const tradeValueAVAX = 0n
 
     const tradesWithGas = trades.map((trade, index) => {
       return {
@@ -484,8 +484,8 @@ export class TradeV2 {
                 trade.outputAmount.numerator,
                 trade.outputAmount.denominator
               ).subtract(
-                tradeValueAVAX === BigInt(0)
-                  ? BigInt(0)
+                tradeValueAVAX === 0n
+                  ? 0n
                   : // Cross product to get the gas price against the output token
                     trade.outputAmount
                       .multiply(estimatedGas[index].toString())
@@ -495,8 +495,8 @@ export class TradeV2 {
                 trade.inputAmount.numerator,
                 trade.inputAmount.denominator
               ).add(
-                tradeValueAVAX === BigInt(0)
-                  ? BigInt(0)
+                tradeValueAVAX === 0n
+                  ? 0n
                   : trade.inputAmount
                       .multiply(estimatedGas[index].toString())
                       .divide(tradeValueAVAX)
