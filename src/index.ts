@@ -1,6 +1,3 @@
-import JSBI from 'jsbi'
-export { JSBI }
-
 export {
   LB_QUOTER_ADDRESS,
   LB_ROUTER_ADDRESS,

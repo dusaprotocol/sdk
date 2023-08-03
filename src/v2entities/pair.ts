@@ -1,5 +1,4 @@
 import flatMap from 'lodash.flatmap'
-import JSBI from 'jsbi'
 
 import {
   LBPairReservesAndId,
@@ -7,7 +6,7 @@ import {
   BinReserves,
   LBPair
 } from '../types'
-import { ChainId, LB_FACTORY_ADDRESS, ONE } from '../constants'
+import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
@@ -180,36 +179,28 @@ export class PairV2 {
     totalSupplies: bigint[],
     liquidity: string[]
   ): {
-    amountX: JSBI
-    amountY: JSBI
+    amountX: bigint
+    amountY: bigint
   } {
     // calculate expected total to remove for X and Y
-    let totalAmountX = JSBI.BigInt(0)
-    let totalAmountY = JSBI.BigInt(0)
+    let totalAmountX = 0n
+    let totalAmountY = 0n
 
     binIds.forEach((binId, i) => {
       // get totalSupply, reserveX, and reserveY for the bin
-      const { reserveX: _reserveX, reserveY: _reserveY } = bins[i]
-      const reserveX = JSBI.BigInt(_reserveX.toString())
-      const reserveY = JSBI.BigInt(_reserveY.toString())
-      const totalSupply = JSBI.BigInt(totalSupplies[i].toString())
-      const liquidityAmount = JSBI.BigInt(liquidity[i])
+      const { reserveX, reserveY } = bins[i]
+      const totalSupply = totalSupplies[i]
+      const liquidityAmount = BigInt(liquidity[i])
 
       // increment totalAmountX and/or totalAmountY
       if (binId <= activeBin) {
-        const amountY = JSBI.divide(
-          JSBI.multiply(liquidityAmount, reserveY),
-          totalSupply
-        )
-        totalAmountY = JSBI.add(amountY, totalAmountY)
+        const amountY = (liquidityAmount * reserveY) / totalSupply
+        totalAmountY = amountY + totalAmountY
       }
 
       if (binId >= activeBin) {
-        const amountX = JSBI.divide(
-          JSBI.multiply(liquidityAmount, reserveX),
-          totalSupply
-        )
-        totalAmountX = JSBI.add(amountX, totalAmountX)
+        const amountX = (liquidityAmount * reserveX) / totalSupply
+        totalAmountX = amountX + totalAmountX
       }
     })
 
@@ -252,17 +243,17 @@ export class PairV2 {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const tokenX = token0isX ? token0Amount.token : token1Amount.token
     const tokenY = token0isX ? token1Amount.token : token0Amount.token
-    const _amountX: JSBI = token0isX ? token0Amount.raw : token1Amount.raw
-    const _amountY: JSBI = token0isX ? token1Amount.raw : token0Amount.raw
+    const _amountX: bigint = token0isX ? token0Amount.raw : token1Amount.raw
+    const _amountY: bigint = token0isX ? token1Amount.raw : token0Amount.raw
 
     const amountX: string = _amountX.toString()
     const amountY: string = _amountY.toString()
-    const amountXMin = new Fraction(ONE)
+    const amountXMin = new Fraction(1n)
       .add(amountSlippage)
       .invert()
       .multiply(_amountX)
       .quotient.toString()
-    const amountYMin = new Fraction(ONE)
+    const amountYMin = new Fraction(1n)
       .add(amountSlippage)
       .invert()
       .multiply(_amountY)
@@ -311,10 +302,10 @@ export class PairV2 {
     amountsToRemove: string[],
     amountSlippage: Percent
   ): {
-    amountX: JSBI
-    amountY: JSBI
-    amountXMin: JSBI
-    amountYMin: JSBI
+    amountX: bigint
+    amountY: bigint
+    amountXMin: bigint
+    amountYMin: bigint
   } {
     // calculate expected total to remove for X and Y
     const { amountX, amountY } = PairV2.calculateAmounts(
@@ -326,12 +317,12 @@ export class PairV2 {
     )
 
     // compute min amounts taking into consideration slippage
-    const amountXMin = new Fraction(ONE)
+    const amountXMin = new Fraction(1n)
       .add(amountSlippage)
       .invert()
       .multiply(amountX).quotient
 
-    const amountYMin = new Fraction(ONE)
+    const amountYMin = new Fraction(1n)
       .add(amountSlippage)
       .invert()
       .multiply(amountY).quotient

@@ -5,7 +5,6 @@ import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
 import { ChainId } from '../constants'
 import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
-import JSBI from 'jsbi'
 import { ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
@@ -66,7 +65,7 @@ describe('TradeV2 entity', async () => {
     inputToken.decimals
   ).toString()
 
-  const amountIn = new TokenAmount(inputToken, JSBI.BigInt(typedValueInParsed))
+  const amountIn = new TokenAmount(inputToken, typedValueInParsed)
 
   // user input for exactOut trade
   const typedValueOut = '0.2'
@@ -74,10 +73,7 @@ describe('TradeV2 entity', async () => {
     typedValueOut,
     outputToken.decimals
   ).toString()
-  const amountOut = new TokenAmount(
-    outputToken,
-    JSBI.BigInt(typedValueOutParsed)
-  )
+  const amountOut = new TokenAmount(outputToken, typedValueOutParsed)
 
   describe('TradeV2.getTradesExactIn()', () => {
     it('generates at least one trade', async () => {
@@ -111,10 +107,7 @@ describe('TradeV2 entity', async () => {
 
     it('calculates price impact correctly', async () => {
       const reserves = await lbPairContract.getReservesAndId()
-      const amountOut = new TokenAmount(
-        outputToken,
-        JSBI.BigInt(reserves.reserveX.toString())
-      )
+      const amountOut = new TokenAmount(outputToken, BigInt(reserves.reserveX))
 
       const trades = await TradeV2.getTradesExactOut(
         allRoutes,
@@ -151,7 +144,7 @@ describe('TradeV2 entity', async () => {
 
       trades.forEach((trade) => {
         if (trade) {
-          if (JSBI.greaterThan(trade.outputAmount.raw, maxOutputAmount)) {
+          if (trade.outputAmount.raw > maxOutputAmount) {
             maxOutputAmount = trade.outputAmount.raw
           }
         }
@@ -159,9 +152,9 @@ describe('TradeV2 entity', async () => {
 
       const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], isExactIn)
 
-      expect(
-        JSBI.equal(maxOutputAmount, (bestTrade as TradeV2).outputAmount.raw)
-      ).toBe(true)
+      expect(maxOutputAmount === (bestTrade as TradeV2).outputAmount.raw).toBe(
+        true
+      )
     })
     it('chooses the best trade among exactOut trades', async () => {
       const trades = await TradeV2.getTradesExactOut(
@@ -180,7 +173,7 @@ describe('TradeV2 entity', async () => {
 
       trades.forEach((trade) => {
         if (trade) {
-          if (JSBI.lessThan(trade.inputAmount.raw, minInputAmount)) {
+          if (trade.inputAmount.raw < minInputAmount) {
             minInputAmount = trade.inputAmount.raw
           }
         }
@@ -188,9 +181,9 @@ describe('TradeV2 entity', async () => {
 
       const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], isExactIn)
 
-      expect(
-        JSBI.equal(minInputAmount, (bestTrade as TradeV2).inputAmount.raw)
-      ).toBe(true)
+      expect(minInputAmount === (bestTrade as TradeV2).inputAmount.raw).toBe(
+        true
+      )
     })
   })
   describe('TradeV2.getTradesExactIn() and TradeV2.getTradesExactIn()', () => {
@@ -254,7 +247,7 @@ describe('TradeV2 entity', async () => {
       const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], true)
 
       const options = {
-        allowedSlippage: new Percent(JSBI.BigInt(50), JSBI.BigInt(10000)),
+        allowedSlippage: new Percent(50n, 10000n),
         ttl: 1000,
         recipient: '0x0000000000000000000000000000000000000000'
       }
@@ -278,7 +271,7 @@ describe('TradeV2 entity', async () => {
       const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], true)
 
       const options = {
-        allowedSlippage: new Percent(JSBI.BigInt(50), JSBI.BigInt(10000)),
+        allowedSlippage: new Percent(50n, 10000n),
         ttl: 1000,
         recipient: '0x0000000000000000000000000000000000000000'
       }

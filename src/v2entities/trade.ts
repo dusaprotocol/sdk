@@ -1,14 +1,6 @@
-import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
-import {
-  ChainId,
-  LB_QUOTER_ADDRESS,
-  ONE,
-  TradeType,
-  ZERO,
-  ZERO_HEX
-} from '../constants'
+import { ChainId, LB_QUOTER_ADDRESS, TradeType, ZERO_HEX } from '../constants'
 import {
   TradeOptions,
   TradeOptionsDeadline,
@@ -52,13 +44,10 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean
   ) {
-    const inputAmount = new TokenAmount(
-      tokenIn,
-      JSBI.BigInt(quote.amounts[0].toString())
-    )
+    const inputAmount = new TokenAmount(tokenIn, quote.amounts[0])
     const outputAmount = new TokenAmount(
       tokenOut,
-      JSBI.BigInt(quote.amounts[quote.amounts.length - 1].toString())
+      quote.amounts[quote.amounts.length - 1]
     )
 
     this.route = route
@@ -81,14 +70,14 @@ export class TradeV2 {
         quote.virtualAmountsWithoutSlippage[
           quote.virtualAmountsWithoutSlippage.length - 1
         ].toString()
-      this.exactQuote = new TokenAmount(tokenOut, JSBI.BigInt(exactQuoteStr))
+      this.exactQuote = new TokenAmount(tokenOut, exactQuoteStr)
       const slippage = this.exactQuote
         .subtract(outputAmount)
         .divide(this.exactQuote)
       this.priceImpact = new Percent(slippage.numerator, slippage.denominator)
     } else {
       const exactQuoteStr = quote.virtualAmountsWithoutSlippage[0].toString()
-      this.exactQuote = new TokenAmount(tokenIn, JSBI.BigInt(exactQuoteStr))
+      this.exactQuote = new TokenAmount(tokenIn, exactQuoteStr)
       const slippage = inputAmount.subtract(this.exactQuote).divide(inputAmount)
       this.priceImpact = new Percent(slippage.numerator, slippage.denominator)
     }
@@ -101,11 +90,11 @@ export class TradeV2 {
    * @returns {CurrencyAmount}
    */
   public minimumAmountOut(slippageTolerance: Percent): CurrencyAmount {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_OUTPUT) {
       return this.outputAmount
     } else {
-      const slippageAdjustedAmountOut = new Fraction(ONE)
+      const slippageAdjustedAmountOut = new Fraction(1n)
         .add(slippageTolerance)
         .invert()
         .multiply(this.outputAmount.raw).quotient
@@ -123,11 +112,11 @@ export class TradeV2 {
    * @returns {CurrencyAmount}
    */
   public maximumAmountIn(slippageTolerance: Percent): CurrencyAmount {
-    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    invariant(!slippageTolerance.lessThan(0n), 'SLIPPAGE_TOLERANCE')
     if (this.tradeType === TradeType.EXACT_INPUT) {
       return this.inputAmount
     } else {
-      const slippageAdjustedAmountIn = new Fraction(ONE)
+      const slippageAdjustedAmountIn = new Fraction(1n)
         .add(slippageTolerance)
         .multiply(this.inputAmount.raw).quotient
       const chainId = this.outputAmount.token.chainId
@@ -267,14 +256,12 @@ export class TradeV2 {
 
     // pool fee % for each step of the swap from quoter contract
     // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
-    const feesPct = this.quote.fees.map(
-      (bn) => new Percent(JSBI.BigInt(bn.toString()), JSBI.BigInt(1e18))
-    )
+    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 18n))
 
     // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
-      const amount = amounts[i].toString()
-      return pct.multiply(JSBI.BigInt(amount)).quotient
+      const amount = amounts[i]
+      return pct.multiply(amount).quotient
     })
 
     // change each fees in terms of the inputToken; e.g. [0.005 WMAS, 0.0001 WMAS]
@@ -284,24 +271,18 @@ export class TradeV2 {
         return fee
       }
 
-      const midPrice = new Fraction(
-        JSBI.BigInt(amounts[0].toString()),
-        JSBI.BigInt(amounts[i].toString())
-      )
+      const midPrice = new Fraction(amounts[0], amounts[i])
       return midPrice.multiply(fee).quotient
     })
 
     // sum of all fees; e.g. 0.0051 WMAS
-    const totalFee = feesTokenIn.reduce(
-      (a, b) => JSBI.add(a, b),
-      JSBI.BigInt('0')
-    )
+    const totalFee = feesTokenIn.reduce((a, b) => a + b, 0n)
 
     // get total fee in TokenAmount
     const feeAmountIn = new TokenAmount(this.inputAmount.token, totalFee)
 
     // get total fee pct; e.g. 0.0051 / 10 * 100 = 0.051%
-    const totalFeePct = new Percent(totalFee, JSBI.BigInt(this.inputAmount.raw))
+    const totalFeePct = new Percent(totalFee, this.inputAmount.raw)
 
     return {
       totalFeePct,
@@ -371,10 +352,7 @@ export class TradeV2 {
       })
     )
 
-    return trades.filter(
-      (trade) =>
-        !!trade && JSBI.greaterThan(trade.outputAmount.raw, JSBI.BigInt(0))
-    )
+    return trades.filter((trade) => !!trade && trade.outputAmount.raw > 0n)
   }
 
   /**
@@ -439,10 +417,7 @@ export class TradeV2 {
       })
     )
 
-    return trades.filter(
-      (trade) =>
-        !!trade && JSBI.greaterThan(trade.outputAmount.raw, JSBI.BigInt(0))
-    )
+    return trades.filter((trade) => !!trade && trade.outputAmount.raw > 0n)
   }
 
   /**
@@ -465,15 +440,13 @@ export class TradeV2 {
 
     trades.forEach((trade) => {
       if (isExactIn) {
-        if (
-          JSBI.greaterThan(trade.outputAmount.raw, bestTrade.outputAmount.raw)
-        ) {
+        if (trade.outputAmount.raw > bestTrade.outputAmount.raw) {
           bestTrade = trade
         }
       } else {
         if (
-          JSBI.greaterThan(trade.inputAmount.raw, JSBI.BigInt(0)) &&
-          JSBI.lessThan(trade.inputAmount.raw, bestTrade.inputAmount.raw)
+          trade.inputAmount.raw > 0n &&
+          trade.inputAmount.raw < bestTrade.inputAmount.raw
         ) {
           bestTrade = trade
         }

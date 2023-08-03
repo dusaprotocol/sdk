@@ -1,6 +1,5 @@
 import {
   ChainId,
-  JSBI,
   PairV2,
   RouteV2,
   Token,
@@ -57,10 +56,7 @@ export const swapAmountOut = async () => {
     typedValueOut,
     outputToken.decimals
   ).toString() // returns 10000
-  const amountOut = new TokenAmount(
-    outputToken,
-    JSBI.BigInt(typedValueOutParsed)
-  ) // wrap into TokenAmount
+  const amountOut = new TokenAmount(outputToken, BigInt(typedValueOutParsed)) // wrap into TokenAmount
 
   // get all [Token, Token] combinations
   const allTokenPairs = PairV2.createAllTokenPairs(
