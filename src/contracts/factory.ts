@@ -49,7 +49,6 @@ export class IFactory {
         maxGas: BigInt(100_000_000)
       })
       .then((res) => {
-        console.log(res.returnValue)
         return new LBPairInformation().deserialize(res.returnValue, 0).instance
       })
   }

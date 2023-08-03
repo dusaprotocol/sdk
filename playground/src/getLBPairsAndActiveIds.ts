@@ -56,7 +56,7 @@ export const getLBPairsAndActiveIds = async () => {
   })
 
   // fetch single LBPair
-  const binStep = 10
+  const binStep = 20
   const lbPair = await pair.fetchLBPair(binStep, client, chainId)
   console.log('lbPair', lbPair)
   const lbPairData = await PairV2.getLBPairReservesAndId(lbPair.LBPair, client)

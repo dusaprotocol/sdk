@@ -1,4 +1,7 @@
 /** Class with helper functions related to bin id and price */
+
+const REAL_ID_SHIFT = 2 ** 17
+
 export class Bin {
   /**
    * @static
@@ -9,7 +12,7 @@ export class Bin {
    * @returns {number}
    */
   public static getPriceFromId(id: number, binStep: number): number {
-    return (1 + binStep / 10_000) ** (id - 8388608)
+    return (1 + binStep / 10_000) ** (id - REAL_ID_SHIFT)
   }
 
   /**
@@ -22,7 +25,8 @@ export class Bin {
    */
   public static getIdFromPrice(price: number, binStep: number): number {
     return (
-      Math.trunc(Math.log(price) / Math.log(1 + binStep / 10_000)) + 8388608
+      Math.trunc(Math.log(price) / Math.log(1 + binStep / 10_000)) +
+      REAL_ID_SHIFT
     )
   }
 
