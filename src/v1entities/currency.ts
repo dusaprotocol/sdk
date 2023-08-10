@@ -1,7 +1,7 @@
 import { Token } from './token'
 
 /**
- * Represents the native currency of the chain on which it resides, e.g. ETH, AVAX
+ * Represents the native currency of the chain on which it resides, e.g. ETH, MAS
  */
 export class NativeCurrency {
   public readonly decimals: number
@@ -39,7 +39,7 @@ export class NativeCurrency {
 }
 
 /*
- * CNATIVE is the main usage of a 'native' currency, i.e. ETH, AVAX, BNB
+ * CNATIVE is the main usage of a 'native' currency, i.e. ETH, MAS
  */
 export class CNATIVE extends NativeCurrency {
   constructor(chainId: number) {

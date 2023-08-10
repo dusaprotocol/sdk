@@ -137,8 +137,8 @@ export class TradeV2 {
   ): SwapParameters {
     const nativeIn = this.isNativeIn
     const nativeOut = this.isNativeOut
-    // the router does not support both avax in and out
-    invariant(!(nativeIn && nativeOut), 'AVAX_IN_OUT')
+    // the router does not support both native in and out
+    invariant(!(nativeIn && nativeOut), 'NATIVE_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = options.recipient
@@ -256,7 +256,7 @@ export class TradeV2 {
 
     // pool fee % for each step of the swap from quoter contract
     // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
-    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 18n))
+    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 9n))
 
     // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
@@ -314,7 +314,7 @@ export class TradeV2 {
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = true
 
-    // handle wavax<->avax wrap swaps
+    // handle wnative<->native wrap swaps
     const isWrapSwap =
       (isNativeIn && tokenOut.address === _WMAS[chainId].address) ||
       (isNativeOut && tokenAmountIn.token.address === _WMAS[chainId].address)
@@ -453,69 +453,6 @@ export class TradeV2 {
       }
     })
     return bestTrade
-  }
-
-  /**
-   * Selects the best trade given trades and gas
-   *
-   * @param {TradeV2[]} trades
-   * @param {BigInt[]} estimatedGas
-   * @returns {bestTrade: TradeV2, estimatedGas: BigInt}
-   */
-  public static chooseBestTradeWithGas(
-    trades: TradeV2[],
-    estimatedGas: bigint[]
-  ): {
-    bestTrade: TradeV2
-    estimatedGas: bigint
-  } {
-    const tradeType = trades[0].tradeType
-    // The biggest tradeValueAVAX will be the most accurate
-    // If we haven't found any equivalent of the trade in AVAX, we won't take gas cost into account
-    const tradeValueAVAX = 0n
-
-    const tradesWithGas = trades.map((trade, index) => {
-      return {
-        trade: trade,
-        estimatedGas: estimatedGas[index],
-        swapOutcome:
-          trade.tradeType === TradeType.EXACT_INPUT
-            ? new Fraction(
-                trade.outputAmount.numerator,
-                trade.outputAmount.denominator
-              ).subtract(
-                tradeValueAVAX === 0n
-                  ? 0n
-                  : // Cross product to get the gas price against the output token
-                    trade.outputAmount
-                      .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX)
-              )
-            : new Fraction(
-                trade.inputAmount.numerator,
-                trade.inputAmount.denominator
-              ).add(
-                tradeValueAVAX === 0n
-                  ? 0n
-                  : trade.inputAmount
-                      .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX)
-              )
-      }
-    })
-
-    const bestTrade = tradesWithGas.reduce((previousTrade, currentTrade) =>
-      tradeType === TradeType.EXACT_INPUT
-        ? currentTrade.swapOutcome.greaterThan(previousTrade.swapOutcome)
-          ? currentTrade
-          : previousTrade
-        : currentTrade.trade.inputAmount.greaterThan('0') &&
-          currentTrade.swapOutcome.lessThan(previousTrade.swapOutcome)
-        ? currentTrade
-        : previousTrade
-    )
-
-    return { bestTrade: bestTrade.trade, estimatedGas: bestTrade.estimatedGas }
   }
 
   /**
