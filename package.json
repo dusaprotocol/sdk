@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@massalabs/massa-web3": "^1.23.0",
+    "@massalabs/web3-utils": "^1.4.1",
     "big.js": "5.2",
     "decimal.js-light": "^2.5.1",
     "lodash.flatmap": "^4.5.0",
