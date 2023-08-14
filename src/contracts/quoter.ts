@@ -18,7 +18,7 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountIn))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 1_000_000_000n
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -58,7 +58,7 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountOut))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 1_000_000_000n
       })
       .then((result) => {
         const args = new Args(result.returnValue)

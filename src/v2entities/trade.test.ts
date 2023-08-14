@@ -3,9 +3,9 @@ import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
-import { ChainId } from '../constants'
+import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
-import { ILBPair } from '../contracts'
+import { IFactory, ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
@@ -19,28 +19,37 @@ describe('TradeV2 entity', async () => {
   )
 
   // init tokens and route bases
-  const lbPairAddress = 'AS12f7gb15ZC2ei4Eu3FdeY7K7NUZn1nfnjf6Y44QNhMuTbJaK94f'
-  const lbPairContract = new ILBPair(lbPairAddress, client)
   const USDC = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
     'Wrapped Ether'
   )
-  const WMAS = _WMAS[ChainId.BUILDNET]
+  const WMAS = _WMAS[CHAIN_ID]
   const BASES = [WMAS, USDC, WETH]
 
   // init input / output
   const inputToken = USDC
-  const outputToken = WMAS
+  const outputToken = WETH
+  const binStep = 10
+
+  const factory = new IFactory(LB_FACTORY_ADDRESS[CHAIN_ID], client)
+  const lbPairAddress = (
+    await factory.getLBPairInformation(
+      inputToken.address,
+      outputToken.address,
+      binStep
+    )
+  ).LBPair
+  const lbPairContract = new ILBPair(lbPairAddress, client)
 
   // token pairs
   const allTokenPairs = PairV2.createAllTokenPairs(
@@ -107,7 +116,14 @@ describe('TradeV2 entity', async () => {
 
     it('calculates price impact correctly', async () => {
       const reserves = await lbPairContract.getReservesAndId()
-      const amountOut = new TokenAmount(outputToken, BigInt(reserves.reserveX))
+      const amountOut = new TokenAmount(
+        outputToken,
+        BigInt(
+          inputToken.sortsBefore(outputToken)
+            ? reserves.reserveY
+            : reserves.reserveX
+        )
+      )
 
       const trades = await TradeV2.getTradesExactOut(
         allRoutes,

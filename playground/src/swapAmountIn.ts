@@ -121,8 +121,8 @@ export const swapAmountIn = async () => {
     functionName: params.methodName,
     coins: BigInt(params.value),
     parameter: params.args,
-    fee: BigInt(100_000_000),
-    maxGas: BigInt(100_000_000)
+    fee: 100_000_000n,
+    maxGas: 100_000_000n
   })
   console.log('txId', txId)
 

@@ -11,7 +11,7 @@ export class ILBPair {
         { address: this.address, key: strToBytes('PAIR_INFORMATION') }
       ])
       .then((res) => {
-        const data = res[0].candidate_value
+        const data = res[0].final_value
         if (!data) throw new Error('No pair information found')
 
         const args = new Args(data)

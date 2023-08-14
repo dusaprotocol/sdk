@@ -21,7 +21,7 @@ export class IFactory {
           .addString(token0Address)
           .addString(token1Address)
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 100_000_000n
       })
       .then((res) => {
         return bytesToSerializableObjectArray(
@@ -46,7 +46,7 @@ export class IFactory {
           .addString(token1Address)
           .addU32(binStep)
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 100_000_000n
       })
       .then((res) => {
         return new LBPairInformation().deserialize(res.returnValue, 0).instance

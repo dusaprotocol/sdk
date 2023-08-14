@@ -1,4 +1,4 @@
-import { Bin } from '../../src'
+import { Bin } from '@dusalabs/sdk'
 
 export const pricesAndBinsRelations = async () => {
   console.log('\n------- pricesAndBinsRelations() called -------\n')

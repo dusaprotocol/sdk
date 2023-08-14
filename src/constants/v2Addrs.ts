@@ -5,7 +5,7 @@ import { ChainId } from './internal'
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS12jpqNB3a5cz1U9xY9Yc1RSoVdFk5LdKwiTz8BmUCEtgG49AXhj',
+  [ChainId.BUILDNET]: 'AS124sgADEzbgMP2NcnHYQtk4kSEk75uY5KCiXJMZ6vEg4Sj58MyA',
   [ChainId.MAINNET]: ''
 }
 
