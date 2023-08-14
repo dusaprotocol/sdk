@@ -1,5 +1,6 @@
 import {
   ChainId,
+  IRouter,
   LB_ROUTER_ADDRESS,
   PairV2,
   Percent,
@@ -112,14 +113,8 @@ export const swapAmountIn = async () => {
     recipient: account.address,
     allowedSlippage: new Percent('5')
   })
-  const txId = await client.smartContracts().callSmartContract({
-    targetAddress: LB_ROUTER_ADDRESS[chainId],
-    functionName: params.methodName,
-    coins: BigInt(params.value),
-    parameter: params.args,
-    fee: 100_000_000n,
-    maxGas: 100_000_000n
-  })
+  const router = new IRouter(LB_ROUTER_ADDRESS[chainId], client)
+  const txId = await router[params.methodName](params)
   console.log('txId', txId)
 
   // await tx confirmation and log events

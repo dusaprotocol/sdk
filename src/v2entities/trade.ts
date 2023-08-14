@@ -8,7 +8,8 @@ import {
   SwapParameters,
   Quote,
   RouterPathParameters,
-  Address
+  Address,
+  RouterMethod
 } from '../types'
 import { Args, Client } from '@massalabs/massa-web3'
 import { ArrayTypes } from '@massalabs/web3-utils'
@@ -162,15 +163,15 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    let methodName = ''
+    let methodName: RouterMethod = 'swapExactTokensForTokens'
     const args: Args = new Args()
     let value = ''
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
         if (nativeIn) {
           methodName = useFeeOnTransfer
-            ? 'swapExactNATIVEForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactNATIVEForTokens'
+            ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
+            : 'swapExactMASForTokens'
           args
             .addU64(BigInt(amountOut))
             .addArray(path.pairBinSteps, ArrayTypes.U64)
@@ -180,8 +181,8 @@ export class TradeV2 {
           value = amountIn
         } else if (nativeOut) {
           methodName = useFeeOnTransfer
-            ? 'swapExactTokensForNATIVESupportingFeeOnTransferTokens'
-            : 'swapExactTokensForNATIVE'
+            ? 'swapExactTokensForMASSupportingFeeOnTransferTokens'
+            : 'swapExactTokensForMAS'
           args
             .addU64(BigInt(amountIn))
             .addU64(BigInt(amountOut))
@@ -207,7 +208,7 @@ export class TradeV2 {
       case TradeType.EXACT_OUTPUT:
         invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
         if (nativeIn) {
-          methodName = 'swapNATIVEForExactTokens'
+          methodName = 'swapMASForExactTokens'
           args
             .addU64(BigInt(amountOut))
             .addArray(path.pairBinSteps, ArrayTypes.U64)
@@ -216,7 +217,7 @@ export class TradeV2 {
             .addU64(BigInt(deadline))
           value = amountIn
         } else if (nativeOut) {
-          methodName = 'swapTokensForExactNATIVE'
+          methodName = 'swapTokensForExactMAS'
           args
             .addU64(BigInt(amountOut))
             .addU64(BigInt(amountIn))
