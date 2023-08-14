@@ -3,7 +3,7 @@ import { ArrayTypes } from '@massalabs/web3-utils'
 import { Address, Quote } from '../types'
 
 export class IQuoter {
-  constructor(public address: string, public client: Client) {}
+  constructor(public address: string, private client: Client) {}
 
   async findBestPathFromAmountIn(
     route: string[],

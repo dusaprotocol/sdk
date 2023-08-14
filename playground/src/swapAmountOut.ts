@@ -31,16 +31,17 @@ export const swapAmountOut = async () => {
     account
   )
 
-  const WMAS = _WMAS[ChainId.BUILDNET]
+  const CHAIN_ID = ChainId.BUILDNET
+  const WMAS = _WMAS[CHAIN_ID]
   const USDC = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
@@ -72,7 +73,6 @@ export const swapAmountOut = async () => {
   const allRoutes = RouteV2.createAllRoutes(allPairs, inputToken, outputToken) // console.debug('allRoutes', allRoutes)
 
   // get tradess
-  const chainId = ChainId.BUILDNET
   const trades = await TradeV2.getTradesExactOut(
     allRoutes,
     amountOut,
@@ -80,7 +80,7 @@ export const swapAmountOut = async () => {
     false,
     false,
     client,
-    chainId
+    CHAIN_ID
   )
 
   // console.log('trades', trades)

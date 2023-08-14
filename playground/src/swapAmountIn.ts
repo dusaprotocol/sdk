@@ -36,16 +36,17 @@ export const swapAmountIn = async () => {
     account
   )
 
-  const WMAS = _WMAS[ChainId.BUILDNET]
+  const CHAIN_ID = ChainId.BUILDNET
+  const WMAS = _WMAS[CHAIN_ID]
   const USDC = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
@@ -82,7 +83,6 @@ export const swapAmountIn = async () => {
   ) // console.log('allRoutes', allRoutes)
 
   // get trades
-  const chainId = ChainId.BUILDNET
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
@@ -90,7 +90,7 @@ export const swapAmountIn = async () => {
     false,
     false,
     client,
-    chainId
+    CHAIN_ID
   ) // console.log('trades', trades.map(el=>el.toLog()))
 
   for (let trade of trades) {
@@ -113,7 +113,7 @@ export const swapAmountIn = async () => {
     recipient: account.address,
     allowedSlippage: new Percent('5')
   })
-  const router = new IRouter(LB_ROUTER_ADDRESS[chainId], client)
+  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
   const txId = await router[params.methodName](params)
   console.log('txId', txId)
 

@@ -2,7 +2,7 @@ import { Client } from '@massalabs/massa-web3'
 import { SwapParameters } from '../types'
 
 export class IRouter {
-  constructor(public address: string, public client: Client) {}
+  constructor(public address: string, private client: Client) {}
 
   async swapExactMASForTokens(params: SwapParameters): Promise<string> {
     return this.swap(params)
@@ -56,4 +56,6 @@ export class IRouter {
       maxGas: 100_000_000n
     })
   }
+
+  async addLiquidity() {}
 }

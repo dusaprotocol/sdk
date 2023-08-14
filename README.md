@@ -23,7 +23,7 @@ Compile
 npm run build
 ```
 
-Run uni tests (WIP)
+Run unit tests (WIP)
 
 ```sh
 npm test

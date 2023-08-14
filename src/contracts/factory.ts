@@ -6,7 +6,7 @@ import {
 import { LBPair, LBPairInformation } from '../types'
 
 export class IFactory {
-  constructor(public address: string, public client: Client) {}
+  constructor(public address: string, private client: Client) {}
 
   async getAllLBPairs(
     token0Address: string,

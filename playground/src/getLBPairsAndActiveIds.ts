@@ -14,19 +14,19 @@ export const getLBPairsAndActiveIds = async () => {
     true
   )
 
-  const chainId = ChainId.BUILDNET
+  const CHAIN_ID = ChainId.BUILDNET
   const USDC = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
-  const WMAS = _WMAS[ChainId.BUILDNET]
+  const WMAS = _WMAS[CHAIN_ID]
 
   // fetch LBPairs
   const pair = new PairV2(USDC, WMAS)
-  const LBPairs = await pair.fetchAvailableLBPairs(client, chainId)
+  const LBPairs = await pair.fetchAvailableLBPairs(client, CHAIN_ID)
 
   // fetch reserves and activeIds for each LBPair
   const requests = LBPairs.map((lbPair) =>
