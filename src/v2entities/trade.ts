@@ -425,21 +425,23 @@ export class TradeV2 {
    * @static
    * Returns the best trade
    *
-   * @param {TradeV2[]} trades
+   * @param {(TradeV2 | undefined)[]} trades
    * @param {boolean} isExactIn
    * @returns {TradeV2}
    */
   public static chooseBestTrade(
-    trades: TradeV2[],
+    trades: (TradeV2 | undefined)[],
     isExactIn: boolean
   ): TradeV2 {
-    if (trades.length === 0) {
+    if (trades.length === 0 || trades[0] === undefined) {
       throw new Error('No trades')
     }
 
     let bestTrade = trades[0]
 
     trades.forEach((trade) => {
+      if (!trade) return
+
       if (isExactIn) {
         if (trade.outputAmount.raw > bestTrade.outputAmount.raw) {
           bestTrade = trade

@@ -166,7 +166,7 @@ describe('TradeV2 entity', async () => {
         }
       })
 
-      const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], isExactIn)
+      const bestTrade = TradeV2.chooseBestTrade(trades, isExactIn)
 
       expect(maxOutputAmount === (bestTrade as TradeV2).outputAmount.raw).toBe(
         true
@@ -195,7 +195,7 @@ describe('TradeV2 entity', async () => {
         }
       })
 
-      const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], isExactIn)
+      const bestTrade = TradeV2.chooseBestTrade(trades, isExactIn)
 
       expect(minInputAmount === (bestTrade as TradeV2).inputAmount.raw).toBe(
         true
@@ -225,12 +225,9 @@ describe('TradeV2 entity', async () => {
       )
 
       const isExactIn = true
-      const bestTradeExactIn = TradeV2.chooseBestTrade(
-        tradesExactIn as TradeV2[],
-        isExactIn
-      )
+      const bestTradeExactIn = TradeV2.chooseBestTrade(tradesExactIn, isExactIn)
       const bestTradeExactOut = TradeV2.chooseBestTrade(
-        tradesExactOut as TradeV2[],
+        tradesExactOut,
         !isExactIn
       )
 
@@ -260,7 +257,7 @@ describe('TradeV2 entity', async () => {
         CHAIN_ID
       )
 
-      const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], true)
+      const bestTrade = TradeV2.chooseBestTrade(trades, true)
 
       const options = {
         allowedSlippage: new Percent(50n, 10000n),
@@ -284,7 +281,7 @@ describe('TradeV2 entity', async () => {
         CHAIN_ID
       )
 
-      const bestTrade = TradeV2.chooseBestTrade(trades as TradeV2[], true)
+      const bestTrade = TradeV2.chooseBestTrade(trades, true)
 
       const options = {
         allowedSlippage: new Percent(50n, 10000n),

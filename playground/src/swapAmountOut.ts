@@ -95,9 +95,6 @@ export const swapAmountOut = async () => {
     ) // in token's decimals
   }
 
-  const filteredTrades = trades.filter(
-    (trade): trade is TradeV2 => trade !== undefined
-  )
-  const bestTrade = TradeV2.chooseBestTrade(filteredTrades, false)
+  const bestTrade = TradeV2.chooseBestTrade(trades, false)
   console.log('bestTrade', bestTrade.toLog())
 }

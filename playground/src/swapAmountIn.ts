@@ -26,7 +26,6 @@ export const swapAmountIn = async () => {
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   if (!account.address) throw new Error('Missing address in account')
-
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
@@ -104,10 +103,7 @@ export const swapAmountIn = async () => {
     )
   }
 
-  const filteredTrades = trades.filter(
-    (trade): trade is TradeV2 => trade !== undefined
-  )
-  const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
+  const bestTrade = TradeV2.chooseBestTrade(trades, true)
   console.log('bestTrade', bestTrade?.toLog())
 
   // execute trade
