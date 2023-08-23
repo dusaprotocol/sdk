@@ -1,5 +1,6 @@
 import {
   ChainId,
+  IRouter,
   LB_ROUTER_ADDRESS,
   PairV2,
   Percent,
@@ -27,7 +28,6 @@ export const swapAmountIn = async () => {
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
   if (!account.address) throw new Error('Missing address in account')
-
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
@@ -37,16 +37,17 @@ export const swapAmountIn = async () => {
     account
   )
 
-  const WMAS = _WMAS[ChainId.BUILDNET]
+  const CHAIN_ID = ChainId.BUILDNET
+  const WMAS = _WMAS[CHAIN_ID]
   const USDC = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
     9,
     'USDC',
     'USD Coin'
   )
   const WETH = new Token(
-    ChainId.BUILDNET,
+    CHAIN_ID,
     'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
     9,
     'WETH',
@@ -83,7 +84,6 @@ export const swapAmountIn = async () => {
   ) // console.log('allRoutes', allRoutes)
 
   // get trades
-  const chainId = ChainId.BUILDNET
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
@@ -91,7 +91,7 @@ export const swapAmountIn = async () => {
     false,
     false,
     client,
-    chainId
+    CHAIN_ID
   ) // console.log('trades', trades.map(el=>el.toLog()))
 
   for (let trade of trades) {
@@ -105,10 +105,7 @@ export const swapAmountIn = async () => {
     )
   }
 
-  const filteredTrades = trades.filter(
-    (trade): trade is TradeV2 => trade !== undefined
-  )
-  const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
+  const bestTrade = TradeV2.chooseBestTrade(trades, true)
   console.log('bestTrade', bestTrade?.toLog())
 
   // increase allowance
@@ -149,14 +146,8 @@ export const swapAmountIn = async () => {
     recipient: account.address,
     allowedSlippage: new Percent('5')
   })
-  const txId = await client.smartContracts().callSmartContract({
-    targetAddress: LB_ROUTER_ADDRESS[chainId],
-    functionName: params.methodName,
-    coins: BigInt(params.value),
-    parameter: params.args,
-    fee: BigInt(100_000_000),
-    maxGas: BigInt(100_000_000)
-  })
+  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
+  const txId = await router[params.methodName](params)
   console.log('txId', txId)
 
   // await tx confirmation and log events

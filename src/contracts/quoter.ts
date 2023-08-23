@@ -1,8 +1,9 @@
-import { Args, ArrayType, Client } from '@massalabs/massa-web3'
+import { Args, Client } from '@massalabs/massa-web3'
+import { ArrayTypes } from '@massalabs/web3-utils'
 import { Address, Quote } from '../types'
 
 export class IQuoter {
-  constructor(public address: string, public client: Client) {}
+  constructor(public address: string, private client: Client) {}
 
   async findBestPathFromAmountIn(
     route: string[],
@@ -17,7 +18,7 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountIn))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 1_000_000_000n
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -27,12 +28,12 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
-        const amounts: bigint[] = args.nextArray(ArrayType.U64)
+        const binSteps: bigint[] = args.nextArray(ArrayTypes.U64)
+        const amounts: bigint[] = args.nextArray(ArrayTypes.U64)
         const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
-          ArrayType.U64
+          ArrayTypes.U64
         )
-        const fees: bigint[] = args.nextArray(ArrayType.U64)
+        const fees: bigint[] = args.nextArray(ArrayTypes.U64)
         return {
           route,
           pairs,
@@ -57,7 +58,7 @@ export class IQuoter {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU64(BigInt(amountOut))
           .serialize(),
-        maxGas: BigInt(100_000_000)
+        maxGas: 1_000_000_000n
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -67,12 +68,12 @@ export class IQuoter {
         const pairs = args
           .nextSerializableObjectArray(Address)
           .map((r) => r.str)
-        const binSteps: bigint[] = args.nextArray(ArrayType.U64)
-        const amounts: bigint[] = args.nextArray(ArrayType.U64)
+        const binSteps: bigint[] = args.nextArray(ArrayTypes.U64)
+        const amounts: bigint[] = args.nextArray(ArrayTypes.U64)
         const virtualAmountsWithoutSlippage: bigint[] = args.nextArray(
-          ArrayType.U64
+          ArrayTypes.U64
         )
-        const fees: bigint[] = args.nextArray(ArrayType.U64)
+        const fees: bigint[] = args.nextArray(ArrayTypes.U64)
         return {
           route,
           pairs,

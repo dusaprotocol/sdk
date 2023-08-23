@@ -1,10 +1,8 @@
 import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
 import { Percent } from '../v1entities/fractions'
 
-export type BigNumberish = bigint | string | number
-
 export interface LBPair {
-  binStep: BigNumberish
+  binStep: number
   LBPair: string
   createdByOwner: boolean
   isBlacklisted: boolean
@@ -46,9 +44,9 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
 }
 
 export interface LBPairReservesAndId {
-  reserveX: BigNumberish
-  reserveY: BigNumberish
-  activeId: BigNumberish
+  reserveX: bigint
+  reserveY: bigint
+  activeId: number
 }
 
 export interface LBPairFeeParameters {
@@ -74,18 +72,18 @@ export interface LBPairFeePercent {
 export interface LiquidityParametersStruct {
   tokenX: string
   tokenY: string
-  binStep: BigNumberish
-  amountX: BigNumberish
-  amountY: BigNumberish
-  amountXMin: BigNumberish
-  amountYMin: BigNumberish
-  activeIdDesired: BigNumberish
-  idSlippage: BigNumberish
-  deltaIds: BigNumberish[]
-  distributionX: BigNumberish[]
-  distributionY: BigNumberish[]
+  binStep: number
+  amountX: bigint
+  amountY: bigint
+  amountXMin: bigint
+  amountYMin: bigint
+  activeIdDesired: number
+  idSlippage: number
+  deltaIds: number[]
+  distributionX: bigint[]
+  distributionY: bigint[]
   to: string
-  deadline: BigNumberish
+  deadline: number
 }
 
 export interface BinReserves {

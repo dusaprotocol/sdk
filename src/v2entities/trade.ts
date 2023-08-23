@@ -8,9 +8,11 @@ import {
   SwapParameters,
   Quote,
   RouterPathParameters,
-  Address
+  Address,
+  RouterMethod
 } from '../types'
-import { Args, ArrayType, Client } from '@massalabs/massa-web3'
+import { Args, Client } from '@massalabs/massa-web3'
+import { ArrayTypes } from '@massalabs/web3-utils'
 import {
   CurrencyAmount,
   Fraction,
@@ -137,8 +139,8 @@ export class TradeV2 {
   ): SwapParameters {
     const nativeIn = this.isNativeIn
     const nativeOut = this.isNativeOut
-    // the router does not support both avax in and out
-    invariant(!(nativeIn && nativeOut), 'AVAX_IN_OUT')
+    // the router does not support both native in and out
+    invariant(!(nativeIn && nativeOut), 'NATIVE_IN_OUT')
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = options.recipient
@@ -161,30 +163,30 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    let methodName = ''
+    let methodName: RouterMethod = 'swapExactTokensForTokens'
     const args: Args = new Args()
     let value = ''
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
         if (nativeIn) {
           methodName = useFeeOnTransfer
-            ? 'swapExactNATIVEForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactNATIVEForTokens'
+            ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
+            : 'swapExactMASForTokens'
           args
             .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
           value = amountIn
         } else if (nativeOut) {
           methodName = useFeeOnTransfer
-            ? 'swapExactTokensForNATIVESupportingFeeOnTransferTokens'
-            : 'swapExactTokensForNATIVE'
+            ? 'swapExactTokensForMASSupportingFeeOnTransferTokens'
+            : 'swapExactTokensForMAS'
           args
             .addU64(BigInt(amountIn))
             .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -196,7 +198,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountIn))
             .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -206,20 +208,20 @@ export class TradeV2 {
       case TradeType.EXACT_OUTPUT:
         invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
         if (nativeIn) {
-          methodName = 'swapNATIVEForExactTokens'
+          methodName = 'swapMASForExactTokens'
           args
             .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
           value = amountIn
         } else if (nativeOut) {
-          methodName = 'swapTokensForExactNATIVE'
+          methodName = 'swapTokensForExactMAS'
           args
             .addU64(BigInt(amountOut))
             .addU64(BigInt(amountIn))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -229,7 +231,7 @@ export class TradeV2 {
           args
             .addU64(BigInt(amountOut))
             .addU64(BigInt(amountIn))
-            .addArray(path.pairBinSteps, ArrayType.U64)
+            .addArray(path.pairBinSteps, ArrayTypes.U64)
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
@@ -256,7 +258,7 @@ export class TradeV2 {
 
     // pool fee % for each step of the swap from quoter contract
     // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
-    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 18n))
+    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 9n))
 
     // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
@@ -314,7 +316,7 @@ export class TradeV2 {
   ): Promise<Array<TradeV2 | undefined>> {
     const isExactIn = true
 
-    // handle wavax<->avax wrap swaps
+    // handle wnative<->native wrap swaps
     const isWrapSwap =
       (isNativeIn && tokenOut.address === _WMAS[chainId].address) ||
       (isNativeOut && tokenAmountIn.token.address === _WMAS[chainId].address)
@@ -424,21 +426,23 @@ export class TradeV2 {
    * @static
    * Returns the best trade
    *
-   * @param {TradeV2[]} trades
+   * @param {(TradeV2 | undefined)[]} trades
    * @param {boolean} isExactIn
    * @returns {TradeV2}
    */
   public static chooseBestTrade(
-    trades: TradeV2[],
+    trades: (TradeV2 | undefined)[],
     isExactIn: boolean
   ): TradeV2 {
-    if (trades.length === 0) {
+    if (trades.length === 0 || trades[0] === undefined) {
       throw new Error('No trades')
     }
 
     let bestTrade = trades[0]
 
     trades.forEach((trade) => {
+      if (!trade) return
+
       if (isExactIn) {
         if (trade.outputAmount.raw > bestTrade.outputAmount.raw) {
           bestTrade = trade
@@ -453,69 +457,6 @@ export class TradeV2 {
       }
     })
     return bestTrade
-  }
-
-  /**
-   * Selects the best trade given trades and gas
-   *
-   * @param {TradeV2[]} trades
-   * @param {BigInt[]} estimatedGas
-   * @returns {bestTrade: TradeV2, estimatedGas: BigInt}
-   */
-  public static chooseBestTradeWithGas(
-    trades: TradeV2[],
-    estimatedGas: bigint[]
-  ): {
-    bestTrade: TradeV2
-    estimatedGas: bigint
-  } {
-    const tradeType = trades[0].tradeType
-    // The biggest tradeValueAVAX will be the most accurate
-    // If we haven't found any equivalent of the trade in AVAX, we won't take gas cost into account
-    const tradeValueAVAX = 0n
-
-    const tradesWithGas = trades.map((trade, index) => {
-      return {
-        trade: trade,
-        estimatedGas: estimatedGas[index],
-        swapOutcome:
-          trade.tradeType === TradeType.EXACT_INPUT
-            ? new Fraction(
-                trade.outputAmount.numerator,
-                trade.outputAmount.denominator
-              ).subtract(
-                tradeValueAVAX === 0n
-                  ? 0n
-                  : // Cross product to get the gas price against the output token
-                    trade.outputAmount
-                      .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX)
-              )
-            : new Fraction(
-                trade.inputAmount.numerator,
-                trade.inputAmount.denominator
-              ).add(
-                tradeValueAVAX === 0n
-                  ? 0n
-                  : trade.inputAmount
-                      .multiply(estimatedGas[index].toString())
-                      .divide(tradeValueAVAX)
-              )
-      }
-    })
-
-    const bestTrade = tradesWithGas.reduce((previousTrade, currentTrade) =>
-      tradeType === TradeType.EXACT_INPUT
-        ? currentTrade.swapOutcome.greaterThan(previousTrade.swapOutcome)
-          ? currentTrade
-          : previousTrade
-        : currentTrade.trade.inputAmount.greaterThan('0') &&
-          currentTrade.swapOutcome.lessThan(previousTrade.swapOutcome)
-        ? currentTrade
-        : previousTrade
-    )
-
-    return { bestTrade: bestTrade.trade, estimatedGas: bestTrade.estimatedGas }
   }
 
   /**

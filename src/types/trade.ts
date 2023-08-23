@@ -33,10 +33,23 @@ export interface RouterPathParameters {
   tokenPath: Address[]
 }
 
+export type RouterMethod =
+  | 'swapExactMASForTokens'
+  | 'swapExactTokensForMAS'
+  | 'swapExactTokensForTokens'
+  | 'swapMASForExactTokens'
+  | 'swapTokensForExactMAS'
+  | 'swapTokensForExactTokens'
+
+  // not supported yet
+  | 'swapExactMASForTokensSupportingFeeOnTransferTokens'
+  | 'swapExactTokensForMASSupportingFeeOnTransferTokens'
+  | 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+
 /** The parameters to use in the call to the DEX V2 Router to execute a trade. */
 export interface SwapParameters {
   // The method to call on LBRouter
-  methodName: string
+  methodName: RouterMethod
   // The arguments to pass to the method, all hex encoded.
   args: number[]
   // The amount of wei to send in hex.
