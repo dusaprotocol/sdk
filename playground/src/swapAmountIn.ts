@@ -11,6 +11,7 @@ import {
   parseUnits
 } from '@dusalabs/sdk'
 import {
+  Args,
   ClientFactory,
   EOperationStatus,
   ProviderType,
@@ -109,6 +110,38 @@ export const swapAmountIn = async () => {
   )
   const bestTrade = TradeV2.chooseBestTrade(filteredTrades, true)
   console.log('bestTrade', bestTrade?.toLog())
+
+  // increase allowance
+  const txIdAllowance = await client.smartContracts().callSmartContract({
+    targetAddress: inputToken.address,
+    functionName: 'increaseAllowance',
+    coins: 0n,
+    parameter: new Args()
+      .addString(LB_ROUTER_ADDRESS[chainId])
+      .addU64(bestTrade.inputAmount.raw)
+      .serialize(),
+    fee: BigInt(100_000_000),
+    maxGas: BigInt(100_000_000)
+  })
+  console.log('txIdAllowance', txIdAllowance)
+
+  // await tx confirmation and log events
+  const statusAllowance = await client
+    .smartContracts()
+    .awaitRequiredOperationStatus(txIdAllowance, EOperationStatus.FINAL)
+  console.log('statusAllowance', statusAllowance)
+  await client
+    .smartContracts()
+    .getFilteredScOutputEvents({
+      emitter_address: null,
+      start: null,
+      end: null,
+      original_caller_address: null,
+      is_final: null,
+      original_operation_id: txIdAllowance
+    })
+    .then((r) => r.forEach((e) => console.log(e.data)))
+  // TODO: check if events contain errors
 
   // execute trade
   const params = bestTrade.swapCallParameters({
