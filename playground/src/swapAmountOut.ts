@@ -2,9 +2,10 @@ import {
   ChainId,
   PairV2,
   RouteV2,
-  Token,
   TokenAmount,
   TradeV2,
+  USDC as _USDC,
+  WETH as _WETH,
   WMAS as _WMAS,
   parseUnits
 } from '@dusalabs/sdk'
@@ -34,20 +35,8 @@ export const swapAmountOut = async () => {
 
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    CHAIN_ID,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
   const BASES = [WMAS, USDC, WETH]
 
   // Init: user inputs

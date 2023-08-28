@@ -6,9 +6,9 @@ import {
   LB_ROUTER_ADDRESS,
   LiquidityDistribution,
   PairV2,
-  Token,
   TokenAmount,
   WMAS as _WMAS,
+  USDC as _USDC,
   getLiquidityConfig
 } from '@dusalabs/sdk'
 import {
@@ -39,13 +39,7 @@ export const addLiquidity = async () => {
 
   // initialize tokens
   const WMAS = _WMAS[CHAIN_ID]
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
+  const USDC = _USDC[CHAIN_ID]
 
   const spender = LB_ROUTER_ADDRESS[CHAIN_ID]
   await new IERC20(USDC.address, client).approve(spender)

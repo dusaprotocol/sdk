@@ -1,4 +1,10 @@
-import { Bin, ChainId, PairV2, Token, WMAS as _WMAS } from '@dusalabs/sdk'
+import {
+  Bin,
+  ChainId,
+  PairV2,
+  USDC as _USDC,
+  WMAS as _WMAS
+} from '@dusalabs/sdk'
 import {
   ClientFactory,
   DefaultProviderUrls,
@@ -19,13 +25,7 @@ export const getLBPairsAndActiveIds = async () => {
   )
 
   const CHAIN_ID = ChainId.BUILDNET
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
+  const USDC = _USDC[CHAIN_ID]
   const WMAS = _WMAS[CHAIN_ID]
 
   // fetch LBPairs

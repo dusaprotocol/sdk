@@ -1,26 +1,16 @@
 import { ChainId } from '../constants'
-import { WMAS as _WMAS, Token } from '../v1entities'
+import { USDC as _USDC, WETH as _WETH, WMAS as _WMAS } from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { describe, it, expect } from 'vitest'
 
 describe('RouteV2.createAllRoute()', () => {
   // init tokens and route bases
-  const USDC = new Token(
-    ChainId.BUILDNET,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    ChainId.BUILDNET,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
-  const MAS = _WMAS[ChainId.BUILDNET]
+
+  const CHAIN_ID = ChainId.BUILDNET
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
+  const MAS = _WMAS[CHAIN_ID]
   const BASES = [MAS, USDC, WETH]
 
   // init input / output
