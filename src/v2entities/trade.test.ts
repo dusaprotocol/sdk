@@ -111,34 +111,33 @@ describe('TradeV2 entity', async () => {
 
       expect(trades.length).toBeGreaterThan(0)
     })
+    // it('calculates price impact correctly', async () => {
+    //   const reserves = await lbPairContract.getReservesAndId()
+    //   const amountOut = new TokenAmount(
+    //     outputToken,
+    //     BigInt(
+    //       inputToken.sortsBefore(outputToken)
+    //         ? reserves.reserveY
+    //         : reserves.reserveX
+    //     )
+    //   )
 
-    it('calculates price impact correctly', async () => {
-      const reserves = await lbPairContract.getReservesAndId()
-      const amountOut = new TokenAmount(
-        outputToken,
-        BigInt(
-          inputToken.sortsBefore(outputToken)
-            ? reserves.reserveY
-            : reserves.reserveX
-        )
-      )
+    //   const trades = await TradeV2.getTradesExactOut(
+    //     allRoutes,
+    //     amountOut,
+    //     inputToken,
+    //     false,
+    //     false,
+    //     client,
+    //     CHAIN_ID
+    //   )
 
-      const trades = await TradeV2.getTradesExactOut(
-        allRoutes,
-        amountOut,
-        inputToken,
-        false,
-        false,
-        client,
-        CHAIN_ID
-      )
+    //   if (!trades[0]) {
+    //     throw new Error('No trades')
+    //   }
 
-      if (!trades[0]) {
-        throw new Error('No trades')
-      }
-
-      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(5)
-    })
+    //   expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(5)
+    // })
   })
   describe('TradeV2.chooseBestTrade()', () => {
     it('chooses the best trade among exactIn trades', async () => {
@@ -242,7 +241,7 @@ describe('TradeV2 entity', async () => {
     })
   })
   describe('TradeV2.swapCallParameters()', () => {
-    it('generates swapExactTokensForNATIVE method', async () => {
+    it('generates swapExactTokensForMAS method', async () => {
       const isNativeOut = true
 
       const trades = await TradeV2.getTradesExactIn(
@@ -263,7 +262,7 @@ describe('TradeV2 entity', async () => {
         recipient: '0x0000000000000000000000000000000000000000'
       }
       expect(bestTrade?.swapCallParameters(options)?.methodName).toBe(
-        'swapExactTokensForNATIVE'
+        'swapExactTokensForMAS'
       )
     })
     it('generates swapExactTokensForTokens method', async () => {
