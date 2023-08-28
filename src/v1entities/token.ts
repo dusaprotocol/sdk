@@ -79,7 +79,7 @@ export const WMAS = {
   [ChainId.DUSANET]: new Token(ChainId.DUSANET, '', 9, 'WMAS', 'Wrapped Massa'),
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS18vveYFkSuGUKfC4R2NLwxP91yUaLqNNNbUeGicTVq6fvLo4VF',
+    'AS16Tuqat9Pfxtu4Fad3EoFizmPtuCokYTMfmqXQuPCpoHZRZkcr',
     9,
     'WMAS',
     'Wrapped Massa'
