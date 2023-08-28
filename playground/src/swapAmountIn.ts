@@ -14,6 +14,7 @@ import {
 import {
   Args,
   ClientFactory,
+  DefaultProviderUrls,
   EOperationStatus,
   ProviderType,
   WalletClient
@@ -23,7 +24,8 @@ export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
+  const chainId = ChainId.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)

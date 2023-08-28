@@ -4,11 +4,15 @@ import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
 import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
-import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  DefaultProviderUrls,
+  ProviderType
+} from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
   const client = await ClientFactory.createCustomClient(
     [

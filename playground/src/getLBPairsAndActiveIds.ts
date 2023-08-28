@@ -1,11 +1,15 @@
 import { Bin, ChainId, PairV2, Token, WMAS as _WMAS } from '@dusalabs/sdk'
-import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  DefaultProviderUrls,
+  ProviderType
+} from '@massalabs/massa-web3'
 
 export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },

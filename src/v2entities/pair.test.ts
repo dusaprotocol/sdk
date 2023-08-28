@@ -3,11 +3,15 @@ import { ChainId } from '../constants'
 import { PairV2 } from './pair'
 import { Token } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
-import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  ProviderType,
+  DefaultProviderUrls
+} from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
   const client = await ClientFactory.createCustomClient(
     [
@@ -43,12 +47,12 @@ describe('PairV2 entity', async () => {
     expect(pair1.equals(pair2)).toEqual(true)
   })
 
-  it('can fetch all available v2 LBPairs', async () => {
+  it('can fetch all available LBPairs', async () => {
     const LBPairs = await pair1.fetchAvailableLBPairs(client, CHAIN_ID)
     expect(LBPairs.length).toBeGreaterThan(0)
   })
 
-  it('can fetch single v2 LBPair given the bin step', async () => {
+  it('can fetch single LBPair given the bin step', async () => {
     const binStep = 20
     const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
     expect(LBPair.binStep).toEqual(binStep)
@@ -91,7 +95,7 @@ describe('PairV2 entity', async () => {
   })
 
   describe('PairV2.getLBPairReservesAndId()', () => {
-    it('can fetch LBPair v2 reserves and activeId', async () => {
+    it('can fetch LBPair reserves and activeId', async () => {
       const binStep = 20
       const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
 

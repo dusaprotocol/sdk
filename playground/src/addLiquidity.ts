@@ -13,6 +13,7 @@ import {
 } from '@dusalabs/sdk'
 import {
   ClientFactory,
+  DefaultProviderUrls,
   EOperationStatus,
   ProviderType,
   WalletClient
@@ -21,7 +22,7 @@ import {
 export const addLiquidity = async () => {
   console.log('\n------- addLiquidity() called -------\n')
 
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)

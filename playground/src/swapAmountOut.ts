@@ -10,6 +10,7 @@ import {
 } from '@dusalabs/sdk'
 import {
   ClientFactory,
+  DefaultProviderUrls,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
@@ -18,7 +19,7 @@ export const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
