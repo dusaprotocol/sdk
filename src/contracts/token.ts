@@ -42,7 +42,9 @@ export class IERC20 {
     spender: string,
     amount: bigint = 2n ** 256n - 1n
   ): Promise<string> {
-    const owner = this.client.wallet().getBaseAccount()?.address() as string
+    const owner = this.client.wallet().getBaseAccount()?.address
+    if (!owner) throw new Error('No base account')
+
     const currentAllowance = await this.allowance(owner, spender)
 
     if (currentAllowance >= amount) return ''

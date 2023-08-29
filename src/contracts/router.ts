@@ -1,4 +1,4 @@
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
+import { Args, ArrayType, Client } from '@massalabs/massa-web3'
 import { AddLiquidityParameters, SwapParameters } from '../types'
 
 export class IRouter {
@@ -101,9 +101,9 @@ export class IRouter {
       .addU64(amount1Min)
       .addU64(BigInt(activeIdDesired))
       .addU64(BigInt(idSlippage))
-      .addArray(deltaIds.map(BigInt), ArrayTypes.I64)
-      .addArray(distributionX, ArrayTypes.U64)
-      .addArray(distributionY, ArrayTypes.U64)
+      .addArray(deltaIds.map(BigInt), ArrayType.I64)
+      .addArray(distributionX, ArrayType.U64)
+      .addArray(distributionY, ArrayType.U64)
       .addString(to)
       .addU64(BigInt(deadline))
 
