@@ -1,29 +1,33 @@
 import {
   ChainId,
+  IERC20,
   IRouter,
   LB_ROUTER_ADDRESS,
   PairV2,
   Percent,
   RouteV2,
-  Token,
   TokenAmount,
   TradeV2,
+  USDC as _USDC,
+  WETH as _WETH,
   WMAS as _WMAS,
   parseUnits
 } from '@dusalabs/sdk'
 import {
   Args,
   ClientFactory,
+  DefaultProviderUrls,
   EOperationStatus,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { awaitFinalization, logEvents } from './utils'
 
 export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
@@ -39,20 +43,8 @@ export const swapAmountIn = async () => {
 
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    CHAIN_ID,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
   const BASES = [WMAS, USDC, WETH]
 
   // Init: user inputs
@@ -109,36 +101,15 @@ export const swapAmountIn = async () => {
   console.log('bestTrade', bestTrade?.toLog())
 
   // increase allowance
-  const txIdAllowance = await client.smartContracts().callSmartContract({
-    targetAddress: inputToken.address,
-    functionName: 'increaseAllowance',
-    coins: 0n,
-    parameter: new Args()
-      .addString(LB_ROUTER_ADDRESS[chainId])
-      .addU64(bestTrade.inputAmount.raw)
-      .serialize(),
-    fee: BigInt(100_000_000),
-    maxGas: BigInt(100_000_000)
-  })
+  const txIdAllowance = await new IERC20(inputToken.address, client).approve(
+    LB_ROUTER_ADDRESS[CHAIN_ID],
+    bestTrade.inputAmount.raw
+  )
   console.log('txIdAllowance', txIdAllowance)
 
   // await tx confirmation and log events
-  const statusAllowance = await client
-    .smartContracts()
-    .awaitRequiredOperationStatus(txIdAllowance, EOperationStatus.FINAL)
-  console.log('statusAllowance', statusAllowance)
-  await client
-    .smartContracts()
-    .getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      is_final: null,
-      original_operation_id: txIdAllowance
-    })
-    .then((r) => r.forEach((e) => console.log(e.data)))
-  // TODO: check if events contain errors
+  await awaitFinalization(client, txIdAllowance)
+  logEvents(client, txIdAllowance)
 
   // execute trade
   const params = bestTrade.swapCallParameters({
@@ -151,19 +122,6 @@ export const swapAmountIn = async () => {
   console.log('txId', txId)
 
   // await tx confirmation and log events
-  const status = await client
-    .smartContracts()
-    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL)
-  console.log('status', status)
-  await client
-    .smartContracts()
-    .getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      is_final: null,
-      original_operation_id: txId
-    })
-    .then((r) => r.forEach((e) => console.log(e.data)))
+  await awaitFinalization(client, txId)
+  logEvents(client, txId)
 }

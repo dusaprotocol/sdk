@@ -1,13 +1,17 @@
 // import {Bin} from './bin'
 import { ChainId } from '../constants'
 import { PairV2 } from './pair'
-import { Token } from '../v1entities'
+import { Token, USDC as _USDC, WETH as _WETH } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
-import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  ProviderType,
+  DefaultProviderUrls
+} from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
   const client = await ClientFactory.createCustomClient(
     [
@@ -18,37 +22,25 @@ describe('PairV2 entity', async () => {
   )
 
   // init tokens
-  const USDC = new Token(
-    ChainId.BUILDNET,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    ChainId.BUILDNET,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
-  const MAS = _WMAS[ChainId.BUILDNET]
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
+  const WMAS = _WMAS[CHAIN_ID]
 
   // init pairs
-  const pair1 = new PairV2(USDC, MAS)
-  const pair2 = new PairV2(MAS, USDC)
+  const pair1 = new PairV2(USDC, WMAS)
+  const pair2 = new PairV2(WMAS, USDC)
   const pair3 = new PairV2(USDC, WETH)
 
   it('can be initialized in any order of tokens', async () => {
     expect(pair1.equals(pair2)).toEqual(true)
   })
 
-  it('can fetch all available v2 LBPairs', async () => {
+  it('can fetch all available LBPairs', async () => {
     const LBPairs = await pair1.fetchAvailableLBPairs(client, CHAIN_ID)
     expect(LBPairs.length).toBeGreaterThan(0)
   })
 
-  it('can fetch single v2 LBPair given the bin step', async () => {
+  it('can fetch single LBPair given the bin step', async () => {
     const binStep = 20
     const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
     expect(LBPair.binStep).toEqual(binStep)
@@ -67,14 +59,14 @@ describe('PairV2 entity', async () => {
   describe('PairV2.createAllTokenPairs() / PairV2.initPairs()', () => {
     it('creates all possible combination of token pairs', () => {
       const TOKEN1 = new Token(
-        ChainId.BUILDNET,
+        CHAIN_ID,
         '0x0000000000000000000000000000000000000001',
         6,
         'TOKEN1',
         'TOKEN1'
       )
       const TOKEN2 = new Token(
-        ChainId.BUILDNET,
+        CHAIN_ID,
         '0x0000000000000000000000000000000000000002',
         6,
         'TOKEN2',
@@ -82,7 +74,7 @@ describe('PairV2 entity', async () => {
       )
       const BASES = [TOKEN1, TOKEN2]
 
-      const allTokenPairs = PairV2.createAllTokenPairs(USDC, MAS, BASES)
+      const allTokenPairs = PairV2.createAllTokenPairs(USDC, WMAS, BASES)
       expect(allTokenPairs.length).toEqual(7)
 
       const allUniquePairs = PairV2.initPairs(allTokenPairs)
@@ -91,7 +83,7 @@ describe('PairV2 entity', async () => {
   })
 
   describe('PairV2.getLBPairReservesAndId()', () => {
-    it('can fetch LBPair v2 reserves and activeId', async () => {
+    it('can fetch LBPair reserves and activeId', async () => {
       const binStep = 20
       const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
 

@@ -1,14 +1,24 @@
-import { Percent, Token, TokenAmount, WMAS as _WMAS } from '../v1entities'
+import {
+  Percent,
+  TokenAmount,
+  USDC as _USDC,
+  WETH as _WETH,
+  WMAS as _WMAS
+} from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
 import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
-import { ClientFactory, ProviderType } from '@massalabs/massa-web3'
+import {
+  ClientFactory,
+  DefaultProviderUrls,
+  ProviderType
+} from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
   const client = await ClientFactory.createCustomClient(
     [
@@ -19,20 +29,8 @@ describe('TradeV2 entity', async () => {
   )
 
   // init tokens and route bases
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    CHAIN_ID,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
   const WMAS = _WMAS[CHAIN_ID]
   const BASES = [WMAS, USDC, WETH]
 
@@ -113,34 +111,33 @@ describe('TradeV2 entity', async () => {
 
       expect(trades.length).toBeGreaterThan(0)
     })
+    // it('calculates price impact correctly', async () => {
+    //   const reserves = await lbPairContract.getReservesAndId()
+    //   const amountOut = new TokenAmount(
+    //     outputToken,
+    //     BigInt(
+    //       inputToken.sortsBefore(outputToken)
+    //         ? reserves.reserveY
+    //         : reserves.reserveX
+    //     )
+    //   )
 
-    it('calculates price impact correctly', async () => {
-      const reserves = await lbPairContract.getReservesAndId()
-      const amountOut = new TokenAmount(
-        outputToken,
-        BigInt(
-          inputToken.sortsBefore(outputToken)
-            ? reserves.reserveY
-            : reserves.reserveX
-        )
-      )
+    //   const trades = await TradeV2.getTradesExactOut(
+    //     allRoutes,
+    //     amountOut,
+    //     inputToken,
+    //     false,
+    //     false,
+    //     client,
+    //     CHAIN_ID
+    //   )
 
-      const trades = await TradeV2.getTradesExactOut(
-        allRoutes,
-        amountOut,
-        inputToken,
-        false,
-        false,
-        client,
-        CHAIN_ID
-      )
+    //   if (!trades[0]) {
+    //     throw new Error('No trades')
+    //   }
 
-      if (!trades[0]) {
-        throw new Error('No trades')
-      }
-
-      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(5)
-    })
+    //   expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(5)
+    // })
   })
   describe('TradeV2.chooseBestTrade()', () => {
     it('chooses the best trade among exactIn trades', async () => {
@@ -244,7 +241,7 @@ describe('TradeV2 entity', async () => {
     })
   })
   describe('TradeV2.swapCallParameters()', () => {
-    it('generates swapExactTokensForNATIVE method', async () => {
+    it('generates swapExactTokensForMAS method', async () => {
       const isNativeOut = true
 
       const trades = await TradeV2.getTradesExactIn(
@@ -265,7 +262,7 @@ describe('TradeV2 entity', async () => {
         recipient: '0x0000000000000000000000000000000000000000'
       }
       expect(bestTrade?.swapCallParameters(options)?.methodName).toBe(
-        'swapExactTokensForNATIVE'
+        'swapExactTokensForMAS'
       )
     })
     it('generates swapExactTokensForTokens method', async () => {

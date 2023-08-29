@@ -6,22 +6,24 @@ import {
   LB_ROUTER_ADDRESS,
   LiquidityDistribution,
   PairV2,
-  Token,
   TokenAmount,
   WMAS as _WMAS,
+  USDC as _USDC,
   getLiquidityConfig
 } from '@dusalabs/sdk'
 import {
   ClientFactory,
+  DefaultProviderUrls,
   EOperationStatus,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { awaitFinalization, logEvents } from './utils'
 
 export const addLiquidity = async () => {
   console.log('\n------- addLiquidity() called -------\n')
 
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
@@ -38,17 +40,13 @@ export const addLiquidity = async () => {
 
   // initialize tokens
   const WMAS = _WMAS[CHAIN_ID]
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
+  const USDC = _USDC[CHAIN_ID]
 
   const spender = LB_ROUTER_ADDRESS[CHAIN_ID]
-  await new IERC20(USDC.address, client).approve(spender)
-  await new IERC20(WMAS.address, client).approve(spender)
+  const txIdApprove0 = await new IERC20(USDC.address, client).approve(spender)
+  const txIdApprove1 = await new IERC20(WMAS.address, client).approve(spender)
+  await awaitFinalization(client, txIdApprove0)
+  await awaitFinalization(client, txIdApprove1)
 
   // set the amounts for each of tokens
   const typedValueUSDC = '20'
@@ -116,5 +114,10 @@ export const addLiquidity = async () => {
   const value = null
 
   // call methods
-  router.addLiquidity(addLiquidityInput)
+  const txId = await router.addLiquidity(addLiquidityInput)
+  console.log('txId', txId)
+
+  // await tx confirmation and log events
+  await awaitFinalization(client, txId)
+  logEvents(client, txId)
 }

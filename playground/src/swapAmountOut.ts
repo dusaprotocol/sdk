@@ -2,14 +2,16 @@ import {
   ChainId,
   PairV2,
   RouteV2,
-  Token,
   TokenAmount,
   TradeV2,
+  USDC as _USDC,
+  WETH as _WETH,
   WMAS as _WMAS,
   parseUnits
 } from '@dusalabs/sdk'
 import {
   ClientFactory,
+  DefaultProviderUrls,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
@@ -18,7 +20,7 @@ export const swapAmountOut = async () => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
-  const BUILDNET_URL = 'https://buildnet.massa.net/api/v2'
+  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
@@ -33,20 +35,8 @@ export const swapAmountOut = async () => {
 
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
-  const USDC = new Token(
-    CHAIN_ID,
-    'AS127XuJBNCJrQafhVy8cWPfxSb4PV7GFueYgAEYCEPJy3ePjMNb8',
-    9,
-    'USDC',
-    'USD Coin'
-  )
-  const WETH = new Token(
-    CHAIN_ID,
-    'AS12WuZMkAEeDGczFtHYDSnwJvmXwrUWtWo4GgKYUaR2zWv3X6RHG',
-    9,
-    'WETH',
-    'Wrapped Ether'
-  )
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
   const BASES = [WMAS, USDC, WETH]
 
   // Init: user inputs

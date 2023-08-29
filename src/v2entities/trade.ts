@@ -11,8 +11,7 @@ import {
   Address,
   RouterMethod
 } from '../types'
-import { Args, Client } from '@massalabs/massa-web3'
-import { ArrayTypes } from '@massalabs/web3-utils'
+import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
