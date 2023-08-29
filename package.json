@@ -27,7 +27,6 @@
     "@massalabs/web3-utils": "^1.4.1",
     "big.js": "5.2",
     "decimal.js-light": "^2.5.1",
-    "lodash.flatmap": "^4.5.0",
     "tiny-invariant": "^1.1.0",
     "tiny-warning": "^1.0.3",
     "toformat": "^2.0.0"
@@ -35,7 +34,6 @@
   "devDependencies": {
     "@types/big.js": "^4.0.5",
     "@types/jest": "^24.0.25",
-    "@types/lodash.flatmap": "^4.5.7",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
     "eslint": "^8.32.0",

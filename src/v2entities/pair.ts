@@ -1,5 +1,3 @@
-import flatMap from 'lodash.flatmap'
-
 import {
   LBPairReservesAndId,
   LiquidityDistribution,
@@ -100,9 +98,9 @@ export class PairV2 {
     outputToken: Token,
     bases: Token[]
   ): [Token, Token][] {
-    const basePairs = flatMap(bases, (base: Token) =>
-      bases.map((otherBase) => [base, otherBase])
-    ).filter(([t0, t1]) => t0.address !== t1.address)
+    const basePairs = bases
+      .flatMap((base: Token) => bases.map((otherBase) => [base, otherBase]))
+      .filter(([t0, t1]) => t0.address !== t1.address)
 
     const allTokenPairs: [Token, Token][] = [
       // the direct pair
