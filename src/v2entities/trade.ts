@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
-import { ChainId, LB_QUOTER_ADDRESS, TradeType, ZERO_HEX } from '../constants'
+import { ChainId, LB_QUOTER_ADDRESS, TradeType } from '../constants'
 import {
   TradeOptions,
   TradeOptionsDeadline,
@@ -165,7 +165,7 @@ export class TradeV2 {
 
     let methodName: RouterMethod = 'swapExactTokensForTokens'
     const args: Args = new Args()
-    let value = ''
+    let value = '0'
     switch (this.tradeType) {
       case TradeType.EXACT_INPUT:
         if (nativeIn) {
@@ -190,7 +190,6 @@ export class TradeV2 {
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
-          value = ZERO_HEX
         } else {
           methodName = useFeeOnTransfer
             ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
@@ -202,7 +201,6 @@ export class TradeV2 {
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
-          value = ZERO_HEX
         }
         break
       case TradeType.EXACT_OUTPUT:
@@ -225,7 +223,6 @@ export class TradeV2 {
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
-          value = ZERO_HEX
         } else {
           methodName = 'swapTokensForExactTokens'
           args
@@ -235,7 +232,6 @@ export class TradeV2 {
             .addSerializableObjectArray(path.tokenPath)
             .addString(to)
             .addU64(BigInt(deadline))
-          value = ZERO_HEX
         }
         break
     }

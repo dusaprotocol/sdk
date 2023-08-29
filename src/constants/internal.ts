@@ -19,5 +19,3 @@ export enum SolidityType {
   uint8 = 'uint8',
   uint256 = 'uint256'
 }
-
-export const ZERO_HEX = '0x0'
