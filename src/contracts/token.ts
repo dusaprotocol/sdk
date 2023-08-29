@@ -1,11 +1,4 @@
-import {
-  Args,
-  Client,
-  EOperationStatus,
-  bytesToU64,
-  withTimeoutRejection
-} from '@massalabs/massa-web3'
-import { pollAsyncEvents } from './utils'
+import { Args, Client, bytesToU64 } from '@massalabs/massa-web3'
 
 export class IERC20 {
   constructor(public address: string, private client: Client) {}
@@ -51,7 +44,7 @@ export class IERC20 {
     amount -= currentAllowance
     console.log({ currentAllowance, amount })
 
-    const txId = await this.client.smartContracts().callSmartContract({
+    return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: 'increaseAllowance',
       parameter: new Args().addString(spender).addU256(amount).serialize(),
@@ -59,20 +52,19 @@ export class IERC20 {
       fee: 0n,
       coins: 0n
     })
+  }
 
-    const status = await this.client
-      .smartContracts()
-      .awaitRequiredOperationStatus(txId, EOperationStatus.INCLUDED_PENDING)
-    if (status !== EOperationStatus.INCLUDED_PENDING)
-      throw new Error(`Operation status is ${status}`)
+  async transfer(spender: string, amount: bigint): Promise<string> {
+    const owner = this.client.wallet().getBaseAccount()?.address()
+    if (!owner) throw new Error('No base account')
 
-    const { isError, events } = await withTimeoutRejection(
-      pollAsyncEvents(this.client, txId),
-      40000
-    )
-    if (isError) throw new Error('Error while polling events')
-    console.log(events)
-
-    return txId
+    return this.client.smartContracts().callSmartContract({
+      targetAddress: this.address,
+      functionName: 'transfer',
+      parameter: new Args().addString(spender).addU256(amount).serialize(),
+      maxGas: 100_000_000n,
+      fee: 0n,
+      coins: 0n
+    })
   }
 }

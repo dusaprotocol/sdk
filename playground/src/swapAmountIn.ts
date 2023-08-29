@@ -1,5 +1,6 @@
 import {
   ChainId,
+  IERC20,
   IRouter,
   LB_ROUTER_ADDRESS,
   PairV2,
@@ -20,6 +21,7 @@ import {
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { awaitFinalization, logEvents } from './utils'
 
 export const swapAmountIn = async () => {
   console.log('\n------- swapAmountIn() called -------\n')
@@ -99,36 +101,15 @@ export const swapAmountIn = async () => {
   console.log('bestTrade', bestTrade?.toLog())
 
   // increase allowance
-  const txIdAllowance = await client.smartContracts().callSmartContract({
-    targetAddress: inputToken.address,
-    functionName: 'increaseAllowance',
-    coins: 0n,
-    parameter: new Args()
-      .addString(LB_ROUTER_ADDRESS[CHAIN_ID])
-      .addU64(bestTrade.inputAmount.raw)
-      .serialize(),
-    fee: BigInt(100_000_000),
-    maxGas: BigInt(100_000_000)
-  })
+  const txIdAllowance = await new IERC20(inputToken.address, client).approve(
+    LB_ROUTER_ADDRESS[CHAIN_ID],
+    bestTrade.inputAmount.raw
+  )
   console.log('txIdAllowance', txIdAllowance)
 
   // await tx confirmation and log events
-  const statusAllowance = await client
-    .smartContracts()
-    .awaitRequiredOperationStatus(txIdAllowance, EOperationStatus.FINAL_SUCCESS)
-  console.log('statusAllowance', statusAllowance)
-  await client
-    .smartContracts()
-    .getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      is_final: null,
-      original_operation_id: txIdAllowance
-    })
-    .then((r) => r.forEach((e) => console.log(e.data)))
-  // TODO: check if events contain errors
+  await awaitFinalization(client, txIdAllowance)
+  logEvents(client, txIdAllowance)
 
   // execute trade
   const params = bestTrade.swapCallParameters({
@@ -141,19 +122,6 @@ export const swapAmountIn = async () => {
   console.log('txId', txId)
 
   // await tx confirmation and log events
-  const status = await client
-    .smartContracts()
-    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL_SUCCESS)
-  console.log('status', status)
-  await client
-    .smartContracts()
-    .getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      is_final: null,
-      original_operation_id: txId
-    })
-    .then((r) => r.forEach((e) => console.log(e.data)))
+  await awaitFinalization(client, txId)
+  logEvents(client, txId)
 }

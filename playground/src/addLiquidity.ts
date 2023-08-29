@@ -18,6 +18,7 @@ import {
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { awaitFinalization, logEvents } from './utils'
 
 export const addLiquidity = async () => {
   console.log('\n------- addLiquidity() called -------\n')
@@ -42,8 +43,10 @@ export const addLiquidity = async () => {
   const USDC = _USDC[CHAIN_ID]
 
   const spender = LB_ROUTER_ADDRESS[CHAIN_ID]
-  await new IERC20(USDC.address, client).approve(spender)
-  await new IERC20(WMAS.address, client).approve(spender)
+  const txIdApprove0 = await new IERC20(USDC.address, client).approve(spender)
+  const txIdApprove1 = await new IERC20(WMAS.address, client).approve(spender)
+  await awaitFinalization(client, txIdApprove0)
+  await awaitFinalization(client, txIdApprove1)
 
   // set the amounts for each of tokens
   const typedValueUSDC = '20'
@@ -115,19 +118,6 @@ export const addLiquidity = async () => {
   console.log('txId', txId)
 
   // await tx confirmation and log events
-  const status = await client
-    .smartContracts()
-    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL_SUCCESS)
-  console.log('status', status)
-  await client
-    .smartContracts()
-    .getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      is_final: null,
-      original_operation_id: txId
-    })
-    .then((r) => r.forEach((e) => console.log(e.data)))
+  await awaitFinalization(client, txId)
+  logEvents(client, txId)
 }
