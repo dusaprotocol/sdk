@@ -115,7 +115,7 @@ export const swapAmountIn = async () => {
   // await tx confirmation and log events
   const statusAllowance = await client
     .smartContracts()
-    .awaitRequiredOperationStatus(txIdAllowance, EOperationStatus.FINAL)
+    .awaitRequiredOperationStatus(txIdAllowance, EOperationStatus.FINAL_SUCCESS)
   console.log('statusAllowance', statusAllowance)
   await client
     .smartContracts()
@@ -143,7 +143,7 @@ export const swapAmountIn = async () => {
   // await tx confirmation and log events
   const status = await client
     .smartContracts()
-    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL)
+    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL_SUCCESS)
   console.log('status', status)
   await client
     .smartContracts()

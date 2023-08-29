@@ -2,10 +2,10 @@ import {
   Args,
   Client,
   EOperationStatus,
-  bytesToU64
+  bytesToU64,
+  withTimeoutRejection
 } from '@massalabs/massa-web3'
 import { pollAsyncEvents } from './utils'
-import { withTimeoutRejection } from '@massalabs/massa-web3/dist/esm/utils/time'
 
 export class IERC20 {
   constructor(public address: string, private client: Client) {}
@@ -42,7 +42,7 @@ export class IERC20 {
     spender: string,
     amount: bigint = 2n ** 256n - 1n
   ): Promise<string> {
-    const owner = this.client.wallet().getBaseAccount()?.address
+    const owner = this.client.wallet().getBaseAccount()?.address()
     if (!owner) throw new Error('No base account')
 
     const currentAllowance = await this.allowance(owner, spender)

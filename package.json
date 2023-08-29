@@ -23,7 +23,7 @@
     ]
   },
   "dependencies": {
-    "@massalabs/massa-web3": "1.21",
+    "@massalabs/massa-web3": "^1.24.2",
     "big.js": "5.2",
     "decimal.js-light": "^2.5.1",
     "tiny-invariant": "^1.1.0",

@@ -111,5 +111,23 @@ export const addLiquidity = async () => {
   const value = null
 
   // call methods
-  router.addLiquidity(addLiquidityInput)
+  const txId = await router.addLiquidity(addLiquidityInput)
+  console.log('txId', txId)
+
+  // await tx confirmation and log events
+  const status = await client
+    .smartContracts()
+    .awaitRequiredOperationStatus(txId, EOperationStatus.FINAL_SUCCESS)
+  console.log('status', status)
+  await client
+    .smartContracts()
+    .getFilteredScOutputEvents({
+      emitter_address: null,
+      start: null,
+      end: null,
+      original_caller_address: null,
+      is_final: null,
+      original_operation_id: txId
+    })
+    .then((r) => r.forEach((e) => console.log(e.data)))
 }
