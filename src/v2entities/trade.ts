@@ -143,12 +143,8 @@ export class TradeV2 {
     invariant(!('ttl' in options) || options.ttl > 0, 'TTL')
 
     const to: string = options.recipient
-    const amountIn: string = this.maximumAmountIn(
-      options.allowedSlippage
-    ).raw.toString()
-    const amountOut: string = this.minimumAmountOut(
-      options.allowedSlippage
-    ).raw.toString()
+    const amountIn: bigint = this.maximumAmountIn(options.allowedSlippage).raw
+    const amountOut: bigint = this.minimumAmountOut(options.allowedSlippage).raw
 
     const binSteps: string[] = this.quote.binSteps.map((bin) => bin.toString())
     const path: RouterPathParameters = {
@@ -162,78 +158,87 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    let methodName: RouterMethod = 'swapExactTokensForTokens'
-    const args: Args = new Args()
-    let value = '0'
-    switch (this.tradeType) {
-      case TradeType.EXACT_INPUT:
-        if (nativeIn) {
-          methodName = useFeeOnTransfer
-            ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactMASForTokens'
-          args
-            .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-          value = amountIn
-        } else if (nativeOut) {
-          methodName = useFeeOnTransfer
-            ? 'swapExactTokensForMASSupportingFeeOnTransferTokens'
-            : 'swapExactTokensForMAS'
-          args
-            .addU64(BigInt(amountIn))
-            .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-        } else {
-          methodName = useFeeOnTransfer
-            ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactTokensForTokens'
-          args
-            .addU64(BigInt(amountIn))
-            .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-        }
-        break
-      case TradeType.EXACT_OUTPUT:
-        invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
-        if (nativeIn) {
-          methodName = 'swapMASForExactTokens'
-          args
-            .addU64(BigInt(amountOut))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-          value = amountIn
-        } else if (nativeOut) {
-          methodName = 'swapTokensForExactMAS'
-          args
-            .addU64(BigInt(amountOut))
-            .addU64(BigInt(amountIn))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-        } else {
-          methodName = 'swapTokensForExactTokens'
-          args
-            .addU64(BigInt(amountOut))
-            .addU64(BigInt(amountIn))
-            .addArray(path.pairBinSteps, ArrayTypes.U64)
-            .addSerializableObjectArray(path.tokenPath)
-            .addString(to)
-            .addU64(BigInt(deadline))
-        }
-        break
+    const generateParameters = (
+      tradeType: TradeType
+    ): { methodName: RouterMethod; args: Args; value: bigint } => {
+      const args: Args = new Args()
+      let value = 0n
+      switch (tradeType) {
+        case TradeType.EXACT_INPUT:
+          if (nativeIn) {
+            const methodName = useFeeOnTransfer
+              ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
+              : 'swapExactMASForTokens'
+            args
+              .addU64(amountOut)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            value = amountIn
+            return { args, methodName, value }
+          } else if (nativeOut) {
+            const methodName = useFeeOnTransfer
+              ? 'swapExactTokensForMASSupportingFeeOnTransferTokens'
+              : 'swapExactTokensForMAS'
+            args
+              .addU64(amountIn)
+              .addU64(amountOut)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            return { args, methodName, value }
+          } else {
+            const methodName = useFeeOnTransfer
+              ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+              : 'swapExactTokensForTokens'
+            args
+              .addU64(amountIn)
+              .addU64(amountOut)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            return { args, methodName, value }
+          }
+        case TradeType.EXACT_OUTPUT:
+          invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
+          if (nativeIn) {
+            const methodName = 'swapMASForExactTokens'
+            args
+              .addU64(amountOut)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            value = amountIn
+            return { args, methodName, value }
+          } else if (nativeOut) {
+            const methodName = 'swapTokensForExactMAS'
+            args
+              .addU64(amountOut)
+              .addU64(amountIn)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            return { args, methodName, value }
+          } else {
+            const methodName = 'swapTokensForExactTokens'
+            args
+              .addU64(amountOut)
+              .addU64(amountIn)
+              .addArray(path.pairBinSteps, ArrayTypes.U64)
+              .addSerializableObjectArray(path.tokenPath)
+              .addString(to)
+              .addU64(BigInt(deadline))
+            return { args, methodName, value }
+          }
+      }
     }
+    const { methodName, args, value } = generateParameters(this.tradeType)
+
     return {
       methodName,
       args: args.serialize(),
