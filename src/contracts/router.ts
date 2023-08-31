@@ -4,51 +4,7 @@ import { AddLiquidityParameters, SwapParameters } from '../types'
 export class IRouter {
   constructor(public address: string, private client: Client) {}
 
-  // SWAP
-
-  async swapExactMASForTokens(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapExactTokensForMAS(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapExactTokensForTokens(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapMASForExactTokens(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapTokensForExactMAS(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapTokensForExactTokens(params: SwapParameters) {
-    return this.swap(params)
-  }
-
-  async swapExactMASForTokensSupportingFeeOnTransferTokens(
-    params: SwapParameters
-  ) {
-    return this.swap(params)
-  }
-
-  async swapExactTokensForMASSupportingFeeOnTransferTokens(
-    params: SwapParameters
-  ) {
-    return this.swap(params)
-  }
-
-  async swapExactTokensForTokensSupportingFeeOnTransferTokens(
-    params: SwapParameters
-  ) {
-    return this.swap(params)
-  }
-
-  private async swap(params: SwapParameters): Promise<string> {
+  async swap(params: SwapParameters): Promise<string> {
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,

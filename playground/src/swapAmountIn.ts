@@ -118,7 +118,7 @@ export const swapAmountIn = async () => {
     allowedSlippage: new Percent('5')
   })
   const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
-  const txId = await router[params.methodName](params)
+  const txId = await router.swap(params)
   console.log('txId', txId)
 
   // await tx confirmation and log events

@@ -158,7 +158,7 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
-    const generateParameters = (
+    const { methodName, args, value } = ((
       tradeType: TradeType
     ): { methodName: RouterMethod; args: Args; value: bigint } => {
       const args: Args = new Args()
@@ -236,8 +236,7 @@ export class TradeV2 {
             return { args, methodName, value }
           }
       }
-    }
-    const { methodName, args, value } = generateParameters(this.tradeType)
+    })(this.tradeType)
 
     return {
       methodName,
