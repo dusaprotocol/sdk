@@ -1,3 +1,4 @@
+import { Args } from '@massalabs/massa-web3'
 import { Percent, TokenAmount } from '../v1entities/fractions'
 import { Address } from './serializable'
 
@@ -53,7 +54,7 @@ export interface SwapParameters {
   // The method to call on LBRouter
   methodName: RouterMethod
   // The arguments to pass to the method, all hex encoded.
-  args: number[]
+  args: Args
   // The amount of nano to send.
   value: bigint
 }

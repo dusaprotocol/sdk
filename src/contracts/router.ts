@@ -8,7 +8,7 @@ export class IRouter {
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
-      coins: BigInt(params.value),
+      coins: params.value,
       parameter: params.args,
       fee: 100_000_000n,
       maxGas: 100_000_000n

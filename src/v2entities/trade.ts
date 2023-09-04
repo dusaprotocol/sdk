@@ -240,7 +240,7 @@ export class TradeV2 {
 
     return {
       methodName,
-      args: args.serialize(),
+      args,
       value
     }
   }
