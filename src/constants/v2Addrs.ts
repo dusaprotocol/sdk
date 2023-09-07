@@ -5,21 +5,21 @@ import { ChainId } from './internal'
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1FjTt2MkpXuxKwpEh8Ar2hfy7QfkdBii5sB61UjfGnajuMwvvF',
+  [ChainId.BUILDNET]: 'AS12i1UxxszrS56np9TQwig1ySGRR6CmePzGysVynXcjGAiw1HPAc',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1WvZWkdcRsa1irmgAB2zY92pnCgSvKKrnwActcv595jc4EN71b',
+  [ChainId.BUILDNET]: 'AS12ZhJYEffSWWyp7XvCoEMKFBnbXw5uwp6S3cY2xbEr76W3VL3Dk',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1tv8CFU6criWXZyFoJxawb6EuntYKRezqB2ahMQUCou9Kb76rS',
+  [ChainId.BUILDNET]: 'AS1pLmABmGWUTBoaMPwThauUy75PQi8WW29zVYMHbU54ep1o9Hbf',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
@@ -30,7 +30,7 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
 
 export const DCA_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1MyHBUoCM5MxAoTupEvUA3hPK286mnG5fMwc1D85c7yhkpNHm7',
+  [ChainId.BUILDNET]: 'AS12DEdQKeA1ynJhvv4Zt9o3wgdeNENDAAtrfq61yy1ST3uBNHqET',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
