@@ -1,5 +1,5 @@
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
-import { AddParameters, RemoveParameters, SwapParameters } from '../types'
+import { Client } from '@massalabs/massa-web3'
+import { LiquidityParameters, SwapParameters } from '../types'
 
 const U32_MAX = BigInt(2 ** 32 - 1)
 
@@ -17,18 +17,7 @@ export class IRouter {
     })
   }
 
-  async add(params: AddParameters) {
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: params.methodName,
-      coins: params.value,
-      parameter: params.args,
-      fee: 100_000_000n,
-      maxGas: U32_MAX
-    })
-  }
-
-  async remove(params: RemoveParameters) {
+  async addOrRemove(params: LiquidityParameters) {
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
