@@ -34,7 +34,7 @@ export interface RouterPathParameters {
   tokenPath: Address[]
 }
 
-export const ROUTER_METHODS = [
+export const SWAP_ROUTER_METHODS = [
   'swapExactMASForTokens',
   'swapExactTokensForMAS',
   'swapExactTokensForTokens',
@@ -47,12 +47,12 @@ export const ROUTER_METHODS = [
   'swapExactTokensForMASSupportingFeeOnTransferTokens',
   'swapExactTokensForTokensSupportingFeeOnTransferTokens'
 ] as const
-export type RouterMethod = (typeof ROUTER_METHODS)[number]
+export type SwapRouterMethod = (typeof SWAP_ROUTER_METHODS)[number]
 
-/** The parameters to use in the call to the DEX V2 Router to execute a trade. */
+/** The parameters to use in the call to the DEX Router to execute a trade. */
 export interface SwapParameters {
   // The method to call on LBRouter
-  methodName: RouterMethod
+  methodName: SwapRouterMethod
   // The arguments to pass to the method, all hex encoded.
   args: Args
   // The amount of nano to send.

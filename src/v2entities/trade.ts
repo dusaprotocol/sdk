@@ -9,7 +9,7 @@ import {
   Quote,
   RouterPathParameters,
   Address,
-  RouterMethod
+  SwapRouterMethod
 } from '../types'
 import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
 import {
@@ -160,7 +160,7 @@ export class TradeV2 {
 
     const { methodName, args, value } = ((
       tradeType: TradeType
-    ): { methodName: RouterMethod; args: Args; value: bigint } => {
+    ): { methodName: SwapRouterMethod; args: Args; value: bigint } => {
       const args: Args = new Args()
       let value = 0n
       switch (tradeType) {
