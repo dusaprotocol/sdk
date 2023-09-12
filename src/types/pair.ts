@@ -46,6 +46,14 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
 export interface LBPairReservesAndId {
   reserveX: bigint
   reserveY: bigint
+  feesX: {
+    total: bigint
+    protocol: bigint
+  }
+  feesY: {
+    total: bigint
+    protocol: bigint
+  }
   activeId: number
 }
 
