@@ -180,6 +180,13 @@ export const getBidAskDistributionFromBinRange = (
     _distributionX: number[] = [],
     _distributionY: number[] = []
 
+  if (binRange.length === 1)
+    return {
+      deltaIds,
+      distributionX: [1n],
+      distributionY: [1n]
+    }
+
   // range only includes B tokens (Y tokens)
   if (binRange[1] <= activeId && parsedAmountA.raw.toString() === '0') {
     const negDelta = binRange[1] - binRange[0] + 1
@@ -241,7 +248,7 @@ export const getBidAskDistributionFromBinRange = (
     ]
 
     // dist = 1/R^2 * i
-    const rSquareY = Math.pow(negativeDeltaIds[0], 2)
+    const rSquareY = Math.pow(negativeDeltaIds[0] || 1, 2)
     _distributionY = [
       ...negativeDeltaIds.map((i) => (-1 * (i - 1)) / rSquareY),
       1 / rSquareY,
@@ -280,6 +287,13 @@ export const getCurveDistributionFromBinRange = (
   let deltaIds: number[] = [],
     _distributionX: number[] = [],
     _distributionY: number[] = []
+
+  if (binRange.length === 1)
+    return {
+      deltaIds,
+      distributionX: [1n],
+      distributionY: [1n]
+    }
 
   // get sigma based on radius R
   const getSigma = (_R: number) => {
@@ -374,7 +388,7 @@ export const getCurveDistributionFromBinRange = (
 
     // radius is num of bins
     const RX = positiveDeltaIds.length
-    const sigmaX = getSigma(RX)
+    const sigmaX = getSigma(RX) || 0.5
 
     // A = 1 / (sigma  * sqrt(2 * pi))
     const AX = 1 / (Math.sqrt(Math.PI * 2) * sigmaX)
@@ -391,7 +405,7 @@ export const getCurveDistributionFromBinRange = (
 
     // radius is num of bins
     const RY = negativeDeltaIds.length
-    const sigmaY = getSigma(RY)
+    const sigmaY = getSigma(RY) || 0.5
 
     // A = 1 / (sigma  * sqrt(2 * pi))
     const AY = 1 / (Math.sqrt(Math.PI * 2) * sigmaY)

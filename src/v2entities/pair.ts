@@ -238,6 +238,7 @@ export class PairV2 {
     distributionX: bigint[]
     distributionY: bigint[]
   } {
+    // TODO: refactor this /src/types/pair
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const tokenX = token0isX ? token0Amount.token : token1Amount.token
     const tokenY = token0isX ? token1Amount.token : token0Amount.token
