@@ -124,7 +124,7 @@ export interface RemoveLiquidityParameters {
 }
 
 export const LIQUIDITY_ROUTER_METHODS = [
-  'addLiquidty',
+  'addLiquidity',
   'addLiquidityMAS',
   'removeLiquidity',
   'removeLiquidityMAS'
