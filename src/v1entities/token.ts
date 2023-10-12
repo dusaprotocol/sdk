@@ -79,7 +79,7 @@ const nullToken = new Token(ChainId.MAINNET, '', 0, '', '')
 
 const wmasName = 'Wrapped Massa'
 const wmasSymbol = 'WMAS'
-const wmasDecimals = 9
+const wmasDecimals = 18
 export const WMAS: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
@@ -95,7 +95,7 @@ export const WMAS: { [chainId in ChainId]: Token } = {
 
 const usdcName = 'USD Coin'
 const usdcSymbol = 'USDC'
-const usdcDecimals = 9
+const usdcDecimals = 18
 export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
@@ -112,7 +112,7 @@ USDC[ChainId.BUILDNET]
 
 const wethName = 'Wrapped Ether'
 const wethSymbol = 'WETH'
-const wethDecimals = 9
+const wethDecimals = 18
 export const WETH: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
