@@ -152,10 +152,10 @@ export const getUniformDistributionFromBinRange = (
   return {
     deltaIds,
     distributionX: _distributionX.map((el) =>
-      parseEther(el.toFixed(parsedAmountA.currency.decimals))
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
     ),
     distributionY: _distributionY.map((el) =>
-      parseEther(el.toFixed(parsedAmountB.currency.decimals))
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
     )
   }
 }
@@ -260,10 +260,10 @@ export const getBidAskDistributionFromBinRange = (
   return {
     deltaIds,
     distributionX: _distributionX.map((el) =>
-      parseEther(el.toFixed(parsedAmountA.currency.decimals))
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
     ),
     distributionY: _distributionY.map((el) =>
-      parseEther(el.toFixed(parsedAmountB.currency.decimals))
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
     )
   }
 }
@@ -388,7 +388,7 @@ export const getCurveDistributionFromBinRange = (
 
     // radius is num of bins
     const RX = positiveDeltaIds.length
-    const sigmaX = getSigma(RX) || 0.5
+    const sigmaX = getSigma(RX)
 
     // A = 1 / (sigma  * sqrt(2 * pi))
     const AX = 1 / (Math.sqrt(Math.PI * 2) * sigmaX)
@@ -405,7 +405,7 @@ export const getCurveDistributionFromBinRange = (
 
     // radius is num of bins
     const RY = negativeDeltaIds.length
-    const sigmaY = getSigma(RY) || 0.5
+    const sigmaY = getSigma(RY)
 
     // A = 1 / (sigma  * sqrt(2 * pi))
     const AY = 1 / (Math.sqrt(Math.PI * 2) * sigmaY)
@@ -425,10 +425,14 @@ export const getCurveDistributionFromBinRange = (
   return {
     deltaIds,
     distributionX: _distributionX.map((el) =>
-      parseEther(el.toFixed(parsedAmountA.currency.decimals))
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
     ),
     distributionY: _distributionY.map((el) =>
-      parseEther(el.toFixed(parsedAmountB.currency.decimals))
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
     )
   }
+}
+
+const parseDistributionValue = (value: number, decimals: number) => {
+  return parseEther(`${parseFloat(value.toFixed(decimals))}`)
 }
