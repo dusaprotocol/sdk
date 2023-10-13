@@ -420,14 +420,21 @@ export const getCurveDistributionFromBinRange = (
       ...Array(posDelta).fill(0)
     ]
   }
+  const normalizeDistribution = (distribution: number[]): number[] => {
+    const total = distribution.reduce((acc, val) => acc + val, 0)
+    return distribution.map((val) => val / total)
+  }
+
+  const normalizedDistributionX = normalizeDistribution(_distributionX)
+  const normalizedDistributionY = normalizeDistribution(_distributionY)
 
   // return
   return {
     deltaIds,
-    distributionX: _distributionX.map((el) =>
+    distributionX: normalizedDistributionX.map((el) =>
       parseDistributionValue(el, parsedAmountA.currency.decimals)
     ),
-    distributionY: _distributionY.map((el) =>
+    distributionY: normalizedDistributionY.map((el) =>
       parseDistributionValue(el, parsedAmountB.currency.decimals)
     )
   }
