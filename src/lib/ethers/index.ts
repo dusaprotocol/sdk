@@ -1,6 +1,6 @@
 import { BigintIsh } from './../../constants'
 
-export const parseEther = (ether: string): bigint => parseUnits(ether, 9)
+export const parseEther = (ether: string): bigint => parseUnits(ether, 18)
 export const parseUnits = (units: string, decimals: number): bigint =>
   BigInt(Math.round(parseFloat(units) * 10 ** decimals))
 
