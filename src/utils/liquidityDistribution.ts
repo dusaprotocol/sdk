@@ -46,27 +46,6 @@ export const getDistributionFromTargetBin = (
 }
 
 /**
- * Returns normalized array, e.g. normalize so array sums to 1e18 within 1e5 precision
- * @param dist
- * @param sumTo
- * @param precision
- * @returns
- */
-export const normalizeDist = (
-  dist: bigint[],
-  sumTo: bigint,
-  precision: bigint
-): bigint[] => {
-  const sumDist = dist.reduce((sum, cur) => sum + cur, 0n)
-  if (sumDist == 0n) {
-    return dist
-  }
-  const factor = (sumDist * precision) / sumTo
-  const normalized = dist.map((d) => (d * precision) / factor)
-  return normalized
-}
-
-/**
  * Returns distribution params for on-chain addLiquidity() call when liquidity is focused at a custom range of bins
  *
  * @param {number} activeId
@@ -148,15 +127,23 @@ export const getUniformDistributionFromBinRange = (
     ]
   }
 
+  // normalize distributions
+  const normalizedDistX = normalizeDist(
+    _distributionX.map((el) =>
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
+    )
+  )
+  const normalizedDistY = normalizeDist(
+    _distributionY.map((el) =>
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
+    )
+  )
+
   // return
   return {
     deltaIds,
-    distributionX: _distributionX.map((el) =>
-      parseDistributionValue(el, parsedAmountA.currency.decimals)
-    ),
-    distributionY: _distributionY.map((el) =>
-      parseDistributionValue(el, parsedAmountB.currency.decimals)
-    )
+    distributionX: normalizedDistX,
+    distributionY: normalizedDistY
   }
 }
 
@@ -179,13 +166,6 @@ export const getBidAskDistributionFromBinRange = (
   let deltaIds: number[] = [],
     _distributionX: number[] = [],
     _distributionY: number[] = []
-
-  if (binRange.length === 1)
-    return {
-      deltaIds,
-      distributionX: [1n],
-      distributionY: [1n]
-    }
 
   // range only includes B tokens (Y tokens)
   if (binRange[1] <= activeId && parsedAmountA.raw.toString() === '0') {
@@ -248,7 +228,7 @@ export const getBidAskDistributionFromBinRange = (
     ]
 
     // dist = 1/R^2 * i
-    const rSquareY = Math.pow(negativeDeltaIds[0] || 1, 2)
+    const rSquareY = Math.pow(negativeDeltaIds[0], 2)
     _distributionY = [
       ...negativeDeltaIds.map((i) => (-1 * (i - 1)) / rSquareY),
       1 / rSquareY,
@@ -256,18 +236,23 @@ export const getBidAskDistributionFromBinRange = (
     ]
   }
 
-  const normalizedDistributionX = normalizeDistribution(_distributionX)
-  const normalizedDistributionY = normalizeDistribution(_distributionY)
+  // normalize distributions
+  const normalizedDistX = normalizeDist(
+    _distributionX.map((el) =>
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
+    )
+  )
+  const normalizedDistY = normalizeDist(
+    _distributionY.map((el) =>
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
+    )
+  )
 
   // return
   return {
     deltaIds,
-    distributionX: normalizedDistributionX.map((el) =>
-      parseDistributionValue(el, parsedAmountA.currency.decimals)
-    ),
-    distributionY: normalizedDistributionY.map((el) =>
-      parseDistributionValue(el, parsedAmountB.currency.decimals)
-    )
+    distributionX: normalizedDistX,
+    distributionY: normalizedDistY
   }
 }
 
@@ -290,13 +275,6 @@ export const getCurveDistributionFromBinRange = (
   let deltaIds: number[] = [],
     _distributionX: number[] = [],
     _distributionY: number[] = []
-
-  if (binRange.length === 1)
-    return {
-      deltaIds,
-      distributionX: [1n],
-      distributionY: [1n]
-    }
 
   // get sigma based on radius R
   const getSigma = (_R: number) => {
@@ -424,18 +402,23 @@ export const getCurveDistributionFromBinRange = (
     ]
   }
 
-  const normalizedDistributionX = normalizeDistribution(_distributionX)
-  const normalizedDistributionY = normalizeDistribution(_distributionY)
+  // normalize distributions
+  const normalizedDistX = normalizeDist(
+    _distributionX.map((el) =>
+      parseDistributionValue(el, parsedAmountA.currency.decimals)
+    )
+  )
+  const normalizedDistY = normalizeDist(
+    _distributionY.map((el) =>
+      parseDistributionValue(el, parsedAmountB.currency.decimals)
+    )
+  )
 
   // return
   return {
     deltaIds,
-    distributionX: normalizedDistributionX.map((el) =>
-      parseDistributionValue(el, parsedAmountA.currency.decimals)
-    ),
-    distributionY: normalizedDistributionY.map((el) =>
-      parseDistributionValue(el, parsedAmountB.currency.decimals)
-    )
+    distributionX: normalizedDistX,
+    distributionY: normalizedDistY
   }
 }
 
@@ -443,7 +426,31 @@ const parseDistributionValue = (value: number, decimals: number) => {
   return parseEther(`${parseFloat(value.toFixed(decimals))}`)
 }
 
-const normalizeDistribution = (distribution: number[]): number[] => {
-  const total = distribution.reduce((acc, val) => acc + val, 0)
-  return distribution.map((val) => val / total)
+const normalizeDist = (dist: bigint[]): bigint[] => {
+  const sumTo = BigInt(1e18)
+  const precision = BigInt(1e18)
+
+  const sumDist = dist.reduce((sum, cur) => sum + cur, 0n)
+  if (sumDist === 0n) {
+    return dist
+  }
+
+  const factor = (sumDist * precision) / sumTo
+  const normalized = dist.map((d) => (d * precision) / factor)
+  const normalizedSum = normalized.reduce((sum, cur) => sum + cur, 0n)
+
+  // Check if the normalized sum exceeds 1e18
+  if (normalizedSum > sumTo) {
+    // Find out how much the sum exceeds 1e18
+    const excess = normalizedSum - sumTo
+    // Find the first non-null bigint in the array and subtract the excess
+    for (let i = 0; i < normalized.length; i++) {
+      if (normalized[i] > 0n) {
+        normalized[i] = normalized[i] - excess
+        break
+      }
+    }
+  }
+
+  return normalized
 }
