@@ -44,15 +44,15 @@ export class IRouter {
         targetFunction: 'getSwapIn',
         parameter: new Args()
           .addString(params.pairAddress)
-          .addU64(params.amountIn)
+          .addU256(params.amountIn)
           .addBool(params.swapForY),
         maxGas: U32_MAX
       })
       .then((result) => {
         const args = new Args(result.returnValue)
         return {
-          amountIn: args.nextU64(),
-          feesIn: args.nextU64()
+          amountIn: args.nextU256(),
+          feesIn: args.nextU256()
         }
       })
   }
@@ -67,15 +67,15 @@ export class IRouter {
         targetFunction: 'getSwapOut',
         parameter: new Args()
           .addString(params.pairAddress)
-          .addU64(params.amountIn)
+          .addU256(params.amountIn)
           .addBool(params.swapForY),
         maxGas: U32_MAX
       })
       .then((result) => {
         const args = new Args(result.returnValue)
         return {
-          amountOut: args.nextU64(),
-          feesIn: args.nextU64()
+          amountOut: args.nextU256(),
+          feesIn: args.nextU256()
         }
       })
   }
