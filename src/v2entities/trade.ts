@@ -11,7 +11,7 @@ import {
   Address,
   SwapRouterMethod
 } from '../types'
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -170,7 +170,7 @@ export class TradeV2 {
               ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
               : 'swapExactMASForTokens'
             args
-              .addU64(amountOut)
+              .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -182,8 +182,8 @@ export class TradeV2 {
               ? 'swapExactTokensForMASSupportingFeeOnTransferTokens'
               : 'swapExactTokensForMAS'
             args
-              .addU64(amountIn)
-              .addU64(amountOut)
+              .addU256(amountIn)
+              .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -194,8 +194,8 @@ export class TradeV2 {
               ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
               : 'swapExactTokensForTokens'
             args
-              .addU64(amountIn)
-              .addU64(amountOut)
+              .addU256(amountIn)
+              .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -207,7 +207,7 @@ export class TradeV2 {
           if (nativeIn) {
             const methodName = 'swapMASForExactTokens'
             args
-              .addU64(amountOut)
+              .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -217,8 +217,8 @@ export class TradeV2 {
           } else if (nativeOut) {
             const methodName = 'swapTokensForExactMAS'
             args
-              .addU64(amountOut)
-              .addU64(amountIn)
+              .addU256(amountOut)
+              .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -227,8 +227,8 @@ export class TradeV2 {
           } else {
             const methodName = 'swapTokensForExactTokens'
             args
-              .addU64(amountOut)
-              .addU64(amountIn)
+              .addU256(amountOut)
+              .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
@@ -257,7 +257,9 @@ export class TradeV2 {
 
     // pool fee % for each step of the swap from quoter contract
     // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
-    const feesPct = this.quote.fees.map((bn) => new Percent(bn, 10n ** 9n))
+    const feesPct = this.quote.fees.map(
+      (bn) => new Percent(bn, MassaUnits.oneMassa)
+    )
 
     // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
@@ -336,6 +338,7 @@ export class TradeV2 {
             routeStrArr,
             amountIn
           )
+          console.log(quote)
           const trade: TradeV2 = new TradeV2(
             route,
             tokenAmountIn.token,

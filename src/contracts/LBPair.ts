@@ -16,15 +16,15 @@ export class ILBPair {
 
         const args = new Args(data)
         const activeId = args.nextU32()
-        const reserveX = args.nextU64()
-        const reserveY = args.nextU64()
+        const reserveX = args.nextU256()
+        const reserveY = args.nextU256()
         const feesX = {
-          total: args.nextU64(),
-          protocol: args.nextU64()
+          total: args.nextU256(),
+          protocol: args.nextU256()
         }
         const feesY = {
-          total: args.nextU64(),
-          protocol: args.nextU64()
+          total: args.nextU256(),
+          protocol: args.nextU256()
         }
         return { activeId, reserveX, reserveY, feesX, feesY }
       })

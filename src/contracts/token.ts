@@ -1,4 +1,4 @@
-import { Args, Client, bytesToU64 } from '@massalabs/massa-web3'
+import { Args, Client, bytesToU256 } from '@massalabs/massa-web3'
 
 export class IERC20 {
   constructor(public address: string, private client: Client) {}
@@ -13,7 +13,7 @@ export class IERC20 {
         maxGas: 1_000_000_000n
       })
       .then((res) => {
-        return bytesToU64(res.returnValue)
+        return bytesToU256(res.returnValue)
       })
   }
 
@@ -27,7 +27,7 @@ export class IERC20 {
         maxGas: 1_000_000_000n
       })
       .then((res) => {
-        return bytesToU64(res.returnValue)
+        return bytesToU256(res.returnValue)
       })
   }
 
