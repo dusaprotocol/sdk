@@ -338,7 +338,6 @@ export class TradeV2 {
             routeStrArr,
             amountIn
           )
-          console.log(quote)
           const trade: TradeV2 = new TradeV2(
             route,
             tokenAmountIn.token,
