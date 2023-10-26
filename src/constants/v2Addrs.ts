@@ -41,3 +41,10 @@ export const LIMIT_ORDER_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
+
+export const VAULT_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.DUSANET]: '',
+  [ChainId.BUILDNET]: '',
+  [ChainId.TESTNET]: '',
+  [ChainId.MAINNET]: ''
+}
