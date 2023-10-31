@@ -9,13 +9,12 @@ import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
-import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
+import { ChainId } from '../constants'
 import {
   ClientFactory,
   DefaultProviderUrls,
   ProviderType
 } from '@massalabs/massa-web3'
-import { IFactory, ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const BUILDNET_URL = DefaultProviderUrls.BUILDNET
@@ -37,17 +36,6 @@ describe('TradeV2 entity', async () => {
   // init input / output
   const inputToken = USDC
   const outputToken = WETH
-  const binStep = 10
-
-  const factory = new IFactory(LB_FACTORY_ADDRESS[CHAIN_ID], client)
-  const lbPairAddress = (
-    await factory.getLBPairInformation(
-      inputToken.address,
-      outputToken.address,
-      binStep
-    )
-  ).LBPair
-  const lbPairContract = new ILBPair(lbPairAddress, client)
 
   // token pairs
   const allTokenPairs = PairV2.createAllTokenPairs(
