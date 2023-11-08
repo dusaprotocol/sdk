@@ -116,7 +116,7 @@ export const USDT: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS18fPrXMkQT2j5cMm7x9tNoMzw13wfUaKU39L14CdRVq4Rqypwu',
+    'AS123VrJGwJHT9xf3eB8zucijafzXb1NiqDpMWtX39DL1rLWt8gpS',
     usdtDecimals,
     usdtSymbol,
     usdtName
