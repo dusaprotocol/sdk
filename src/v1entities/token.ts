@@ -77,14 +77,14 @@ export function currencyEquals(
 
 const nullToken = new Token(ChainId.MAINNET, '', 0, '', '')
 
-const wmasName = 'Wrapped Massa'
-const wmasSymbol = 'WMAS'
+const wmasName = 'Massa'
+const wmasSymbol = 'MAS'
 const wmasDecimals = 9
 export const WMAS: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS122W8t222jZJnh3p6n6QGFprik2UcJx2R5KCnoEX2ChZYJGUpfJ',
+    'AS1ZpbV7rxMrbMUCgaFaHQLpXyCspNC65mYHPcpaT1ArHbqxt4R8',
     wmasDecimals,
     wmasSymbol,
     wmasName
@@ -100,7 +100,7 @@ export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS18fPrXMkQT2j5cMm7x9tNoMzw13wfUaKU39L14CdRVq4Rqypwu',
+    'AS1297hjduYBnMpEAcfyBYv8uYCdLH1HLyHoRJYeKB2jqfx9u5C2t',
     usdcDecimals,
     usdcSymbol,
     usdcName
@@ -116,7 +116,7 @@ export const USDT: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS123VrJGwJHT9xf3eB8zucijafzXb1NiqDpMWtX39DL1rLWt8gpS',
+    'AS12QobnAUYvC8pBngTb2DJMJr6DJccU2QEzFUdLY7iAfQxURbemK',
     usdtDecimals,
     usdtSymbol,
     usdtName
@@ -132,7 +132,7 @@ export const WETH: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS126JEgAaCvk8FrCg1Zcy7LhYJyLAKfxJ2BpmzGJmnXNxEpPkiu3',
+    'AS12P7ismSUCGrTQhcE8riJfvGfHnDFgmwd2dsqjMbSMhqpGTHho2',
     wethDecimals,
     wethSymbol,
     wethName
@@ -148,7 +148,7 @@ export const WBTC: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1LkftcBPso2Lz3d4qoMTFVayUpuRWcZ35LAtkE3Ar1bVrQWw6b',
+    'AS12HkgBettCHBwTDsP33jEssfVQf5zofbhhPvcjryHBB9S5DpGuj',
     btcDecimals,
     btcSymbol,
     btcName
