@@ -11,7 +11,7 @@ import {
   Address,
   SwapRouterMethod
 } from '../types'
-import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -257,9 +257,7 @@ export class TradeV2 {
 
     // pool fee % for each step of the swap from quoter contract
     // e.g. [WMAS-USDC pool 0.05%, USDC-USDT pool 0.01%]
-    const feesPct = this.quote.fees.map(
-      (bn) => new Percent(bn, MassaUnits.oneMassa)
-    )
+    const feesPct = this.quote.fees.map((bn) => new Percent(bn, BigInt(1e18)))
 
     // actual fee amounts paid at each step of the swap; e.g. [0.005 WMAS, 0.002 USDC]
     const fees = feesPct.map((pct, i) => {
