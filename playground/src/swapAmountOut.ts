@@ -1,6 +1,10 @@
 import {
   ChainId,
+  IERC20,
+  IRouter,
+  LB_ROUTER_ADDRESS,
   PairV2,
+  Percent,
   RouteV2,
   TokenAmount,
   TradeV2,
@@ -15,8 +19,9 @@ import {
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
+import { awaitFinalization, logEvents } from './utils'
 
-export const swapAmountOut = async () => {
+export const swapAmountOut = async (executeSwap = false) => {
   console.debug('\n------- swapAmountOut() called -------\n')
 
   // Init constants
@@ -24,6 +29,7 @@ export const swapAmountOut = async () => {
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  if (!account.address) throw new Error('Missing address in account')
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
@@ -46,7 +52,7 @@ export const swapAmountOut = async () => {
   const typedValueOutParsed = parseUnits(
     typedValueOut,
     outputToken.decimals
-  ).toString() // returns 10000
+  ).toString() // returns 1000000
   const amountOut = new TokenAmount(outputToken, BigInt(typedValueOutParsed)) // wrap into TokenAmount
 
   // get all [Token, Token] combinations
@@ -62,13 +68,16 @@ export const swapAmountOut = async () => {
   // routes to consider in finding the best trade
   const allRoutes = RouteV2.createAllRoutes(allPairs, inputToken, outputToken) // console.debug('allRoutes', allRoutes)
 
-  // get tradess
+  const isNativeIn = false
+  const isNativeOut = true
+
+  // get trades
   const trades = await TradeV2.getTradesExactOut(
     allRoutes,
     amountOut,
     inputToken,
-    false,
-    false,
+    isNativeIn,
+    isNativeOut,
     client,
     CHAIN_ID
   )
@@ -87,4 +96,32 @@ export const swapAmountOut = async () => {
 
   const bestTrade = TradeV2.chooseBestTrade(trades, false)
   console.log('bestTrade', bestTrade.toLog())
+
+  if (!bestTrade || !executeSwap) return
+
+  // increase allowance
+  const txIdAllowance = await new IERC20(inputToken.address, client).approve(
+    LB_ROUTER_ADDRESS[CHAIN_ID],
+    bestTrade.inputAmount.raw
+  )
+
+  if (txIdAllowance) {
+    console.log('txIdAllowance', txIdAllowance)
+    await awaitFinalization(client, txIdAllowance)
+    logEvents(client, txIdAllowance)
+  }
+
+  // execute trade
+  const params = bestTrade.swapCallParameters({
+    ttl: 1000 * 60 * 10, // 10 minutes
+    recipient: account.address,
+    allowedSlippage: new Percent('5')
+  })
+  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
+  const txId = await router.swap(params)
+  console.log('txId', txId)
+
+  // await tx confirmation and log events
+  await awaitFinalization(client, txId)
+  logEvents(client, txId)
 }

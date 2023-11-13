@@ -23,7 +23,7 @@ import {
 } from '@massalabs/massa-web3'
 import { awaitFinalization, logEvents } from './utils'
 
-export const swapAmountIn = async () => {
+export const swapAmountIn = async (executeSwap = false) => {
   console.log('\n------- swapAmountIn() called -------\n')
 
   // Init constants
@@ -54,7 +54,7 @@ export const swapAmountIn = async () => {
   const typedValueInParsed = parseUnits(
     typedValueIn,
     inputToken.decimals
-  ).toString() // returns 10000
+  ).toString() // returns 20000000
   const amountIn = new TokenAmount(inputToken, typedValueInParsed) // wrap into TokenAmount
 
   // get all [Token, Token] combinations
@@ -75,13 +75,16 @@ export const swapAmountIn = async () => {
     2
   ) // console.log('allRoutes', allRoutes)
 
+  const isNativeIn = false
+  const isNativeOut = true
+
   // get trades
   const trades = await TradeV2.getTradesExactIn(
     allRoutes,
     amountIn,
     outputToken,
-    false,
-    false,
+    isNativeIn,
+    isNativeOut,
     client,
     CHAIN_ID
   ) // console.log('trades', trades.map(el=>el.toLog()))
@@ -92,6 +95,7 @@ export const swapAmountIn = async () => {
     console.log('\n', trade.toLog())
     const { totalFeePct, feeAmountIn } = trade.getTradeFee()
     console.debug('Total fees percentage', totalFeePct.toSignificant(6), '%')
+    console.log(feeAmountIn.raw)
     console.debug(
       `Fee: ${feeAmountIn.toSignificant(6)} ${feeAmountIn.token.symbol}`
     )
@@ -100,16 +104,19 @@ export const swapAmountIn = async () => {
   const bestTrade = TradeV2.chooseBestTrade(trades, true)
   console.log('bestTrade', bestTrade?.toLog())
 
+  if (!bestTrade || !executeSwap) return
+
   // increase allowance
   const txIdAllowance = await new IERC20(inputToken.address, client).approve(
     LB_ROUTER_ADDRESS[CHAIN_ID],
     bestTrade.inputAmount.raw
   )
-  console.log('txIdAllowance', txIdAllowance)
 
-  // await tx confirmation and log events
-  await awaitFinalization(client, txIdAllowance)
-  logEvents(client, txIdAllowance)
+  if (txIdAllowance) {
+    console.log('txIdAllowance', txIdAllowance)
+    await awaitFinalization(client, txIdAllowance)
+    logEvents(client, txIdAllowance)
+  }
 
   // execute trade
   const params = bestTrade.swapCallParameters({
