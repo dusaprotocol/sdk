@@ -403,8 +403,8 @@ export class TradeV2 {
           )
           const trade: TradeV2 = new TradeV2(
             route,
-            tokenAmountOut.token,
             tokenIn,
+            tokenAmountOut.token,
             quote,
             isExactIn,
             isNativeIn,
