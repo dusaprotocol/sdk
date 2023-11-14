@@ -4,6 +4,7 @@ export {
   LB_FACTORY_ADDRESS,
   DCA_MANAGER_ADDRESS,
   LIMIT_ORDER_MANAGER_ADDRESS,
+  VAULT_MANAGER_ADDRESS,
   ChainId
 } from './constants'
 
