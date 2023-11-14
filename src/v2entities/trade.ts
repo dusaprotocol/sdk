@@ -449,7 +449,8 @@ export class TradeV2 {
       } else {
         if (
           trade.inputAmount.raw > 0n &&
-          trade.inputAmount.raw < bestTrade.inputAmount.raw
+          (bestTrade.inputAmount.raw === 0n ||
+            trade.inputAmount.raw < bestTrade.inputAmount.raw)
         ) {
           bestTrade = trade
         }
