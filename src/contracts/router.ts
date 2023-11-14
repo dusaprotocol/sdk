@@ -3,11 +3,12 @@ import { LiquidityParameters, SwapParameters } from '../types'
 
 const U32_MAX = 2n ** 32n - 1n
 
-interface GetSwap {
+interface GetSwapParams {
   pairAddress: string
-  amountIn: bigint
   swapForY: boolean
 }
+type GetSwapInParams = GetSwapParams & { amountOut: bigint }
+type GetSwapOutParams = GetSwapParams & { amountIn: bigint }
 
 export class IRouter {
   constructor(public address: string, private client: Client) {}
@@ -35,7 +36,7 @@ export class IRouter {
   }
 
   async getSwapIn(
-    params: GetSwap
+    params: GetSwapInParams
   ): Promise<{ amountIn: bigint; feesIn: bigint }> {
     return this.client
       .smartContracts()
@@ -44,7 +45,7 @@ export class IRouter {
         targetFunction: 'getSwapIn',
         parameter: new Args()
           .addString(params.pairAddress)
-          .addU256(params.amountIn)
+          .addU256(params.amountOut)
           .addBool(params.swapForY),
         maxGas: U32_MAX
       })
@@ -58,7 +59,7 @@ export class IRouter {
   }
 
   async getSwapOut(
-    params: GetSwap
+    params: GetSwapOutParams
   ): Promise<{ amountOut: bigint; feesIn: bigint }> {
     return this.client
       .smartContracts()

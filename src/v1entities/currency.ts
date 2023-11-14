@@ -47,17 +47,13 @@ export class CNATIVE extends NativeCurrency {
     const name = 'Massa'
     super(chainId, 9, symbol, name)
   }
+
   public equals(other: NativeCurrency): boolean {
     return other.isNative && other.chainId === this.chainId
   }
 
-  private static _etherCache: { [chainId: number]: CNATIVE } = {}
-
   public static onChain(chainId: number): CNATIVE {
-    return (
-      this._etherCache[chainId] ??
-      (this._etherCache[chainId] = new CNATIVE(chainId))
-    )
+    return new CNATIVE(chainId)
   }
 }
 
