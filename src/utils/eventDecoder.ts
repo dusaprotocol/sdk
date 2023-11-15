@@ -13,8 +13,7 @@ const extractParams = (bytes: string): string[] =>
   bytes.split(':')[1].split(',')
 
 export class EventDecoder {
-  static decodeU256 = (bytes: string): bigint =>
-    bytesToU256(strEncodeUTF16(bytes))
+  // CORE
 
   static decodeSwap = (
     bytes: string
@@ -66,6 +65,46 @@ export class EventDecoder {
     }
   }
 
+  static decodeCollectFees = (
+    bytes: string
+  ): {
+    caller: string
+    to: string
+    amountX: bigint
+    amountY: bigint
+  } => {
+    const [caller, to, amountX, amountY] = extractParams(bytes)
+
+    return {
+      caller,
+      to,
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
+    }
+  }
+
+  // PERIPHERY
+
+  /**
+   * Decode start/update/stop DCA events
+   * @param bytes
+   */
+  static decodeDCA = (
+    bytes: string
+  ): {
+    user: string
+    id: number
+  } => {
+    const [user, id] = extractParams(bytes)
+
+    return {
+      user,
+      id: parseInt(id)
+    }
+  }
+
+  // ERC20 STANDARD
+
   static decodeTransfer = (
     bytes: string
   ): {
@@ -96,5 +135,15 @@ export class EventDecoder {
       spender,
       amount: EventDecoder.decodeU256(amount)
     }
+  }
+
+  // MISC
+
+  static decodeU256 = (bytes: string): bigint =>
+    bytesToU256(strEncodeUTF16(bytes))
+
+  static decodeError = (bytes: string): string => {
+    const errorSplit = bytes.split('error: ')
+    return errorSplit[errorSplit.length - 1].split(' at')[0]
   }
 }
