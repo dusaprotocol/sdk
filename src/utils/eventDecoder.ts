@@ -125,6 +125,24 @@ export class EventDecoder {
     }
   }
 
+  /**
+   * Decode add/remove limit order events
+   * @param bytes
+   */
+  static decodeLimitOrder = (
+    bytes: string
+  ): {
+    from: string
+    id: number
+  } => {
+    const [from, id] = extractParams(bytes)
+
+    return {
+      from,
+      id: parseInt(id)
+    }
+  }
+
   // ERC20 STANDARD
 
   static decodeTransfer = (

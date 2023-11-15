@@ -1,5 +1,6 @@
 import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
 import { Token } from 'v1entities'
+import { Address } from './serializable'
 
 export class LimitOrder implements ISerializable<LimitOrder> {
   constructor(
@@ -54,8 +55,7 @@ export interface DCA {
   amountEachDCA: bigint
   interval: number
   nbOfDCA: number
-  tokenIn: Token
-  tokenOut: Token
+  tokenPath: Token[]
   startTime: number
   endTime: number
 }
@@ -64,7 +64,6 @@ export interface StartDCAParameters {
   amountEachDCA: bigint
   interval: number
   nbOfDCA: number
-  tokenIn: string
-  tokenOut: string
+  tokenPath: Address[]
   startIn: number
 }
