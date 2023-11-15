@@ -1,2 +1,2 @@
 export * from './liquidityDistribution'
-export * from './encoder'
+export * from './eventDecoder'
