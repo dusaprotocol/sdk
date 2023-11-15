@@ -103,6 +103,28 @@ export class EventDecoder {
     }
   }
 
+  /**
+   * Decode deposit/withdraw autopool events
+   * @param bytes
+   */
+  static decodeVault = (
+    bytes: string
+  ): {
+    from: string
+    amountX: bigint
+    amountY: bigint
+    shares: bigint
+  } => {
+    const [from, amountX, amountY, shares] = extractParams(bytes)
+
+    return {
+      from,
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY),
+      shares: EventDecoder.decodeU256(shares)
+    }
+  }
+
   // ERC20 STANDARD
 
   static decodeTransfer = (
