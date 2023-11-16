@@ -1,4 +1,10 @@
-import { Args, Client, bytesToU256, bytesToStr } from '@massalabs/massa-web3'
+import {
+  Args,
+  Client,
+  bytesToU256,
+  bytesToStr,
+  byteToU8
+} from '@massalabs/massa-web3'
 
 const maxGas = 100_000_000n
 
@@ -39,6 +45,18 @@ export class IERC20 {
         maxGas
       })
       .then((res) => bytesToU256(res.returnValue))
+  }
+
+  async decimals(): Promise<number> {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: 'decimals',
+        parameter: new Args().serialize(),
+        maxGas
+      })
+      .then((res) => byteToU8(res.returnValue))
   }
 
   async name(): Promise<string> {

@@ -1,4 +1,4 @@
-import { Args, Client } from '@massalabs/massa-web3'
+import { Args, Client, bytesToStr, strToBytes } from '@massalabs/massa-web3'
 import { ArrayTypes } from '@massalabs/web3-utils'
 import { LBPairReservesAndId } from '../types'
 
@@ -30,6 +30,28 @@ export class ILBPair {
           protocol: args.nextU256()
         }
         return { activeId, reserveX, reserveY, feesX, feesY }
+      })
+  }
+
+  async getTokens(): Promise<[string, string]> {
+    return this.client
+      .publicApi()
+      .getDatastoreEntries([
+        {
+          address: this.address,
+          key: strToBytes('TOKEN_X')
+        },
+        {
+          address: this.address,
+          key: strToBytes('TOKEN_Y')
+        }
+      ])
+      .then((r) => {
+        if (!r[0].candidate_value || !r[1].candidate_value) throw new Error()
+        return [
+          bytesToStr(r[0].candidate_value),
+          bytesToStr(r[1].candidate_value)
+        ]
       })
   }
 
