@@ -1,4 +1,10 @@
-import { Args, Client, bytesToStr, strToBytes } from '@massalabs/massa-web3'
+import {
+  Args,
+  Client,
+  bytesToArray,
+  bytesToStr,
+  strToBytes
+} from '@massalabs/massa-web3'
 import { ArrayTypes } from '@massalabs/web3-utils'
 import { LBPairReservesAndId } from '../types'
 
@@ -52,6 +58,35 @@ export class ILBPair {
           bytesToStr(r[0].candidate_value),
           bytesToStr(r[1].candidate_value)
         ]
+      })
+  }
+
+  async getBins(): Promise<number[]> {
+    return this.client
+      .publicApi()
+      .getAddresses([this.address])
+      .then((res) => {
+        const keys = res[0].candidate_datastore_keys.map((key) =>
+          String.fromCharCode(...key)
+        )
+        return keys
+          .filter((key) => key.startsWith('bin::'))
+          .map((key) => Number(key.split('bin::')[1]))
+      })
+  }
+
+  async getUserBins(user: string): Promise<number[]> {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: 'getUserBins',
+        parameter: new Args().addString(user).serialize(),
+        maxGas
+      })
+      .then((res) => {
+        const bins = bytesToArray<number>(res.returnValue, ArrayTypes.U32)
+        return bins.sort((a, b) => a - b)
       })
   }
 
