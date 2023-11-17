@@ -1,5 +1,5 @@
 import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
-import { Token } from 'v1entities'
+import { Token } from '../v1entities'
 import { Address } from './serializable'
 
 export class LimitOrder implements ISerializable<LimitOrder> {
