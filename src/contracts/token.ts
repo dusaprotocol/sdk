@@ -106,14 +106,11 @@ export class IERC20 {
     })
   }
 
-  async transfer(spender: string, amount: bigint): Promise<string> {
-    const owner = this.client.wallet().getBaseAccount()?.address()
-    if (!owner) throw new Error('No base account')
-
+  async transfer(to: string, amount: bigint): Promise<string> {
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: 'transfer',
-      parameter: new Args().addString(spender).addU256(amount).serialize(),
+      parameter: new Args().addString(to).addU256(amount).serialize(),
       maxGas: 100_000_000n,
       fee: 0n,
       coins: 0n
