@@ -8,10 +8,12 @@ import {
   RouteV2,
   TokenAmount,
   TradeV2,
+  WBTC as _WBTC,
   USDC as _USDC,
   WETH as _WETH,
   WMAS as _WMAS,
-  parseUnits
+  parseUnits,
+  QuoterHelper
 } from '@dusalabs/sdk'
 import {
   Args,
@@ -44,8 +46,6 @@ export const swapAmountIn = async (executeSwap = false) => {
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
-  const WETH = _WETH[CHAIN_ID]
-  const BASES = [WMAS, USDC, WETH]
 
   // Init: user inputs
   const inputToken = USDC
@@ -57,52 +57,17 @@ export const swapAmountIn = async (executeSwap = false) => {
   ).toString() // returns 20000000
   const amountIn = new TokenAmount(inputToken, typedValueInParsed) // wrap into TokenAmount
 
-  // get all [Token, Token] combinations
-  const allTokenPairs = PairV2.createAllTokenPairs(
+  const bestTrade = await QuoterHelper.findBestPath(
     inputToken,
+    false,
     outputToken,
-    BASES
-  )
-
-  // get pairs
-  const allPairs = PairV2.initPairs(allTokenPairs) // console.log('allPairs', allPairs)
-
-  // routes to consider in finding the best trade
-  const allRoutes = RouteV2.createAllRoutes(
-    allPairs,
-    inputToken,
-    outputToken,
-    2
-  ) // console.log('allRoutes', allRoutes)
-
-  const isNativeIn = false
-  const isNativeOut = true
-
-  // get trades
-  const trades = await TradeV2.getTradesExactIn(
-    allRoutes,
+    true,
     amountIn,
-    outputToken,
-    isNativeIn,
-    isNativeOut,
+    true,
+    3,
     client,
     CHAIN_ID
-  ) // console.log('trades', trades.map(el=>el.toLog()))
-
-  for (let trade of trades) {
-    if (!trade) return
-
-    console.log('\n', trade.toLog())
-    const { totalFeePct, feeAmountIn } = trade.getTradeFee()
-    console.debug('Total fees percentage', totalFeePct.toSignificant(6), '%')
-    console.log(feeAmountIn.raw)
-    console.debug(
-      `Fee: ${feeAmountIn.toSignificant(6)} ${feeAmountIn.token.symbol}`
-    )
-  }
-
-  const bestTrade = TradeV2.chooseBestTrade(trades, true)
-  console.log('bestTrade', bestTrade?.toLog())
+  )
 
   if (!bestTrade || !executeSwap) return
 
