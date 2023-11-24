@@ -330,34 +330,48 @@ export class TradeV2 {
       return []
     }
 
-    const amountIn = tokenAmountIn.raw.toString()
+    const txs: Tx[] = routes.map((route) => {
+      const routeStrArr = route.pathToStrArr()
+      return new Tx(
+        'findBestPathFromAmountIn',
+        new Uint8Array(
+          new Args()
+            .addArray(routeStrArr, ArrayTypes.STRING)
+            .addU256(tokenAmountIn.raw)
+            .serialize()
+        ),
+        LB_QUOTER_ADDRESS[chainId]
+      )
+    })
 
-    const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], client)
-
-    const trades: Array<TradeV2 | undefined> = await Promise.all(
-      routes.map(async (route) => {
-        try {
-          const routeStrArr = route.pathToStrArr()
-          const quote: Quote = await quoter.findBestPathFromAmountIn(
-            routeStrArr,
-            amountIn
-          )
-          const trade: TradeV2 = new TradeV2(
-            route,
-            tokenAmountIn.token,
-            tokenOut,
-            quote,
-            isExactIn,
-            isNativeIn,
-            isNativeOut
-          )
-          return trade
-        } catch (e) {
-          console.debug('Error fetching quote:', e)
-          return undefined
-        }
-      })
+    const quotes: QuoteSer[] = await new IMulticall(
+      MULTICALL_ADDRESS[chainId],
+      client
     )
+      .aggregateMulticall(txs)
+      .then((res) => {
+        const bs = new Args(res.returnValue)
+        return routes.map(() => {
+          return new QuoteSer().deserialize(bs.nextUint8Array(), 0).instance
+        })
+      })
+    const trades: Array<TradeV2 | undefined> = quotes.map((quote, i) => {
+      try {
+        const trade: TradeV2 = new TradeV2(
+          routes[i],
+          tokenAmountIn.token,
+          tokenOut,
+          quote,
+          isExactIn,
+          isNativeIn,
+          isNativeOut
+        )
+        return trade
+      } catch (e) {
+        console.debug('Error fetching quote:', e)
+        return undefined
+      }
+    })
 
     return trades.filter((trade) => !!trade && trade.outputAmount.raw > 0n)
   }
@@ -409,36 +423,34 @@ export class TradeV2 {
       )
     })
 
-    const trades: Array<TradeV2 | undefined> = await new IMulticall(
+    const quotes: QuoteSer[] = await new IMulticall(
       MULTICALL_ADDRESS[chainId],
       client
     )
       .aggregateMulticall(txs)
       .then((res) => {
-        const result: Array<TradeV2 | undefined> = []
-        try {
-          const bs = new Args(res.returnValue)
-          for (let i = 0; i < routes.length; i++) {
-            const quote = new QuoteSer().deserialize(
-              bs.nextUint8Array(),
-              0
-            ).instance
-            const trade: TradeV2 = new TradeV2(
-              routes[i],
-              tokenIn,
-              tokenAmountOut.token,
-              quote,
-              isExactIn,
-              isNativeIn,
-              isNativeOut
-            )
-            result.push(trade)
-          }
-        } catch (err) {
-          console.log(err)
-        }
-        return result
+        const bs = new Args(res.returnValue)
+        return routes.map(() => {
+          return new QuoteSer().deserialize(bs.nextUint8Array(), 0).instance
+        })
       })
+    const trades: Array<TradeV2 | undefined> = quotes.map((quote, i) => {
+      try {
+        const trade: TradeV2 = new TradeV2(
+          routes[i],
+          tokenIn,
+          tokenAmountOut.token,
+          quote,
+          isExactIn,
+          isNativeIn,
+          isNativeOut
+        )
+        return trade
+      } catch (e) {
+        console.debug('Error fetching quote:', e)
+        return undefined
+      }
+    })
 
     return trades.filter((trade) => !!trade && trade.outputAmount.raw > 0n)
   }
