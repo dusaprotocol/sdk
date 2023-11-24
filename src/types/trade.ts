@@ -8,7 +8,7 @@ import { Percent, TokenAmount } from '../v1entities/fractions'
 import { Address } from './serializable'
 
 /** Interface representing a quote */
-export interface IQuote {
+export interface Quote {
   route: string[]
   pairs: string[]
   binSteps: bigint[]
@@ -17,14 +17,14 @@ export interface IQuote {
   fees: bigint[]
 }
 
-export class Quote implements ISerializable<Quote> {
+export class QuoteSer implements ISerializable<QuoteSer> {
   constructor(
-    public route: string[],
-    public pairs: string[],
-    public binSteps: bigint[],
-    public amounts: bigint[],
-    public virtualAmountsWithoutSlippage: bigint[],
-    public fees: bigint[]
+    public route: string[] = [],
+    public pairs: string[] = [],
+    public binSteps: bigint[] = [],
+    public amounts: bigint[] = [],
+    public virtualAmountsWithoutSlippage: bigint[] = [],
+    public fees: bigint[] = []
   ) {}
 
   serialize(): Uint8Array {
@@ -38,7 +38,7 @@ export class Quote implements ISerializable<Quote> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset: number): IDeserializedResult<Quote> {
+  deserialize(data: Uint8Array, offset: number): IDeserializedResult<QuoteSer> {
     const args = new Args(data, offset)
 
     this.route = args.nextArray(ArrayTypes.STRING)

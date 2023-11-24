@@ -1,34 +1,34 @@
 import {
   Args,
   Client,
+  IContractReadOperationResponse,
   IDeserializedResult,
-  ISerializable,
-  bytesToSerializableObjectArray
+  ISerializable
 } from '@massalabs/massa-web3'
 
 const maxGas = 100_000_000n
 
 export class Tx implements ISerializable<Tx> {
   constructor(
-    public targetAddress: string = '',
-    public functionName: string = '',
-    public parameter: Uint8Array
+    public method: string = '',
+    public args: Uint8Array,
+    public to: string = ''
   ) {}
 
   serialize(): Uint8Array {
     const args = new Args()
-    args.addString(this.targetAddress)
-    args.addString(this.functionName)
-    args.addUint8Array(this.parameter)
+    args.addString(this.method)
+    args.addUint8Array(this.args)
+    args.addString(this.to)
     return Uint8Array.from(args.serialize())
   }
 
   deserialize(data: Uint8Array, offset: number): IDeserializedResult<Tx> {
     const args = new Args(data, offset)
 
-    this.targetAddress = args.nextString()
-    this.functionName = args.nextString()
-    this.parameter = args.nextUint8Array()
+    this.method = args.nextString()
+    this.args = args.nextUint8Array()
+    this.to = args.nextString()
 
     return {
       instance: this,
@@ -38,29 +38,19 @@ export class Tx implements ISerializable<Tx> {
 }
 
 export class IMulticall {
-  constructor(private client: Client) {}
+  constructor(public address: string, private client: Client) {}
 
-  async aggregateMulticall(data: Tx[]): Promise<Uint8Array> {
-    let datastore = new Map<Uint8Array, Uint8Array>()
+  async aggregateMulticall(
+    data: Tx[]
+  ): Promise<IContractReadOperationResponse> {
+    // const datastore = new Map<Uint8Array, Uint8Array>()
+    // datastore.set(new Uint8Array([0x00]), new Args().addSerializableObjectArray(data).serialize())
 
-    const args = new Args()
-    data.forEach((tx) => {
-      args.addUint8Array(tx.serialize())
-      datastore
+    return this.client.smartContracts().readSmartContract({
+      targetAddress: this.address,
+      targetFunction: 'multicall',
+      parameter: new Args().addSerializableObjectArray(data).serialize(),
+      maxGas
     })
-
-    return this.client
-      .smartContracts()
-      .executeReadOnlySmartContract({
-        //     contractDataBinary: ,
-
-        //   parameter: args
-        // .serialize(),
-        datastore,
-        fee: 0n,
-        maxCoins: 0n,
-        maxGas
-      })
-      .then((res) => res.returnValue)
   }
 }

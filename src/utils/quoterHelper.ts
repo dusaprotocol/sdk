@@ -1,7 +1,8 @@
 import { Client } from '@massalabs/massa-web3'
-import { Token, TokenAmount } from '../v1entities'
 import { PairV2, RouteV2, TradeV2 } from '../v2entities'
 import {
+  Token,
+  TokenAmount,
   WBTC as _WBTC,
   USDC as _USDC,
   USDT as _USDT,

@@ -1,5 +1,6 @@
 export * from './factory'
 export * from './LBPair'
+export * from './multicall'
 export * from './quoter'
 export * from './router'
 export * from './token'
