@@ -170,21 +170,19 @@ describe('TradeV2 entity', async () => {
 
       const isExactIn = false
 
-      let minInputAmount = (trades[0] as TradeV2).inputAmount.raw
+      let minInputAmount = trades[0]?.inputAmount.raw || 0n
 
       trades.forEach((trade) => {
-        if (trade) {
-          if (trade.inputAmount.raw < minInputAmount) {
-            minInputAmount = trade.inputAmount.raw
-          }
+        if (!trade) return
+
+        if (minInputAmount == 0n || trade.inputAmount.raw < minInputAmount) {
+          minInputAmount = trade.inputAmount.raw
         }
       })
 
       const bestTrade = TradeV2.chooseBestTrade(trades, isExactIn)
 
-      expect(minInputAmount === (bestTrade as TradeV2).inputAmount.raw).toBe(
-        true
-      )
+      expect(minInputAmount).toStrictEqual(bestTrade.inputAmount.raw)
     })
   })
   describe('TradeV2.getTradesExactIn() and TradeV2.getTradesExactIn()', () => {

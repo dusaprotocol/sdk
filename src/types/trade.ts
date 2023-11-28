@@ -1,4 +1,9 @@
-import { Args } from '@massalabs/massa-web3'
+import {
+  Args,
+  ArrayTypes,
+  IDeserializedResult,
+  ISerializable
+} from '@massalabs/massa-web3'
 import { Percent, TokenAmount } from '../v1entities/fractions'
 import { Address } from './serializable'
 
@@ -10,6 +15,44 @@ export interface Quote {
   amounts: bigint[]
   virtualAmountsWithoutSlippage: bigint[]
   fees: bigint[]
+}
+
+export class QuoteSer implements ISerializable<QuoteSer> {
+  constructor(
+    public route: string[] = [],
+    public pairs: string[] = [],
+    public binSteps: bigint[] = [],
+    public amounts: bigint[] = [],
+    public virtualAmountsWithoutSlippage: bigint[] = [],
+    public fees: bigint[] = []
+  ) {}
+
+  serialize(): Uint8Array {
+    const args = new Args()
+    args.addArray(this.route, ArrayTypes.STRING)
+    args.addArray(this.pairs, ArrayTypes.STRING)
+    args.addArray(this.binSteps, ArrayTypes.U64)
+    args.addArray(this.amounts, ArrayTypes.U256)
+    args.addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
+    args.addArray(this.fees, ArrayTypes.U256)
+    return Uint8Array.from(args.serialize())
+  }
+
+  deserialize(data: Uint8Array, offset: number): IDeserializedResult<QuoteSer> {
+    const args = new Args(data, offset)
+
+    this.route = args.nextArray(ArrayTypes.STRING)
+    this.pairs = args.nextArray(ArrayTypes.STRING)
+    this.binSteps = args.nextArray(ArrayTypes.U64)
+    this.amounts = args.nextArray(ArrayTypes.U256)
+    this.virtualAmountsWithoutSlippage = args.nextArray(ArrayTypes.U256)
+    this.fees = args.nextArray(ArrayTypes.U256)
+
+    return {
+      instance: this,
+      offset: args.getOffset()
+    }
+  }
 }
 
 /** Options for producing the arguments to send call to the router. */
