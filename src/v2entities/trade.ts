@@ -27,7 +27,7 @@ import {
   TokenAmount,
   WMAS as _WMAS
 } from '../v1entities'
-import { IQuoter, IMulticall, Tx } from '../contracts'
+import { IMulticall, Tx } from '../contracts'
 
 /** Class representing a trade */
 export class TradeV2 {
