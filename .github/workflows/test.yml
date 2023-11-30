@@ -19,11 +19,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
 
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Linting
-        run: npm run lint
+        run: pnpm lint
 
       - name: Testing
-        run: npm test
+        run: pnpm test

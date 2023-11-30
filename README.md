@@ -9,24 +9,22 @@ For more details:
 
 ## Running
 
-This project uses standard npm workflows.
-
 Install dependencies
 
 ```sh
-npm install
+pnpm install
 ```
 
 Compile
 
 ```sh
-npm run build
+pnpm build
 ```
 
-Run unit tests (WIP)
+Run unit tests
 
 ```sh
-npm test
+pnpm test
 ```
 
 ## Installation
