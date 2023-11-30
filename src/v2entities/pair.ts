@@ -6,7 +6,7 @@ import {
 } from '../types'
 import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
-import { getLiquidityConfig } from '../utils'
+import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Client } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
