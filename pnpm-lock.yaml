@@ -6,8 +6,11 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: ^1.24.4
-    version: 1.24.4
+    specifier: ^2.2.7
+    version: 2.2.7
+  '@massalabs/web3-utils':
+    specifier: ^1.4.4
+    version: 1.4.4
   big.js:
     specifier: ~6.2.1
     version: 6.2.1
@@ -1798,8 +1801,8 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /@massalabs/massa-web3@1.24.4:
-    resolution: {integrity: sha512-Wzf244cKLbLwAWRTgpyydXuhO9klSx2TV2zyHD29HcpNccOd4EIlAuhTGI0zqRFN+5v9E3yGBeS4K5m4mDDaHw==}
+  /@massalabs/massa-web3@2.2.7:
+    resolution: {integrity: sha512-2dWgk+j6Qp4i99sJ68PdgLi0tYtNwuqA3vgMEcz79GdXw4eRKnLlaKSIMPiJUmEl0vQAfLUEJzXS8pmmxtR2rw==}
     dependencies:
       '@massalabs/wallet-provider': 1.5.1
       '@massalabs/web3-utils': 1.4.4
