@@ -30,14 +30,14 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
 
 export const DCA_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS1X2JJ2eHSSXuN853bMADLRePhQ7TKWTBnDrY8RJvRBVtMxVJMB',
+  [ChainId.BUILDNET]: 'AS1ZuGZSq2w2tHFiTddqTohQMkKUsPZzdRVkyRBAygSGGRcTw7ww',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
 
 export const LIMIT_ORDER_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.DUSANET]: '',
-  [ChainId.BUILDNET]: 'AS12wEtAVFnbM2bjM54bWHzRawrgWi6Y6xhxVKfqT4xoXGi2Et2E7',
+  [ChainId.BUILDNET]: 'AS12ZYLR7AFYC5TduoniL4u4x5QEFqzv6pwTqg8Tfq7PxCBppmJHu',
   [ChainId.TESTNET]: '',
   [ChainId.MAINNET]: ''
 }
