@@ -84,7 +84,7 @@ export const WMAS: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12Xamqmb2hYBMQZZMn4rqdv3hdQNAfWSfr28ZP2Y3jfXiEZmWEM',
+    'AS1Da3TdokuAwRFPuhs56X9MEZXLyjiMtZtevZU9SVTLE7BbjKX2',
     wmasDecimals,
     wmasSymbol,
     wmasName
@@ -100,7 +100,7 @@ export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1247c9yfCLasaScxovEiipMX4ZBMUHU3PNtiiLeUKUGrdosinmD',
+    'AS12WuMr6jLBy6xgPLSBZaypHC9BXtYBFG2Ys6fPQcEYTMBhSzofC',
     usdcDecimals,
     usdcSymbol,
     usdcName
@@ -116,7 +116,7 @@ export const USDT: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12VXvGCW3RS78i3dGVAs8ptHcEUpv7HdmSG3Csm1uJMVUFmYtsr',
+    'AS12PN3CPaXoifVcT2tusyTNdiLvizqWgu8v7DjN4sf4SUDXrEgoZ',
     usdtDecimals,
     usdtSymbol,
     usdtName
@@ -132,7 +132,7 @@ export const WETH: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1ideTh4Uj6aQPpHFvma8gHeBFErEyvA4Z3ZCqc9PhgbZYW2aXm',
+    'AS1RPfZSQZmrMAZBYtuGDk46i6pGMsG4NwaAb2QpHXC2pMrW8akV',
     wethDecimals,
     wethSymbol,
     wethName
@@ -148,7 +148,7 @@ export const WBTC: { [chainId in ChainId]: Token } = {
   [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1mvQfASJz8haWtRquHcyjwmG5YDpSdr2qSsvGZkC5dgGyB2QkN',
+    'AS12dFShK3V4jS9NJA11DmWYx2SEa7736W4sGQLWYcBc7KjLEh6B3',
     btcDecimals,
     btcSymbol,
     btcName
