@@ -107,14 +107,14 @@ export const addLiquidity = async () => {
     deadline
   }
 
-  // init router contract
-  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
-
-  // set AVAX amount, such as tokenAmountAVAX.raw.toString(), when one of the tokens is AVAX; otherwise, set to null
+  // set MAS amount, such as tokenAmountMAS.raw.toString(), when one of the tokens is MAS; otherwise, set to null
   const value = null
 
   // call methods
-  const txId = await router.addLiquidity(addLiquidityInput)
+  const txId = await new IRouter(
+    LB_ROUTER_ADDRESS[CHAIN_ID],
+    client
+  ).addOrRemove(addLiquidityInput)
   console.log('txId', txId)
 
   // await tx confirmation and log events

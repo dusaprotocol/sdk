@@ -10,7 +10,7 @@ import {
   TokenAmount,
   TradeV2,
   USDC as _USDC,
-  WMAS as _WMAS,
+  USDT as _USDT,
   parseUnits
 } from '@dusalabs/sdk'
 import {
@@ -40,11 +40,11 @@ export const swapAmountOut = async (executeSwap = false) => {
   )
 
   const CHAIN_ID = ChainId.BUILDNET
-  const WMAS = _WMAS[CHAIN_ID]
+  const USDT = _USDT[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
   // Init: user inputs
-  const inputToken = WMAS
+  const inputToken = USDT
   const outputToken = USDC
   const typedValueOut = '1' // user string input
   const typedValueOutParsed = parseUnits(
@@ -55,7 +55,7 @@ export const swapAmountOut = async (executeSwap = false) => {
 
   const bestTrade = await QuoterHelper.findBestPath(
     inputToken,
-    true,
+    false,
     outputToken,
     false,
     amountOut,
@@ -85,10 +85,11 @@ export const swapAmountOut = async (executeSwap = false) => {
   const params = bestTrade.swapCallParameters({
     ttl: 1000 * 60 * 10, // 10 minutes
     recipient: account.address,
-    allowedSlippage: new Percent('5')
+    allowedSlippage: new Percent(1n, 100n)
   })
-  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
-  const txId = await router.swap(params)
+  const txId = await new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).swap(
+    params
+  )
   console.log('txId', txId)
 
   // await tx confirmation and log events

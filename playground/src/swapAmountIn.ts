@@ -87,10 +87,11 @@ export const swapAmountIn = async (executeSwap = false) => {
   const params = bestTrade.swapCallParameters({
     ttl: 1000 * 60 * 10, // 10 minutes
     recipient: account.address,
-    allowedSlippage: new Percent('5')
+    allowedSlippage: new Percent(1n, 100n)
   })
-  const router = new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client)
-  const txId = await router.swap(params)
+  const txId = await new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).swap(
+    params
+  )
   console.log('txId', txId)
 
   // await tx confirmation and log events
