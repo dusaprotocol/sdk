@@ -31,9 +31,6 @@ devDependencies:
   '@types/big.js':
     specifier: ^6.2.2
     version: 6.2.2
-  '@types/jest':
-    specifier: ^24.9.1
-    version: 24.9.1
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.62.0
     version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.54.0)(typescript@4.9.5)
@@ -2043,12 +2040,6 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-lib-report': 3.0.3
-    dev: true
-
-  /@types/jest@24.9.1:
-    resolution: {integrity: sha512-Fb38HkXSVA4L8fGKEZ6le5bB8r6MRWlOCZbVuWZcmOMSCd2wCYOwN1ibj8daIoV9naq7aaOZjrLCoCMptKU/4Q==}
-    dependencies:
-      jest-diff: 24.9.0
     dev: true
 
   /@types/json-schema@7.0.15:
