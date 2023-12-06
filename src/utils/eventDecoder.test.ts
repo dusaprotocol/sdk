@@ -1,21 +1,13 @@
-import { describe } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { EventDecoder } from './eventDecoder'
 
-const TRANSFER_EVENT =
-  'TRANSFER:AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar,AS1jCykeNVigJsLr2QXkYW8cquamU41gPFFydSJTsPRvvjQxUetj,@B\x0F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 const DEPOSIT_EVENT =
   'DEPOSITED_TO_BIN:AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX,8391258,�\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000,얇࿨\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'
 const SWAP_EVENT =
   'SWAP:AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar,8391258,true,䄥\x0F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00,௟\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00,0,ě\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
 describe('decode', () => {
-  test('transfer', () => {
-    const { from, to, amount } = EventDecoder.decodeTransfer(TRANSFER_EVENT)
-    expect(from).toBe('AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar')
-    expect(to).toBe('AS1jCykeNVigJsLr2QXkYW8cquamU41gPFFydSJTsPRvvjQxUetj')
-    expect(amount).toBe(64428834880n)
-  })
-  test('deposit', () => {
+  it('deposit', () => {
     const { to, id, amountX, amountY } =
       EventDecoder.decodeLiquidity(DEPOSIT_EVENT)
     expect(to).toBe('AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX')
@@ -23,7 +15,7 @@ describe('decode', () => {
     expect(amountX).toBe(917501n)
     expect(amountY).toBe(4561880455n)
   })
-  test('swap', () => {
+  it('swap', () => {
     const {
       to,
       activeId,

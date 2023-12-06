@@ -1,5 +1,4 @@
 import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
-import { Percent } from '../v1entities/fractions'
 
 export interface LBPair {
   binStep: number
@@ -55,26 +54,6 @@ export interface LBPairReservesAndId {
     protocol: bigint
   }
   activeId: number
-}
-
-export interface LBPairFeeParameters {
-  binStep: number
-  baseFactor: number
-  filterPeriod: number
-  decayPeriod: number
-  reductionFactor: number
-  variableFeeControl: number
-  protocolShare: number
-  maxVolatilityAccumulated: number
-  volatilityAccumulated: number
-  volatilityReference: number
-  indexRef: number
-  time: number
-}
-
-export interface LBPairFeePercent {
-  baseFeePct: Percent
-  variableFeePct: Percent
 }
 
 export interface BinReserves {

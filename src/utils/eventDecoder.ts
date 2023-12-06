@@ -143,40 +143,6 @@ export class EventDecoder {
     }
   }
 
-  // ERC20 STANDARD
-
-  static decodeTransfer = (
-    bytes: string
-  ): {
-    from: string
-    to: string
-    amount: bigint
-  } => {
-    const [from, to, amount] = extractParams(bytes)
-
-    return {
-      from,
-      to,
-      amount: EventDecoder.decodeU256(amount)
-    }
-  }
-
-  static decodeAllowance = (
-    bytes: string
-  ): {
-    owner: string
-    spender: string
-    amount: bigint
-  } => {
-    const [owner, spender, amount] = extractParams(bytes)
-
-    return {
-      owner,
-      spender,
-      amount: EventDecoder.decodeU256(amount)
-    }
-  }
-
   // MISC
 
   static decodeU256 = (bytes: string): bigint =>
