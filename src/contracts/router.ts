@@ -1,7 +1,5 @@
-import { Args, Client } from '@massalabs/massa-web3'
+import { Args, Client, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
-
-const U32_MAX = 2n ** 32n - 1n
 
 interface GetSwapParams {
   pairAddress: string
@@ -13,27 +11,45 @@ type GetSwapOutParams = GetSwapParams & { amountIn: bigint }
 export class IRouter {
   constructor(public address: string, private client: Client) {}
 
+  // EXECUTE
+
   async swap(params: SwapParameters): Promise<string> {
+    const simulatedGas = await this.simulate(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
       fee: 100_000_000n,
-      maxGas: 100_000_000n
+      maxGas: simulatedGas
     })
   }
 
   async addOrRemove(params: LiquidityParameters) {
+    const simulatedGas = await this.simulate(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
       fee: 100_000_000n,
-      maxGas: U32_MAX
+      maxGas: simulatedGas
     })
   }
+
+  private async simulate(params: SwapParameters | LiquidityParameters) {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: params.methodName,
+        parameter: params.args,
+        maxGas: MAX_GAS_CALL
+      })
+      .then((res) => BigInt(res.info.gas_cost))
+  }
+
+  // QUERIES
 
   async getSwapIn(
     params: GetSwapInParams
@@ -47,7 +63,7 @@ export class IRouter {
           .addString(params.pairAddress)
           .addU256(params.amountOut)
           .addBool(params.swapForY),
-        maxGas: U32_MAX
+        maxGas: MAX_GAS_CALL
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -70,7 +86,7 @@ export class IRouter {
           .addString(params.pairAddress)
           .addU256(params.amountIn)
           .addBool(params.swapForY),
-        maxGas: U32_MAX
+        maxGas: MAX_GAS_CALL
       })
       .then((result) => {
         const args = new Args(result.returnValue)
