@@ -1,7 +1,6 @@
 import {
   Args,
   Client,
-  bytesToArray,
   bytesToStr,
   strToBytes
 } from '@massalabs/massa-web3'
