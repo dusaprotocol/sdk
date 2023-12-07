@@ -3,10 +3,9 @@ import {
   Client,
   IContractReadOperationResponse,
   IDeserializedResult,
-  ISerializable
+  ISerializable,
+  MAX_GAS_CALL
 } from '@massalabs/massa-web3'
-
-const maxGas = 100_000_000n
 
 export class Tx implements ISerializable<Tx> {
   constructor(
@@ -50,7 +49,7 @@ export class IMulticall {
       targetAddress: this.address,
       targetFunction: 'multicall',
       parameter: new Args().addSerializableObjectArray(data).serialize(),
-      maxGas
+      maxGas: MAX_GAS_CALL
     })
   }
 }
