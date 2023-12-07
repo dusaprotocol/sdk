@@ -85,7 +85,8 @@ export class ILBPair {
         maxGas
       })
       .then((res) => {
-        const bins = bytesToArray<number>(res.returnValue, ArrayTypes.U32)
+        const args = new Args(res.returnValue)
+        const bins: number[] = args.nextArray(ArrayTypes.U32);
         return bins.sort((a, b) => a - b)
       })
   }
