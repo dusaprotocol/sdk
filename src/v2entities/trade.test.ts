@@ -15,6 +15,7 @@ import {
   DefaultProviderUrls,
   ProviderType
 } from '@massalabs/massa-web3'
+import { describe, it, expect } from 'vitest'
 
 describe('TradeV2 entity', async () => {
   const BUILDNET_URL = DefaultProviderUrls.BUILDNET
@@ -35,7 +36,7 @@ describe('TradeV2 entity', async () => {
 
   // init input / output
   const inputToken = USDC
-  const outputToken = WETH
+  const outputToken = WMAS
 
   // token pairs
   const allTokenPairs = PairV2.createAllTokenPairs(
@@ -50,11 +51,11 @@ describe('TradeV2 entity', async () => {
     allPairs,
     inputToken,
     outputToken,
-    2
+    3
   )
 
   // user input for exactIn trade
-  const typedValueIn = '4'
+  const typedValueIn = '5'
   const typedValueInParsed = parseUnits(
     typedValueIn,
     inputToken.decimals
@@ -63,7 +64,7 @@ describe('TradeV2 entity', async () => {
   const amountIn = new TokenAmount(inputToken, typedValueInParsed)
 
   // user input for exactOut trade
-  const typedValueOut = '0.2'
+  const typedValueOut = '1'
   const typedValueOutParsed = parseUnits(
     typedValueOut,
     outputToken.decimals
@@ -175,7 +176,10 @@ describe('TradeV2 entity', async () => {
       trades.forEach((trade) => {
         if (!trade) return
 
-        if (minInputAmount == 0n || trade.inputAmount.raw < minInputAmount) {
+        if (
+          trade.inputAmount.raw > 0n &&
+          (minInputAmount == 0n || trade.inputAmount.raw < minInputAmount)
+        ) {
           minInputAmount = trade.inputAmount.raw
         }
       })
@@ -214,8 +218,8 @@ describe('TradeV2 entity', async () => {
         !isExactIn
       )
 
-      expect((bestTradeExactIn as TradeV2).route.path.length).toBe(
-        (bestTradeExactOut as TradeV2).route.path.length
+      expect(bestTradeExactIn.route.path.length).toBe(
+        bestTradeExactOut.route.path.length
       )
 
       if (bestTradeExactIn && bestTradeExactOut) {
