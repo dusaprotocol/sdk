@@ -55,12 +55,12 @@ export type VaultEvent = {
 }
 
 export type LimitOrderEvent = {
-  from: string
   id: number
 }
 
 export type LimitOrderExecutionEvent = {
   id: number
+  amountOut: bigint
 }
 
 export class EventDecoder {
@@ -155,10 +155,9 @@ export class EventDecoder {
    * @param bytes
    */
   static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
-    const [from, id] = extractParams(bytes)
+    const [id] = extractParams(bytes)
 
     return {
-      from,
       id: parseInt(id)
     }
   }
@@ -166,10 +165,11 @@ export class EventDecoder {
   static decodeLimitOrderExecution = (
     bytes: string
   ): LimitOrderExecutionEvent => {
-    const [id] = extractParams(bytes)
+    const [id, amountOut] = extractParams(bytes)
 
     return {
-      id: parseInt(id)
+      id: parseInt(id),
+      amountOut: EventDecoder.decodeU256(amountOut)
     }
   }
 
