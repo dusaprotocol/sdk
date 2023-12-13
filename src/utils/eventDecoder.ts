@@ -12,20 +12,61 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
 const extractParams = (bytes: string): string[] =>
   bytes.split(':')[1].split(',')
 
+export type SwapEvent = {
+  to: string
+  activeId: number
+  swapForY: boolean
+  amountInToBin: bigint
+  amountOutOfBin: bigint
+  volatilityAccumulated: number
+  feesTotal: bigint
+}
+
+export type LiquidityEvent = {
+  to: string
+  id: number
+  amountX: bigint
+  amountY: bigint
+}
+
+export type CollectFeesEvent = {
+  caller: string
+  to: string
+  amountX: bigint
+  amountY: bigint
+}
+
+export type DCAEvent = {
+  user: string
+  id: number
+}
+
+export type DCAExecutionEvent = {
+  user: string
+  id: number
+  amountOut: bigint
+}
+
+export type VaultEvent = {
+  from: string
+  amountX: bigint
+  amountY: bigint
+  shares: bigint
+}
+
+export type LimitOrderEvent = {
+  from: string
+  id: number
+}
+
+export type LimitOrderExecutionEvent = {
+  id: number
+}
+
 export class EventDecoder {
   // CORE
 
-  static decodeSwap = (
-    bytes: string
-  ): {
-    to: string
-    activeId: number
-    swapForY: boolean
-    amountInToBin: bigint
-    amountOutOfBin: bigint
-    volatilityAccumulated: number
-    feesTotal: bigint
-  } => {
+  static decodeSwap = (bytes: string): SwapEvent => {
     const [
       to,
       activeId,
@@ -40,46 +81,32 @@ export class EventDecoder {
       to,
       activeId: parseInt(activeId),
       swapForY: swapForY === 'true',
-      amountInToBin: EventDecoder.decodeU256(amountInToBin),
-      amountOutOfBin: EventDecoder.decodeU256(amountOutOfBin),
+      amountInToBin: this.decodeU256(amountInToBin),
+      amountOutOfBin: this.decodeU256(amountOutOfBin),
       volatilityAccumulated: parseInt(volatilityAccumulated),
-      feesTotal: EventDecoder.decodeU256(feesTotal)
+      feesTotal: this.decodeU256(feesTotal)
     }
   }
 
-  static decodeLiquidity = (
-    bytes: string
-  ): {
-    to: string
-    id: number
-    amountX: bigint
-    amountY: bigint
-  } => {
+  static decodeLiquidity = (bytes: string): LiquidityEvent => {
     const [to, id, amountX, amountY] = extractParams(bytes)
 
     return {
       to,
       id: parseInt(id),
-      amountX: EventDecoder.decodeU256(amountX),
-      amountY: EventDecoder.decodeU256(amountY)
+      amountX: this.decodeU256(amountX),
+      amountY: this.decodeU256(amountY)
     }
   }
 
-  static decodeCollectFees = (
-    bytes: string
-  ): {
-    caller: string
-    to: string
-    amountX: bigint
-    amountY: bigint
-  } => {
+  static decodeCollectFees = (bytes: string): CollectFeesEvent => {
     const [caller, to, amountX, amountY] = extractParams(bytes)
 
     return {
       caller,
       to,
-      amountX: EventDecoder.decodeU256(amountX),
-      amountY: EventDecoder.decodeU256(amountY)
+      amountX: this.decodeU256(amountX),
+      amountY: this.decodeU256(amountY)
     }
   }
 
@@ -89,12 +116,7 @@ export class EventDecoder {
    * Decode start/update/stop DCA events
    * @param bytes
    */
-  static decodeDCA = (
-    bytes: string
-  ): {
-    user: string
-    id: number
-  } => {
+  static decodeDCA = (bytes: string): DCAEvent => {
     const [user, id] = extractParams(bytes)
 
     return {
@@ -103,25 +125,28 @@ export class EventDecoder {
     }
   }
 
+  static decodeDCAExecution = (bytes: string): DCAExecutionEvent => {
+    const [user, id, amountOut] = extractParams(bytes)
+
+    return {
+      user,
+      id: parseInt(id),
+      amountOut: this.decodeU256(amountOut)
+    }
+  }
+
   /**
    * Decode deposit/withdraw autopool events
    * @param bytes
    */
-  static decodeVault = (
-    bytes: string
-  ): {
-    from: string
-    amountX: bigint
-    amountY: bigint
-    shares: bigint
-  } => {
+  static decodeVault = (bytes: string): VaultEvent => {
     const [from, amountX, amountY, shares] = extractParams(bytes)
 
     return {
       from,
-      amountX: EventDecoder.decodeU256(amountX),
-      amountY: EventDecoder.decodeU256(amountY),
-      shares: EventDecoder.decodeU256(shares)
+      amountX: this.decodeU256(amountX),
+      amountY: this.decodeU256(amountY),
+      shares: this.decodeU256(shares)
     }
   }
 
@@ -129,16 +154,21 @@ export class EventDecoder {
    * Decode add/remove limit order events
    * @param bytes
    */
-  static decodeLimitOrder = (
-    bytes: string
-  ): {
-    from: string
-    id: number
-  } => {
+  static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
     const [from, id] = extractParams(bytes)
 
     return {
       from,
+      id: parseInt(id)
+    }
+  }
+
+  static decodeLimitOrderExecution = (
+    bytes: string
+  ): LimitOrderExecutionEvent => {
+    const [id] = extractParams(bytes)
+
+    return {
       id: parseInt(id)
     }
   }
