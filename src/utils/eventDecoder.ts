@@ -81,10 +81,10 @@ export class EventDecoder {
       to,
       activeId: parseInt(activeId),
       swapForY: swapForY === 'true',
-      amountInToBin: this.decodeU256(amountInToBin),
-      amountOutOfBin: this.decodeU256(amountOutOfBin),
+      amountInToBin: EventDecoder.decodeU256(amountInToBin),
+      amountOutOfBin: EventDecoder.decodeU256(amountOutOfBin),
       volatilityAccumulated: parseInt(volatilityAccumulated),
-      feesTotal: this.decodeU256(feesTotal)
+      feesTotal: EventDecoder.decodeU256(feesTotal)
     }
   }
 
@@ -94,8 +94,8 @@ export class EventDecoder {
     return {
       to,
       id: parseInt(id),
-      amountX: this.decodeU256(amountX),
-      amountY: this.decodeU256(amountY)
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
     }
   }
 
@@ -105,8 +105,8 @@ export class EventDecoder {
     return {
       caller,
       to,
-      amountX: this.decodeU256(amountX),
-      amountY: this.decodeU256(amountY)
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
     }
   }
 
@@ -131,7 +131,7 @@ export class EventDecoder {
     return {
       user,
       id: parseInt(id),
-      amountOut: this.decodeU256(amountOut)
+      amountOut: EventDecoder.decodeU256(amountOut)
     }
   }
 
@@ -144,9 +144,9 @@ export class EventDecoder {
 
     return {
       from,
-      amountX: this.decodeU256(amountX),
-      amountY: this.decodeU256(amountY),
-      shares: this.decodeU256(shares)
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY),
+      shares: EventDecoder.decodeU256(shares)
     }
   }
 
