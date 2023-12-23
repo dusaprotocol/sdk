@@ -1,11 +1,6 @@
-import {
-  Args,
-  Client,
-  bytesToStr,
-  strToBytes
-} from '@massalabs/massa-web3'
+import { Args, Client, bytesToStr, strToBytes } from '@massalabs/massa-web3'
 import { ArrayTypes } from '@massalabs/web3-utils'
-import { LBPairReservesAndId } from '../types'
+import { BinReserves, LBPairReservesAndId } from '../types'
 
 const maxGas = 100_000_000n
 
@@ -74,6 +69,21 @@ export class ILBPair {
       })
   }
 
+  async getBin(id: number): Promise<BinReserves> {
+    return this.client
+      .publicApi()
+      .getDatastoreEntries([
+        { address: this.address, key: strToBytes(`bin::${id}`) }
+      ])
+      .then((res) => {
+        if (!res[0].candidate_value) throw new Error()
+        const args = new Args(res[0].candidate_value)
+        const reserveX = args.nextU256()
+        const reserveY = args.nextU256()
+        return { reserveX, reserveY }
+      })
+  }
+
   async getUserBins(user: string): Promise<number[]> {
     return this.client
       .smartContracts()
@@ -85,7 +95,7 @@ export class ILBPair {
       })
       .then((res) => {
         const args = new Args(res.returnValue)
-        const bins: number[] = args.nextArray(ArrayTypes.U32);
+        const bins: number[] = args.nextArray(ArrayTypes.U32)
         return bins.sort((a, b) => a - b)
       })
   }
