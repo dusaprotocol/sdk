@@ -81,15 +81,13 @@ const wmasName = 'Wrapped Massa'
 const wmasSymbol = 'WMAS'
 const wmasDecimals = 9
 export const WMAS: { [chainId in ChainId]: Token } = {
-  [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1Da3TdokuAwRFPuhs56X9MEZXLyjiMtZtevZU9SVTLE7BbjKX2',
+    'AS12Emra1SrLsFgYdFRQXBjsksWummAs8zG14iFytS73bZBjbVY5v',
     wmasDecimals,
     wmasSymbol,
     wmasName
   ),
-  [ChainId.TESTNET]: nullToken,
   [ChainId.MAINNET]: nullToken
 }
 
@@ -97,15 +95,13 @@ const usdcName = 'USD Coin'
 const usdcSymbol = 'USDC'
 const usdcDecimals = 6
 export const USDC: { [chainId in ChainId]: Token } = {
-  [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12WuMr6jLBy6xgPLSBZaypHC9BXtYBFG2Ys6fPQcEYTMBhSzofC',
+    'AS1217cAveD2H5rkuytUoiMEL1sg8BXwp966daPRoaoxmV8zv7Bdv',
     usdcDecimals,
     usdcSymbol,
     usdcName
   ),
-  [ChainId.TESTNET]: nullToken,
   [ChainId.MAINNET]: nullToken
 }
 
@@ -113,15 +109,13 @@ const usdtName = 'Tether USD'
 const usdtSymbol = 'USDT'
 const usdtDecimals = 6
 export const USDT: { [chainId in ChainId]: Token } = {
-  [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12PN3CPaXoifVcT2tusyTNdiLvizqWgu8v7DjN4sf4SUDXrEgoZ',
+    'AS1sKBEGsqtm8vQhQzi7KJ4YhyaKTSkhJrLkRc7mQtPqme3VcFHm',
     usdtDecimals,
     usdtSymbol,
     usdtName
   ),
-  [ChainId.TESTNET]: nullToken,
   [ChainId.MAINNET]: nullToken
 }
 
@@ -129,15 +123,13 @@ const wethName = 'Wrapped Ether'
 const wethSymbol = 'WETH'
 const wethDecimals = 18
 export const WETH: { [chainId in ChainId]: Token } = {
-  [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1RPfZSQZmrMAZBYtuGDk46i6pGMsG4NwaAb2QpHXC2pMrW8akV',
+    'AS12erzaq5BHooLLsuZ9MKiDJXWcMnpBBoUe78an7L3Cbaz1orgAv',
     wethDecimals,
     wethSymbol,
     wethName
   ),
-  [ChainId.TESTNET]: nullToken,
   [ChainId.MAINNET]: nullToken
 }
 
@@ -145,14 +137,12 @@ const btcName = 'Bitcoin'
 const btcSymbol = 'WBTC'
 const btcDecimals = 8
 export const WBTC: { [chainId in ChainId]: Token } = {
-  [ChainId.DUSANET]: nullToken,
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12dFShK3V4jS9NJA11DmWYx2SEa7736W4sGQLWYcBc7KjLEh6B3',
+    'AS186NRhT6itQ8LuCS7a8n6xQYiXrqDcaaoeiYpTSUsJWKEMgTEw',
     btcDecimals,
     btcSymbol,
     btcName
   ),
-  [ChainId.TESTNET]: nullToken,
   [ChainId.MAINNET]: nullToken
 }

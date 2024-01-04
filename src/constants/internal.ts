@@ -1,7 +1,5 @@
 export enum ChainId {
-  DUSANET,
   BUILDNET,
-  TESTNET,
   MAINNET
 }
 
