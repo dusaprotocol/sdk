@@ -97,7 +97,7 @@ const usdcDecimals = 6
 export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1217cAveD2H5rkuytUoiMEL1sg8BXwp966daPRoaoxmV8zv7Bdv',
+    'AS1sKBEGsqtm8vQhQzi7KJ4YhyaKTSkhJrLkRc7mQtPqme3VcFHm',
     usdcDecimals,
     usdcSymbol,
     usdcName
@@ -111,7 +111,7 @@ const usdtDecimals = 6
 export const USDT: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1sKBEGsqtm8vQhQzi7KJ4YhyaKTSkhJrLkRc7mQtPqme3VcFHm',
+    'AS1217cAveD2H5rkuytUoiMEL1sg8BXwp966daPRoaoxmV8zv7Bdv',
     usdtDecimals,
     usdtSymbol,
     usdtName
