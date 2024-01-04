@@ -38,6 +38,6 @@ export const VAULT_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
 }
 
 export const MULTICALL_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12j1jjzomM123nn9tav5N5ZfAeUiuDszi5o16asftbvWzpmNNg7',
+  [ChainId.BUILDNET]: 'AS1yphCWi7gychZWYPpqrKDiGb6ZacRoji8YYMLHtQ2TSuuQFqLC',
   [ChainId.MAINNET]: ''
 }
