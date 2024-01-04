@@ -10,7 +10,7 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
 }
 
 const extractParams = (bytes: string): string[] =>
-  bytes.split(':')[1].split(',')
+  bytes.split(':')[1].split(';:!')
 
 export type SwapEvent = {
   to: string
