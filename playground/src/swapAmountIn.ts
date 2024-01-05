@@ -17,6 +17,7 @@ import {
 } from '@dusalabs/sdk'
 import {
   Args,
+  BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls,
   EOperationStatus,
@@ -39,6 +40,7 @@ export const swapAmountIn = async (executeSwap = false) => {
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
+    BUILDNET_CHAIN_ID,
     true,
     account
   )

@@ -14,6 +14,7 @@ import {
   parseUnits
 } from '@dusalabs/sdk'
 import {
+  BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls,
   ProviderType,
@@ -35,6 +36,7 @@ export const swapAmountOut = async (executeSwap = false) => {
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
+    BUILDNET_CHAIN_ID,
     true,
     account
   )

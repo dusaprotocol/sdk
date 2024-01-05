@@ -4,6 +4,7 @@ import { PairV2 } from './pair'
 import { Token, USDC as _USDC, WETH as _WETH } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
 import {
+  BUILDNET_CHAIN_ID,
   ClientFactory,
   ProviderType,
   DefaultProviderUrls
@@ -18,6 +19,7 @@ describe('PairV2 entity', async () => {
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
+    BUILDNET_CHAIN_ID,
     true
   )
 

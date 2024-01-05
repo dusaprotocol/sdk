@@ -11,6 +11,7 @@ import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
 import { ChainId } from '../constants'
 import {
+  BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls,
   ProviderType
@@ -25,6 +26,7 @@ describe('TradeV2 entity', async () => {
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
+    BUILDNET_CHAIN_ID,
     true
   )
 

@@ -12,6 +12,7 @@ import {
   getLiquidityConfig
 } from '@dusalabs/sdk'
 import {
+  BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls,
   EOperationStatus,
@@ -33,6 +34,7 @@ export const addLiquidity = async () => {
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
       { url: BUILDNET_URL, type: ProviderType.PRIVATE }
     ],
+    BUILDNET_CHAIN_ID,
     true,
     account
   )
