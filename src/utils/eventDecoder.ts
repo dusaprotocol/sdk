@@ -9,8 +9,10 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
   return new Uint8Array(buf)
 }
 
-const extractParams = (bytes: string): string[] =>
-  bytes.split(':')[1].split(';:!')
+const extractParams = (bytes: string): string[] => {
+  const regex = /:(?![!])/ // match ':' not followed by '!'
+  return bytes.split(regex)[1].split(';:!')
+}
 
 export type SwapEvent = {
   to: string
@@ -66,7 +68,9 @@ export type LimitOrderExecutionEvent = {
 export class EventDecoder {
   // CORE
 
-  static decodeSwap = (bytes: string): SwapEvent => {
+  static decodeSwap = <Keyword extends 'SWAP', Args extends string>(
+    bytes: `${Keyword}:${Args}`
+  ): SwapEvent => {
     const [
       to,
       activeId,
@@ -88,7 +92,12 @@ export class EventDecoder {
     }
   }
 
-  static decodeLiquidity = (bytes: string): LiquidityEvent => {
+  static decodeLiquidity = <
+    Keyword extends 'DEPOSITED_TO_BIN' | 'WITHDRAWN_FROM_BIN',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): LiquidityEvent => {
     const [to, id, amountX, amountY] = extractParams(bytes)
 
     return {
@@ -99,7 +108,12 @@ export class EventDecoder {
     }
   }
 
-  static decodeCollectFees = (bytes: string): CollectFeesEvent => {
+  static decodeCollectFees = <
+    Keyword extends 'FEES_COLLECTED',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): CollectFeesEvent => {
     const [caller, to, amountX, amountY] = extractParams(bytes)
 
     return {
@@ -116,7 +130,12 @@ export class EventDecoder {
    * Decode start/update/stop DCA events
    * @param bytes
    */
-  static decodeDCA = (bytes: string): DCAEvent => {
+  static decodeDCA = <
+    Keyword extends 'DCA_ADDED' | 'DCA_CANCELLED' | 'DCA_UPDATED' | 'DCA_ENDED',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): DCAEvent => {
     const [user, id] = extractParams(bytes)
 
     return {
@@ -125,7 +144,12 @@ export class EventDecoder {
     }
   }
 
-  static decodeDCAExecution = (bytes: string): DCAExecutionEvent => {
+  static decodeDCAExecution = <
+    Keyword extends 'DCA_EXECUTED',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): DCAExecutionEvent => {
     const [user, id, amountOut] = extractParams(bytes)
 
     return {
@@ -139,7 +163,12 @@ export class EventDecoder {
    * Decode deposit/withdraw autopool events
    * @param bytes
    */
-  static decodeVault = (bytes: string): VaultEvent => {
+  static decodeVault = <
+    Keyword extends 'DEPOSIT' | 'WITHDRAW',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): VaultEvent => {
     const [from, amountX, amountY, shares] = extractParams(bytes)
 
     return {
@@ -154,7 +183,12 @@ export class EventDecoder {
    * Decode add/remove limit order events
    * @param bytes
    */
-  static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
+  static decodeLimitOrder = <
+    Keyword extends 'NEW_LIMIT_ORDER' | 'REMOVE_LIMIT_ORDER',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
+  ): LimitOrderEvent => {
     const [id] = extractParams(bytes)
 
     return {
@@ -162,8 +196,11 @@ export class EventDecoder {
     }
   }
 
-  static decodeLimitOrderExecution = (
-    bytes: string
+  static decodeLimitOrderExecution = <
+    Keyword extends 'EXECUTE_LIMIT_ORDER',
+    Args extends string
+  >(
+    bytes: `${Keyword}:${Args}`
   ): LimitOrderExecutionEvent => {
     const [id, amountOut] = extractParams(bytes)
 
