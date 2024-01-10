@@ -4,17 +4,17 @@ import { ChainId } from './internal'
  * DEX core SDK
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12PYRpLuQevC5vxSCcPavaJMXktQ8yvS1gG8uQzHyfDQwapurk7',
+  [ChainId.BUILDNET]: 'AS12kpx6rSt36HpqipqSSNVQmw7WXZyC3GjLATNenoyoMYX1bP4XV',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS123iXAK1r1nHXf2R4LoyiMkMKLcajheYnX6o1FRJsspjr2278WW',
+  [ChainId.BUILDNET]: 'AS1qCXCY5AF7SpZUk2bwiHneYb5MLVgeWEiRs8BxorYArLWMavZ',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12Mf1nPpxWyMSqgRpB4FJ93dMb1YVyGpyCzeGEpswDbEfmxnb9w',
+  [ChainId.BUILDNET]: 'AS12o8B3xPdY7a9ZbedwxRStLQAiDqp531LR7fChwqhkhfR3rurCB',
   [ChainId.MAINNET]: ''
 }
 
@@ -23,12 +23,12 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
  */
 
 export const DCA_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS1kcpcfjK4L63CiQ7wHivHLjpLcvA24m6hEwJLXUSuRzfbmg78e',
+  [ChainId.BUILDNET]: 'AS12RFjznYhGueZ5kpCgiXjRZpFpQQgEGf2FbrVpGdXk5dYF61uqs',
   [ChainId.MAINNET]: ''
 }
 
 export const LIMIT_ORDER_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS1aA1oZ9ehW1sd54GzcxzntGzbC7fHFDSFDMNbBBdw61TKrtmv8',
+  [ChainId.BUILDNET]: 'AS12bWaEB6jHXxX8SUrvXpb5xzFSSigSK9rV9BCpHffJyqozQwrTq',
   [ChainId.MAINNET]: ''
 }
 
