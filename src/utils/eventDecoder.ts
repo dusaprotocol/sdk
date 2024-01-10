@@ -10,8 +10,7 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
 }
 
 const extractParams = (bytes: string): string[] => {
-  const regex = /:(?![!])/ // match ':' not followed by '!'
-  return bytes.split(regex)[1].split(';:!')
+  return bytes.split(':')[1].split(';?!')
 }
 
 export type SwapEvent = {
