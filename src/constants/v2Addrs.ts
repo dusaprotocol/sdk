@@ -23,7 +23,7 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
  */
 
 export const DCA_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12RFjznYhGueZ5kpCgiXjRZpFpQQgEGf2FbrVpGdXk5dYF61uqs',
+  [ChainId.BUILDNET]: 'AS12p2d3K3gGp6dXw1A1ZusPxUr9MzbLZqKZjrQ6Z8FWsnAH9F8Lv',
   [ChainId.MAINNET]: ''
 }
 
