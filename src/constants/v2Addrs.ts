@@ -23,7 +23,7 @@ export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
  */
 
 export const DCA_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12RFjznYhGueZ5kpCgiXjRZpFpQQgEGf2FbrVpGdXk5dYF61uqs',
+  [ChainId.BUILDNET]: 'AS12p2d3K3gGp6dXw1A1ZusPxUr9MzbLZqKZjrQ6Z8FWsnAH9F8Lv',
   [ChainId.MAINNET]: ''
 }
 
@@ -33,7 +33,7 @@ export const LIMIT_ORDER_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
 }
 
 export const VAULT_MANAGER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS125znAYtVCJ2Qd5up1x7ffnDzuMEzMCYgyjJ82uc65FaeBFVPAn',
+  [ChainId.BUILDNET]: 'AS12s7eFNQWXzCkU4NF4VBHsEBJEbnCBohdpu2DZbwXpRKeLPEstd',
   [ChainId.MAINNET]: ''
 }
 
