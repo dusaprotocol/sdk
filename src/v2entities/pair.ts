@@ -230,8 +230,7 @@ export class PairV2 {
     amountSlippage: Percent,
     priceSlippage: Percent,
     liquidityDistribution: LiquidityDistribution
-  ): AddLiquidityParameters {
-    // TODO: refactor this /src/types/pair
+  ): Omit<AddLiquidityParameters, 'to' | 'deadline'> {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const token0 = (token0isX ? token0Amount : token1Amount).token.address
     const token1 = (token0isX ? token1Amount : token0Amount).token.address
@@ -260,6 +259,7 @@ export class PairV2 {
     return {
       token0,
       token1,
+      binStep,
       amount0,
       amount1,
       amount0Min,
@@ -267,7 +267,8 @@ export class PairV2 {
       idSlippage,
       deltaIds,
       distributionX,
-      distributionY
+      distributionY,
+      activeIdDesired: 1
     }
   }
 
@@ -346,18 +347,50 @@ export class PairV2 {
       switch (isAdd) {
         case true:
           invariant('distributionX' in options, 'INVALID')
-          if (isNative) {
-            args.addString(to).addU64(BigInt(deadline))
+          args
+            .addString(this.token0.address)
+            .addString(this.token1.address)
+            .addU64(BigInt(options.binStep))
+            .addU256(options.amount0)
+            .addU256(options.amount1)
+            .addU256(options.amount0Min)
+            .addU256(options.amount1Min)
+            .addU64(BigInt(options.activeIdDesired))
+            .addU64(BigInt(options.idSlippage))
+            .addArray(options.deltaIds.map(BigInt), ArrayTypes.I64)
+            .addArray(options.distributionX, ArrayTypes.U256)
+            .addArray(options.distributionY, ArrayTypes.U256)
+            .addString(to)
+            .addU64(BigInt(deadline))
+          if (isNative)
             value = this.token0.isNative ? options.amount0 : options.amount1
-            return { args, methodName: 'addLiquidityMAS', value }
-          } else {
-            args.addString(to).addU64(BigInt(deadline))
-            return { args, methodName: 'addLiquidity', value }
+          return {
+            args,
+            methodName: isNative ? 'addLiquidityMAS' : 'addLiquidity',
+            value
           }
         case false:
           invariant(!('distributionX' in options), 'INVALID')
+
+          const isToken0MAS = this.token0.isNative
+          const isToken1MAS = this.token1.isNative
+          if (!isToken0MAS && isToken1MAS) {
+            const [tokenA, tokenB] = [this.token1.address, this.token0.address]
+            const [amountXMin, amountYMin] = [
+              options.amount1Min,
+              options.amount0Min
+            ]
+          }
           if (isNative) {
-            args.addString(to).addU64(BigInt(deadline))
+            args
+              .addString(this.token1.address)
+              .addU32(options.binStep)
+              .addU256(options.amount0Min)
+              .addU256(options.amount1Min)
+              .addArray(options.ids.map(BigInt), ArrayTypes.U64)
+              .addArray(options.amounts, ArrayTypes.U256)
+              .addString(to)
+              .addU64(BigInt(deadline))
             return { args, methodName: 'removeLiquidityMAS', value }
           } else {
             args.addString(to).addU64(BigInt(deadline))

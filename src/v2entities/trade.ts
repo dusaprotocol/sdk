@@ -14,7 +14,6 @@ import {
   Quote,
   RouterPathParameters,
   Address,
-  SwapRouterMethod,
   QuoteSer
 } from '../types'
 import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
