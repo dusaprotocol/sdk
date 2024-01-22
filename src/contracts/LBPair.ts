@@ -1,11 +1,28 @@
 import { Args, Client, bytesToStr, strToBytes } from '@massalabs/massa-web3'
-import { ArrayTypes } from '@massalabs/web3-utils'
+import { ArrayTypes, byteToBool } from '@massalabs/web3-utils'
 import { BinReserves, LBPairReservesAndId } from '../types'
 
 const maxGas = 100_000_000n
 
 export class ILBPair {
   constructor(public address: string, private client: Client) {}
+
+  // EXECUTE
+
+  async setApprovalForAll(
+    operator: string,
+    approved: boolean
+  ): Promise<string> {
+    return this.client.smartContracts().callSmartContract({
+      targetAddress: this.address,
+      functionName: 'setApprovalForAll',
+      parameter: new Args().addString(operator).addBool(approved).serialize(),
+      maxGas,
+      fee: 100_000_000n
+    })
+  }
+
+  // QUERIES
 
   async getReservesAndId(): Promise<LBPairReservesAndId> {
     return await this.client
@@ -123,6 +140,20 @@ export class ILBPair {
         const amount0 = args.nextU256()
         const amount1 = args.nextU256()
         return { amount0, amount1 }
+      })
+  }
+
+  async isApprovedForAll(owner: string, operator: string): Promise<boolean> {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: 'isApprovedForAll',
+        parameter: new Args().addString(owner).addString(operator).serialize(),
+        maxGas
+      })
+      .then((res) => {
+        return byteToBool(res.returnValue)
       })
   }
 }

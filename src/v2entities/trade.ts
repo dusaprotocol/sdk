@@ -166,7 +166,7 @@ export class TradeV2 {
 
     const { methodName, args, value } = ((
       tradeType: TradeType
-    ): { methodName: SwapRouterMethod; args: Args; value: bigint } => {
+    ): SwapParameters => {
       const args: Args = new Args()
       let value = 0n
       switch (tradeType) {

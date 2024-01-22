@@ -2,14 +2,18 @@ import {
   LBPairReservesAndId,
   LiquidityDistribution,
   BinReserves,
-  LBPair
+  LBPair,
+  AddLiquidityParameters,
+  RemoveLiquidityParameters,
+  LiquidityParameters
 } from '../types'
 import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
-import { Client } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
+import invariant from 'tiny-invariant'
 
 /** Class representing a pair of tokens. */
 export class PairV2 {
@@ -226,37 +230,22 @@ export class PairV2 {
     amountSlippage: Percent,
     priceSlippage: Percent,
     liquidityDistribution: LiquidityDistribution
-  ): {
-    tokenX: Token
-    tokenY: Token
-    amountX: string
-    amountY: string
-    amountXMin: string
-    amountYMin: string
-    idSlippage: number
-    deltaIds: number[]
-    distributionX: bigint[]
-    distributionY: bigint[]
-  } {
+  ): AddLiquidityParameters {
     // TODO: refactor this /src/types/pair
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
-    const tokenX = token0isX ? token0Amount.token : token1Amount.token
-    const tokenY = token0isX ? token1Amount.token : token0Amount.token
-    const _amountX: bigint = token0isX ? token0Amount.raw : token1Amount.raw
-    const _amountY: bigint = token0isX ? token1Amount.raw : token0Amount.raw
+    const token0 = (token0isX ? token0Amount : token1Amount).token.address
+    const token1 = (token0isX ? token1Amount : token0Amount).token.address
+    const amount0: bigint = token0isX ? token0Amount.raw : token1Amount.raw
+    const amount1: bigint = token0isX ? token1Amount.raw : token0Amount.raw
 
-    const amountX: string = _amountX.toString()
-    const amountY: string = _amountY.toString()
-    const amountXMin = new Fraction(1n)
+    const amount0Min = new Fraction(1n)
       .add(amountSlippage)
       .invert()
-      .multiply(_amountX)
-      .quotient.toString()
-    const amountYMin = new Fraction(1n)
+      .multiply(amount0).quotient
+    const amount1Min = new Fraction(1n)
       .add(amountSlippage)
       .invert()
-      .multiply(_amountY)
-      .quotient.toString()
+      .multiply(amount1).quotient
 
     const _priceSlippage: number = Number(priceSlippage.toSignificant()) / 100
     const idSlippage = Bin.getIdSlippageFromPriceSlippage(
@@ -269,12 +258,12 @@ export class PairV2 {
     )
 
     return {
-      tokenX,
-      tokenY,
-      amountX,
-      amountY,
-      amountXMin,
-      amountYMin,
+      token0,
+      token1,
+      amount0,
+      amount1,
+      amount0Min,
+      amount1Min,
       idSlippage,
       deltaIds,
       distributionX,
@@ -332,6 +321,55 @@ export class PairV2 {
       amountY,
       amountXMin,
       amountYMin
+    }
+  }
+
+  /**
+   * Returns the on-chain method name and args for this add/remove
+   *
+   * @param {AddLiquidityParameters | RemoveLiquidityParameters} options
+   * @returns {LiquidityParameters}
+   */
+  public liquidityCallParameters(
+    options: AddLiquidityParameters | RemoveLiquidityParameters
+  ): LiquidityParameters {
+    const isAdd = 'distributionX' in options
+    const isNative = this.token0.isNative || this.token1.isNative
+
+    const { to, deadline } = options
+
+    const { methodName, args, value } = ((
+      isAdd: boolean
+    ): LiquidityParameters => {
+      const args: Args = new Args()
+      let value = 0n
+      switch (isAdd) {
+        case true:
+          invariant('distributionX' in options, 'INVALID')
+          if (isNative) {
+            args.addString(to).addU64(BigInt(deadline))
+            value = this.token0.isNative ? options.amount0 : options.amount1
+            return { args, methodName: 'addLiquidityMAS', value }
+          } else {
+            args.addString(to).addU64(BigInt(deadline))
+            return { args, methodName: 'addLiquidity', value }
+          }
+        case false:
+          invariant(!('distributionX' in options), 'INVALID')
+          if (isNative) {
+            args.addString(to).addU64(BigInt(deadline))
+            return { args, methodName: 'removeLiquidityMAS', value }
+          } else {
+            args.addString(to).addU64(BigInt(deadline))
+            return { args, methodName: 'removeLiquidity', value }
+          }
+      }
+    })(isAdd)
+
+    return {
+      methodName,
+      args,
+      value
     }
   }
 }

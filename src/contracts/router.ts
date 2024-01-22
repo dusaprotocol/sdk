@@ -25,7 +25,7 @@ export class IRouter {
     })
   }
 
-  async addOrRemove(params: LiquidityParameters) {
+  async add(params: LiquidityParameters) {
     const simulatedGas = await this.simulate(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
@@ -36,6 +36,20 @@ export class IRouter {
       maxGas: simulatedGas
     })
   }
+
+  async remove(params: LiquidityParameters) {
+    const simulatedGas = await this.simulate(params)
+    return this.client.smartContracts().callSmartContract({
+      targetAddress: this.address,
+      functionName: params.methodName,
+      coins: params.value,
+      parameter: params.args,
+      fee: 100_000_000n,
+      maxGas: simulatedGas
+    })
+  }
+
+  // ESTIME GAS
 
   private async simulate(params: SwapParameters | LiquidityParameters) {
     return this.client
