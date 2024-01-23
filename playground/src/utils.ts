@@ -8,7 +8,6 @@ export const awaitFinalization = async (
     .smartContracts()
     .awaitRequiredOperationStatus(txId, EOperationStatus.SPECULATIVE_SUCCESS)
     .then((status) => {
-      console.log('status', EOperationStatus[status])
       if (status !== EOperationStatus.SPECULATIVE_SUCCESS) {
         throw new Error('Operation failed')
       }

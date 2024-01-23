@@ -10,6 +10,7 @@ import {
   WMAS as _WMAS,
   USDC as _USDC,
   getLiquidityConfig,
+  parseUnits,
   Percent
 } from '@dusalabs/sdk'
 import {
@@ -45,22 +46,39 @@ export const addLiquidity = async () => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
-  const spender = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // set the amounts for each of tokens
   const typedValueUSDC = '20'
   const typedValueWMAS = '20'
 
   // wrap into TokenAmount
-  const tokenAmountUSDC = new TokenAmount(USDC, BigInt(typedValueUSDC))
-  const tokenAmountWMAS = new TokenAmount(WMAS, BigInt(typedValueWMAS))
+  const tokenAmountUSDC = new TokenAmount(
+    USDC,
+    parseUnits(typedValueUSDC, USDC.decimals)
+  )
+  const tokenAmountWMAS = new TokenAmount(
+    WMAS,
+    parseUnits(typedValueWMAS, WMAS.decimals)
+  )
+
+  // increase allowance for the router
+  const approveTxId1 = await new IERC20(USDC.address, client).approve(
+    router,
+    tokenAmountUSDC.raw
+  )
+  const approveTxId2 = await new IERC20(WMAS.address, client).approve(
+    router,
+    tokenAmountWMAS.raw
+  )
+  if (approveTxId1) await awaitFinalization(client, approveTxId1)
+  if (approveTxId2) await awaitFinalization(client, approveTxId2)
 
   // set amount slipage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
 
   // set price slippage tolerance
   const allowedPriceSlippage = 50 // in bips, 0.5% in this case
-  const priceSlippage = allowedPriceSlippage / 10000 // 0.005
 
   // set deadline for the transaction
   const currenTimeInMs = new Date().getTime()
@@ -76,15 +94,20 @@ export const addLiquidity = async () => {
     binStep,
     tokenAmountUSDC,
     tokenAmountWMAS,
-    new Percent(BigInt(allowedAmountSlippage), BigInt(10000)),
-    new Percent(BigInt(allowedPriceSlippage), BigInt(10000)),
+    new Percent(BigInt(allowedAmountSlippage)),
+    new Percent(BigInt(allowedPriceSlippage)),
     LiquidityDistribution.SPOT
   )
 
+  const params = pair.liquidityCallParameters({
+    ...addLiquidityInput,
+    activeIdDesired: lbPairData.activeId,
+    to: account.address,
+    deadline
+  })
+
   // call methods
-  const txId = await new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).add(
-    addLiquidityInput
-  )
+  const txId = await new IRouter(router, client).add(params)
   console.log('txId', txId)
 
   // await tx confirmation and log events
