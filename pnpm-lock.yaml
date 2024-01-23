@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: ^3.0.2
-    version: 3.0.2
+    specifier: 3.0.4-dev.20240116124851
+    version: 3.0.4-dev.20240116124851
   '@massalabs/web3-utils':
     specifier: ^1.4.7
     version: 1.4.7
@@ -1798,8 +1798,8 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /@massalabs/massa-web3@3.0.2:
-    resolution: {integrity: sha512-XdCqq5b6fOFahkXDG1F9vX9+fmBYdQbz5K8JqomD1NFAh7Q9CNA1IG6dlUAnN6GNGkdCJ6XiPsRxUCZfwkejyg==}
+  /@massalabs/massa-web3@3.0.4-dev.20240116124851:
+    resolution: {integrity: sha512-yw/XrQ+FGFGqVdcVSw5478VgJn9ruAHQw8lRV0DuFqz1s+ROGvir1d1knoDGZsLohkAnPDIbSBKMn1OR/tALXQ==}
     dependencies:
       '@massalabs/wallet-provider': 1.5.1
       '@massalabs/web3-utils': 1.4.7
