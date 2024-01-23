@@ -1,5 +1,5 @@
 import { Args, Client, bytesToStr, strToBytes } from '@massalabs/massa-web3'
-import { ArrayTypes, byteToBool } from '@massalabs/web3-utils'
+import { ArrayTypes, byteToBool, bytesToArray } from '@massalabs/web3-utils'
 import { BinReserves, LBPairReservesAndId } from '../types'
 
 const maxGas = 100_000_000n
@@ -16,13 +16,30 @@ export class ILBPair {
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: 'setApprovalForAll',
-      parameter: new Args().addString(operator).addBool(approved).serialize(),
+      parameter: new Args().addBool(approved).addString(operator).serialize(),
       maxGas,
       fee: 100_000_000n
     })
   }
 
   // QUERIES
+
+  async balanceOfBatch(accounts: string[], ids: number[]): Promise<bigint[]> {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: 'balanceOfBatch',
+        parameter: new Args()
+          .addArray(accounts, ArrayTypes.STRING)
+          .addArray(ids.map(BigInt), ArrayTypes.U64)
+          .serialize(),
+        maxGas
+      })
+      .then((res) => {
+        return bytesToArray(res.returnValue, ArrayTypes.U256)
+      })
+  }
 
   async getReservesAndId(): Promise<LBPairReservesAndId> {
     return await this.client
@@ -64,7 +81,13 @@ export class ILBPair {
         }
       ])
       .then((r) => {
-        if (!r[0].candidate_value || !r[1].candidate_value) throw new Error()
+        if (
+          !r[0].candidate_value ||
+          !r[1].candidate_value ||
+          !r[0].candidate_value.length ||
+          !r[1].candidate_value.length
+        )
+          throw new Error()
         return [
           bytesToStr(r[0].candidate_value),
           bytesToStr(r[1].candidate_value)
@@ -72,7 +95,61 @@ export class ILBPair {
       })
   }
 
-  async getBins(): Promise<number[]> {
+  async getSupplies(ids: number[]): Promise<bigint[]> {
+    const keys = ids.map((id) => ({
+      address: this.address,
+      key: strToBytes(`total_supplies::${id}`)
+    }))
+    return this.client
+      .publicApi()
+      .getDatastoreEntries(keys)
+      .then((res) => {
+        return res.map((r) => {
+          if (!r.candidate_value || !r.candidate_value.length) return 0n
+          const args = new Args(r.candidate_value)
+          const supply = args.nextU256()
+          return supply
+        })
+      })
+  }
+
+  async getBins(ids: number[]): Promise<BinReserves[]> {
+    const keys = ids.map((id) => ({
+      address: this.address,
+      key: strToBytes(`bin::${id}`)
+    }))
+    return this.client
+      .publicApi()
+      .getDatastoreEntries(keys)
+      .then((res) => {
+        return res.map((r) => {
+          if (!r.candidate_value || !r.candidate_value.length)
+            return { reserveX: 0n, reserveY: 0n }
+          const args = new Args(r.candidate_value)
+          const reserveX = args.nextU256()
+          const reserveY = args.nextU256()
+          return { reserveX, reserveY }
+        })
+      })
+  }
+
+  async getBin(id: number): Promise<BinReserves> {
+    return this.client
+      .publicApi()
+      .getDatastoreEntries([
+        { address: this.address, key: strToBytes(`bin::${id}`) }
+      ])
+      .then((res) => {
+        if (!res[0].candidate_value || !res[0].candidate_value.length)
+          return { reserveX: 0n, reserveY: 0n }
+        const args = new Args(res[0].candidate_value)
+        const reserveX = args.nextU256()
+        const reserveY = args.nextU256()
+        return { reserveX, reserveY }
+      })
+  }
+
+  async getBinIds(): Promise<number[]> {
     return this.client
       .publicApi()
       .getAddresses([this.address])
@@ -86,22 +163,7 @@ export class ILBPair {
       })
   }
 
-  async getBin(id: number): Promise<BinReserves> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([
-        { address: this.address, key: strToBytes(`bin::${id}`) }
-      ])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        const args = new Args(res[0].candidate_value)
-        const reserveX = args.nextU256()
-        const reserveY = args.nextU256()
-        return { reserveX, reserveY }
-      })
-  }
-
-  async getUserBins(user: string): Promise<number[]> {
+  async getUserBinIds(user: string): Promise<number[]> {
     return this.client
       .smartContracts()
       .readSmartContract({

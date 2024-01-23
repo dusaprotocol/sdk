@@ -10,7 +10,8 @@ import {
   WMAS as _WMAS,
   USDC as _USDC,
   getLiquidityConfig,
-  ILBPair
+  ILBPair,
+  Percent
 } from '@dusalabs/sdk'
 import {
   BUILDNET_CHAIN_ID,
@@ -29,7 +30,8 @@ export const removeLiquidity = async () => {
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await WalletClient.getAccountFromSecretKey(privateKey)
-  if (!account.address) throw new Error('Missing address in account')
+  const address = account.address
+  if (!address) throw new Error('Missing address in account')
   const client = await ClientFactory.createCustomClient(
     [
       { url: BUILDNET_URL, type: ProviderType.PUBLIC },
@@ -46,18 +48,9 @@ export const removeLiquidity = async () => {
   const USDC = _USDC[CHAIN_ID]
 
   const router = LB_ROUTER_ADDRESS[CHAIN_ID]
-  const txIdApprove0 = await new IERC20(USDC.address, client).approve(router)
-  const txIdApprove1 = await new IERC20(WMAS.address, client).approve(router)
-  await awaitFinalization(client, txIdApprove0)
-  await awaitFinalization(client, txIdApprove1)
 
-  // set the amounts for each of tokens
-  const typedValueUSDC = '20'
-  const typedValueWMAS = '20'
-
-  // wrap into TokenAmount
-  const tokenAmountUSDC = new TokenAmount(USDC, BigInt(typedValueUSDC))
-  const tokenAmountWMAS = new TokenAmount(WMAS, BigInt(typedValueWMAS))
+  // set amount slipage tolerance
+  const allowedAmountSlippage = 50 // in bips, 0.5% in this case
 
   // set deadline for the transaction
   const currenTimeInMs = new Date().getTime()
@@ -71,33 +64,55 @@ export const removeLiquidity = async () => {
 
   const x = new ILBPair(lbPair.LBPair, client)
 
-  const approved = await x.isApprovedForAll(account.address, router)
+  const approved = await x.isApprovedForAll(address, router)
 
   if (!approved) {
-    const hashApproval = await x.setApprovalForAll(router, true)
-    console.log(`Approving transaction sent with hash ${hashApproval}`)
+    const txIdApprove = await x.setApprovalForAll(router, true)
+    console.log('txIdApprove', txIdApprove)
   }
 
-  // declare liquidity parameters
-  const removeLiquidityInput = {
+  const range = 200 // should be enough in most cases
+  const addressArray = Array.from({ length: 2 * range + 1 }, () => address)
+  const binsArray: number[] = []
+  for (let i = activeBinId - range; i <= activeBinId + range; i++) {
+    binsArray.push(i)
+  }
+
+  const userPositionIds = await x.getUserBinIds(address)
+  const bins = await x.getBins(userPositionIds)
+
+  const allBins = await x.balanceOfBatch(
+    addressArray.slice(0, userPositionIds.length),
+    userPositionIds
+  )
+  const nonZeroAmounts = allBins.filter((amount) => amount !== 0n)
+  const totalSupplies = await x.getSupplies(userPositionIds)
+
+  const removeLiquidityInput = pair.calculateAmountsToRemove(
+    userPositionIds,
+    activeBinId,
+    bins,
+    totalSupplies,
+    nonZeroAmounts.map(String),
+    new Percent(BigInt(allowedAmountSlippage))
+  )
+
+  const params = pair.liquidityCallParameters({
+    ...removeLiquidityInput,
+    amount0Min: removeLiquidityInput.amountXMin,
+    amount1Min: removeLiquidityInput.amountYMin,
+    ids: userPositionIds,
+    amounts: nonZeroAmounts,
     token0: USDC.address,
     token1: WMAS.address,
-    binStep: binStep,
-    amount0Min: 0, // TODO
-    amount1Min: 0, // TODO
-    ids: [],
-    amounts: [],
-    to: account.address,
+    binStep,
+    to: address,
     deadline
-  }
-
-  // set MAS amount, such as tokenAmountMAS.raw.toString(), when one of the tokens is MAS; otherwise, set to null
-  const value = null
+  })
+  console.log(params.args.getArgsList())
 
   // call methods
-  const txId = await new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).add(
-    removeLiquidityInput
-  )
+  const txId = await new IRouter(router, client).remove(params)
   console.log('txId', txId)
 
   // await tx confirmation and log events
