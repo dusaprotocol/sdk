@@ -52,35 +52,32 @@ export const removeLiquidity = async () => {
 
   const pair = new PairV2(USDC, WMAS)
   const binStep = 20
-  const lbPair = await pair.fetchLBPair(binStep, client, CHAIN_ID)
-  const lbPairData = await new ILBPair(lbPair.LBPair, client).getReservesAndId()
+  const pairAddress = await pair
+    .fetchLBPair(binStep, client, CHAIN_ID)
+    .then((r) => r.LBPair)
+  const lbPairData = await new ILBPair(pairAddress, client).getReservesAndId()
   const activeBinId = lbPairData.activeId
 
-  const x = new ILBPair(lbPair.LBPair, client)
-
-  const approved = await x.isApprovedForAll(address, router)
-
+  const pairContract = new ILBPair(pairAddress, client)
+  const approved = await pairContract.isApprovedForAll(address, router)
   if (!approved) {
-    const txIdApprove = await x.setApprovalForAll(router, true)
+    const txIdApprove = await pairContract.setApprovalForAll(router, true)
     console.log('txIdApprove', txIdApprove)
   }
 
-  const range = 200 // should be enough in most cases
-  const addressArray = Array.from({ length: 2 * range + 1 }, () => address)
-  const binsArray: number[] = []
-  for (let i = activeBinId - range; i <= activeBinId + range; i++) {
-    binsArray.push(i)
-  }
+  const userPositionIds = await pairContract.getUserBinIds(address)
+  const addressArray = Array.from(
+    { length: userPositionIds.length },
+    () => address
+  )
+  const bins = await pairContract.getBins(userPositionIds)
 
-  const userPositionIds = await x.getUserBinIds(address)
-  const bins = await x.getBins(userPositionIds)
-
-  const allBins = await x.balanceOfBatch(
-    addressArray.slice(0, userPositionIds.length),
+  const allBins = await pairContract.balanceOfBatch(
+    addressArray,
     userPositionIds
   )
   const nonZeroAmounts = allBins.filter((amount) => amount !== 0n)
-  const totalSupplies = await x.getSupplies(userPositionIds)
+  const totalSupplies = await pairContract.getSupplies(userPositionIds)
 
   const removeLiquidityInput = pair.calculateAmountsToRemove(
     userPositionIds,
@@ -103,7 +100,6 @@ export const removeLiquidity = async () => {
     to: address,
     deadline
   })
-  console.log(params.args.getArgsList())
 
   // call methods
   const txId = await new IRouter(router, client).remove(params)
