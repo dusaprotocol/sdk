@@ -1,5 +1,4 @@
 import {
-  Bin,
   ChainId,
   IERC20,
   IRouter,
@@ -9,15 +8,14 @@ import {
   TokenAmount,
   WMAS as _WMAS,
   USDC as _USDC,
-  getLiquidityConfig,
   parseUnits,
-  Percent
+  Percent,
+  ILBPair
 } from '@dusalabs/sdk'
 import {
   BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls,
-  EOperationStatus,
   ProviderType,
   WalletClient
 } from '@massalabs/massa-web3'
@@ -87,7 +85,7 @@ export const addLiquidity = async () => {
   const pair = new PairV2(USDC, WMAS)
   const binStep = 20
   const lbPair = await pair.fetchLBPair(binStep, client, CHAIN_ID)
-  const lbPairData = await PairV2.getLBPairReservesAndId(lbPair.LBPair, client)
+  const lbPairData = await new ILBPair(lbPair.LBPair, client).getReservesAndId()
 
   // declare liquidity parameters
   const addLiquidityInput = pair.addLiquidityParameters(

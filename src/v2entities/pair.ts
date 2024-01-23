@@ -1,5 +1,4 @@
 import {
-  LBPairReservesAndId,
   LiquidityDistribution,
   BinReserves,
   LBPair,
@@ -12,7 +11,7 @@ import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
-import { IFactory, ILBPair } from '../contracts'
+import { IFactory } from '../contracts'
 import invariant from 'tiny-invariant'
 
 /** Class representing a pair of tokens. */
@@ -144,24 +143,6 @@ export class PairV2 {
     })
 
     return uniquePairs
-  }
-
-  /**
-   * Fetches the reserves active bin id for the LBPair
-   *
-   * @param {string} LBPairAddr
-   * @param {Client} client
-   * @returns {Promise<LBPairReservesAndId>}
-   */
-  public static async getLBPairReservesAndId(
-    LBPairAddr: string,
-    client: Client
-  ): Promise<LBPairReservesAndId> {
-    const pairContract = new ILBPair(LBPairAddr, client)
-
-    const pairData: LBPairReservesAndId = await pairContract.getReservesAndId()
-
-    return pairData
   }
 
   /**

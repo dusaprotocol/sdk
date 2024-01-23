@@ -84,22 +84,6 @@ describe('PairV2 entity', async () => {
     })
   })
 
-  describe('PairV2.getLBPairReservesAndId()', () => {
-    it('can fetch LBPair reserves and activeId', async () => {
-      const binStep = 20
-      const LBPair = await pair1.fetchLBPair(binStep, client, CHAIN_ID)
-
-      const lbPairData = await PairV2.getLBPairReservesAndId(
-        LBPair.LBPair,
-        client
-      )
-
-      expect(lbPairData.activeId).not.toBeUndefined()
-      expect(lbPairData.reserveX).not.toBeUndefined()
-      expect(lbPairData.reserveY).not.toBeUndefined()
-    })
-  })
-
   describe('PairV2.calculateAmounts()', () => {
     it('can accurately amounts when activeBin is included', async () => {
       const liquidity = ['13333333', '13600300', '13903508']
