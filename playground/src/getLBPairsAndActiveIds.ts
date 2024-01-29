@@ -1,6 +1,7 @@
 import {
   Bin,
   ChainId,
+  ILBPair,
   PairV2,
   USDC as _USDC,
   WMAS as _WMAS
@@ -35,8 +36,9 @@ export const getLBPairsAndActiveIds = async () => {
   const LBPairs = await pair.fetchAvailableLBPairs(client, CHAIN_ID)
 
   // fetch reserves and activeIds for each LBPair
-  const requests = LBPairs.map((lbPair) =>
-    PairV2.getLBPairReservesAndId(lbPair.LBPair, client)
+  const requests = LBPairs.map(
+    async (lbPair) =>
+      await new ILBPair(lbPair.LBPair, client).getReservesAndId()
   )
   const data = await Promise.all(requests)
   data.forEach((data, i) => {

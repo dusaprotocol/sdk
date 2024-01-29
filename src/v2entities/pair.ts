@@ -1,5 +1,4 @@
 import {
-  LBPairReservesAndId,
   LiquidityDistribution,
   BinReserves,
   LBPair,
@@ -12,7 +11,7 @@ import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
-import { IFactory, ILBPair } from '../contracts'
+import { IFactory } from '../contracts'
 import invariant from 'tiny-invariant'
 
 /** Class representing a pair of tokens. */
@@ -147,30 +146,12 @@ export class PairV2 {
   }
 
   /**
-   * Fetches the reserves active bin id for the LBPair
-   *
-   * @param {string} LBPairAddr
-   * @param {Client} client
-   * @returns {Promise<LBPairReservesAndId>}
-   */
-  public static async getLBPairReservesAndId(
-    LBPairAddr: string,
-    client: Client
-  ): Promise<LBPairReservesAndId> {
-    const pairContract = new ILBPair(LBPairAddr, client)
-
-    const pairData: LBPairReservesAndId = await pairContract.getReservesAndId()
-
-    return pairData
-  }
-
-  /**
    * Calculate amountX and amountY
    *
    * @param {number[]} binIds
    * @param {number[]} activeBin
    * @param {BinReserves[]} bins
-   * @param {BigInt[]} totalSupplies
+   * @param {bigint[]} totalSupplies
    * @param {string[]} liquidity
    * @returns
    */
@@ -230,7 +211,7 @@ export class PairV2 {
     amountSlippage: Percent,
     priceSlippage: Percent,
     liquidityDistribution: LiquidityDistribution
-  ): Omit<AddLiquidityParameters, 'to' | 'deadline'> {
+  ): Omit<AddLiquidityParameters, 'to' | 'deadline' | 'activeIdDesired'> {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
     const token0 = (token0isX ? token0Amount : token1Amount).token.address
     const token1 = (token0isX ? token1Amount : token0Amount).token.address
@@ -267,8 +248,7 @@ export class PairV2 {
       idSlippage,
       deltaIds,
       distributionX,
-      distributionY,
-      activeIdDesired: 1
+      distributionY
     }
   }
 
@@ -278,7 +258,7 @@ export class PairV2 {
    * @param {number[]} userPositionIds - List of binIds that user has position
    * @param {number} activeBin - The active bin id for the LBPair
    * @param {Bin[]} bins - List of bins whose indices match those of userPositionIds
-   * @param {BigInt[]} totalSupplies - List of bin's total supplies whose indices match those of userPositionIds
+   * @param {bigint[]} totalSupplies - List of bin's total supplies whose indices match those of userPositionIds
    * @param {string[]} amountsToRemove - List of amounts specified by the user to remove in each of their position
    * @param {Percent} amountSlippage - The amounts slippage used to calculate amountXMin and amountYMin
    * @returns
@@ -371,30 +351,20 @@ export class PairV2 {
           }
         case false:
           invariant(!('distributionX' in options), 'INVALID')
-
-          const isToken0MAS = this.token0.isNative
-          const isToken1MAS = this.token1.isNative
-          if (!isToken0MAS && isToken1MAS) {
-            const [tokenA, tokenB] = [this.token1.address, this.token0.address]
-            const [amountXMin, amountYMin] = [
-              options.amount1Min,
-              options.amount0Min
-            ]
-          }
-          if (isNative) {
-            args
-              .addString(this.token1.address)
-              .addU32(options.binStep)
-              .addU256(options.amount0Min)
-              .addU256(options.amount1Min)
-              .addArray(options.ids.map(BigInt), ArrayTypes.U64)
-              .addArray(options.amounts, ArrayTypes.U256)
-              .addString(to)
-              .addU64(BigInt(deadline))
-            return { args, methodName: 'removeLiquidityMAS', value }
-          } else {
-            args.addString(to).addU64(BigInt(deadline))
-            return { args, methodName: 'removeLiquidity', value }
+          if (!isNative) args.addString(this.token0.address)
+          args
+            .addString(this.token1.address)
+            .addU32(options.binStep)
+            .addU256(options.amount0Min)
+            .addU256(options.amount1Min)
+            .addArray(options.ids.map(BigInt), ArrayTypes.U64)
+            .addArray(options.amounts, ArrayTypes.U256)
+            .addString(to)
+            .addU64(BigInt(deadline))
+          return {
+            args,
+            methodName: isNative ? 'removeLiquidityMAS' : 'removeLiquidity',
+            value
           }
       }
     })(isAdd)
