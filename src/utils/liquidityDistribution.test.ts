@@ -18,44 +18,38 @@ it('getUniformDistributionFromBinRange', () => {
     activeId + 5
   ])
 
-  const sumDistributionX = params.distributionX.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionX = params.distributionX.reduce((a, b) => a + b, 0n)
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
   expect(params.distributionX).toEqual([
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt('90909090909090909'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818')
+    0n,
+    0n,
+    0n,
+    0n,
+    0n,
+    90909090909090909n,
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n
   ])
   expect(params.distributionY).toEqual([
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('181818181818181818'),
-    BigInt('90909090909090909'),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0)
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n,
+    181818181818181818n,
+    90909090909090909n,
+    0n,
+    0n,
+    0n,
+    0n,
+    0n
   ])
-  expect(sumDistributionX).toEqual(BigInt(10) ** BigInt(18) - BigInt(1))
-  expect(sumDistributionY).toEqual(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionX).toEqual(10n ** 18n - 1n)
+  expect(sumDistributionY).toEqual(10n ** 18n - 1n)
 })
 
 it('getBidAskDistributionFromBinRange with amount X and Y', () => {
@@ -69,44 +63,38 @@ it('getBidAskDistributionFromBinRange with amount X and Y', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionX = params.distributionX.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionX = params.distributionX.reduce((a, b) => a + b, 0n)
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
   expect(params.distributionX).toEqual([
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt('24390243902439024'),
-    BigInt('97560975609756097'),
-    BigInt('146341463414634146'),
-    BigInt('195121951219512195'),
-    BigInt('243902439024390243'),
-    BigInt('292682926829268292')
+    0n,
+    0n,
+    0n,
+    0n,
+    0n,
+    24390243902439024n,
+    97560975609756097n,
+    146341463414634146n,
+    195121951219512195n,
+    243902439024390243n,
+    292682926829268292n
   ])
   expect(params.distributionY).toEqual([
-    BigInt('292682926829268292'),
-    BigInt('243902439024390243'),
-    BigInt('195121951219512195'),
-    BigInt('146341463414634146'),
-    BigInt('97560975609756097'),
-    BigInt('24390243902439024'),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0)
+    292682926829268292n,
+    243902439024390243n,
+    195121951219512195n,
+    146341463414634146n,
+    97560975609756097n,
+    24390243902439024n,
+    0n,
+    0n,
+    0n,
+    0n,
+    0n
   ])
-  expect(sumDistributionX).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
-  expect(sumDistributionY).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionX).toBeLessThan(10n ** 18n - 1n)
+  expect(sumDistributionY).toBeLessThan(10n ** 18n - 1n)
 })
 
 it('getBidAskDistributionFromBinRange with amount X only', () => {
@@ -120,29 +108,19 @@ it('getBidAskDistributionFromBinRange with amount X only', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionX = params.distributionX.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionX = params.distributionX.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([0, 1, 2, 3, 4, 5])
   expect(params.distributionX).toEqual([
-    BigInt('47619047619047619'),
-    BigInt('95238095238095238'),
-    BigInt('142857142857142857'),
-    BigInt('190476190476190476'),
-    BigInt('238095238095238095'),
-    BigInt('285714285714285714')
+    47619047619047619n,
+    95238095238095238n,
+    142857142857142857n,
+    190476190476190476n,
+    238095238095238095n,
+    285714285714285714n
   ])
-  expect(params.distributionY).toEqual([
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0)
-  ])
-  expect(sumDistributionX).toEqual(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(params.distributionY).toEqual([0n, 0n, 0n, 0n, 0n, 0n])
+  expect(sumDistributionX).toEqual(10n ** 18n - 1n)
 })
 
 it('getBidAskDistributionFromBinRange with amount Y only', () => {
@@ -156,29 +134,19 @@ it('getBidAskDistributionFromBinRange with amount Y only', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([-5, -4, -3, -2, -1, 0])
-  expect(params.distributionX).toEqual([
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0)
-  ])
+  expect(params.distributionX).toEqual([0n, 0n, 0n, 0n, 0n, 0n])
   expect(params.distributionY).toEqual([
-    BigInt('285714285714285714'),
-    BigInt('238095238095238095'),
-    BigInt('190476190476190476'),
-    BigInt('142857142857142857'),
-    BigInt('95238095238095238'),
-    BigInt('47619047619047619')
+    285714285714285714n,
+    238095238095238095n,
+    190476190476190476n,
+    142857142857142857n,
+    95238095238095238n,
+    47619047619047619n
   ])
-  expect(sumDistributionY).toEqual(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionY).toEqual(10n ** 18n - 1n)
 })
 
 it('getCurveDistributionFromBinRange with amount X and Y', () => {
@@ -192,44 +160,38 @@ it('getCurveDistributionFromBinRange with amount X and Y', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionX = params.distributionX.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionX = params.distributionX.reduce((a, b) => a + b, 0n)
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
   expect(params.distributionX).toEqual([
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt('174249760212214784'),
-    BigInt('317835340137416041'),
-    BigInt('241102761580016849'),
-    BigInt('152125558193368601'),
-    BigInt('79836627834540759'),
-    BigInt('34849952042442963')
+    0n,
+    0n,
+    0n,
+    0n,
+    0n,
+    174249760212214784n,
+    317835340137416041n,
+    241102761580016849n,
+    152125558193368601n,
+    79836627834540759n,
+    34849952042442963n
   ])
   expect(params.distributionY).toEqual([
-    BigInt('34849952042442963'),
-    BigInt('79836627834540759'),
-    BigInt('152125558193368601'),
-    BigInt('241102761580016849'),
-    BigInt('317835340137416041'),
-    BigInt('174249760212214784'),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0),
-    BigInt(0)
+    34849952042442963n,
+    79836627834540759n,
+    152125558193368601n,
+    241102761580016849n,
+    317835340137416041n,
+    174249760212214784n,
+    0n,
+    0n,
+    0n,
+    0n,
+    0n
   ])
-  expect(sumDistributionX).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
-  expect(sumDistributionY).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionX).toBeLessThan(10n ** 18n - 1n)
+  expect(sumDistributionY).toBeLessThan(10n ** 18n - 1n)
 })
 
 it('getCurveDistributionFromBinRange with amount X only', () => {
@@ -243,29 +205,19 @@ it('getCurveDistributionFromBinRange with amount X only', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionX = params.distributionX.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionX = params.distributionX.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([0, 1, 2, 3, 4, 5])
   expect(params.distributionX).toEqual([
-    BigInt('296784834225937962'),
-    BigInt('270670985770502227'),
-    BigInt('205324940016546276'),
-    BigInt('129551278908395012'),
-    BigInt('67989477656024718'),
-    BigInt('29678483422593802')
+    296784834225937962n,
+    270670985770502227n,
+    205324940016546276n,
+    129551278908395012n,
+    67989477656024718n,
+    29678483422593802n
   ])
-  expect(params.distributionY).toEqual([
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0')
-  ])
-  expect(sumDistributionX).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(params.distributionY).toEqual([0n, 0n, 0n, 0n, 0n, 0n])
+  expect(sumDistributionX).toBeLessThan(10n ** 18n - 1n)
 })
 
 it('getCurveDistributionFromBinRange with amount Y only', () => {
@@ -279,29 +231,19 @@ it('getCurveDistributionFromBinRange with amount Y only', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   expect(params.deltaIds).toEqual([-5, -4, -3, -2, -1, 0])
-  expect(params.distributionX).toEqual([
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0'),
-    BigInt('0')
-  ])
+  expect(params.distributionX).toEqual([0n, 0n, 0n, 0n, 0n, 0n])
   expect(params.distributionY).toEqual([
-    BigInt('29678483422593802'),
-    BigInt('67989477656024718'),
-    BigInt('129551278908395012'),
-    BigInt('205324940016546276'),
-    BigInt('270670985770502227'),
-    BigInt('296784834225937962')
+    29678483422593802n,
+    67989477656024718n,
+    129551278908395012n,
+    205324940016546276n,
+    270670985770502227n,
+    296784834225937962n
   ])
-  expect(sumDistributionY).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionY).toBeLessThan(10n ** 18n - 1n)
 })
 
 it('getCurveDistributionFromBinRange with bin range below active bin', () => {
@@ -315,14 +257,11 @@ it('getCurveDistributionFromBinRange with bin range below active bin', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   const expectedDeltaIds = Array.from(Array(46).keys()).map((i) => i - 50)
   expect(params.deltaIds).toEqual(expectedDeltaIds)
-  expect(sumDistributionY).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionY).toBeLessThan(10n ** 18n - 1n)
 })
 
 it('getCurveDistributionFromBinRange with bin range above active bin', () => {
@@ -336,12 +275,9 @@ it('getCurveDistributionFromBinRange with bin range above active bin', () => {
     [amountA, amountB]
   )
 
-  const sumDistributionY = params.distributionY.reduce(
-    (a, b) => a + b,
-    BigInt(0)
-  )
+  const sumDistributionY = params.distributionY.reduce((a, b) => a + b, 0n)
 
   const expectedDeltaIds = Array.from(Array(46).keys()).map((i) => i + 5)
   expect(params.deltaIds).toEqual(expectedDeltaIds)
-  expect(sumDistributionY).toBeLessThan(BigInt(10) ** BigInt(18) - BigInt(1))
+  expect(sumDistributionY).toBeLessThan(10n ** 18n - 1n)
 })

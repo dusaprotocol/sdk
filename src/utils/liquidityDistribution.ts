@@ -57,8 +57,8 @@ export const normalizeDist = (
   sumTo: bigint,
   precision: bigint
 ): bigint[] => {
-  const sumDist = dist.reduce((sum, cur) => sum + cur, BigInt(0))
-  if (sumDist === BigInt(0)) {
+  const sumDist = dist.reduce((sum, cur) => sum + cur, 0n)
+  if (sumDist === 0n) {
     return dist
   }
   const factor = (sumDist * precision) / sumTo
@@ -77,33 +77,33 @@ export const getUniformDistributionFromBinRange = (
   activeId: number,
   binRange: number[]
 ): LiquidityDistributionParams => {
-  const ONE = BigInt(10) ** BigInt(18)
+  const ONE = 10n ** 18n
 
   const deltaIds: number[] = []
   const distributionX: bigint[] = []
   const distributionY: bigint[] = []
 
-  let nb_x = BigInt(0)
-  let nb_y = BigInt(0)
+  let nb_x = 0n
+  let nb_y = 0n
 
   for (let binId = binRange[0]; binId <= binRange[1]; binId++) {
     if (binId > activeId) {
-      nb_x += BigInt(2)
+      nb_x += 2n
     } else if (binId < activeId) {
-      nb_y += BigInt(2)
+      nb_y += 2n
     } else {
-      nb_x += BigInt(1)
-      nb_y += BigInt(1)
+      nb_x += 1n
+      nb_y += 1n
     }
   }
 
   for (let binId = binRange[0]; binId <= binRange[1]; binId++) {
     if (binId > activeId) {
-      distributionX.push((BigInt(2) * ONE) / nb_x)
-      distributionY.push(BigInt(0))
+      distributionX.push((2n * ONE) / nb_x)
+      distributionY.push(0n)
     } else if (binId < activeId) {
-      distributionX.push(BigInt(0))
-      distributionY.push((BigInt(2) * ONE) / nb_y)
+      distributionX.push(0n)
+      distributionY.push((2n * ONE) / nb_y)
     } else {
       distributionX.push(ONE / nb_x)
       distributionY.push(ONE / nb_y)
@@ -159,17 +159,17 @@ export const getBidAskDistributionFromBinRange = (
   }
 
   for (let binId = binRange[0]; binId <= binRange[1]; binId++) {
-    let dist_x = BigInt(0)
-    let dist_y = BigInt(0)
+    let dist_x = 0n
+    let dist_y = 0n
 
     const weight = parseEther(`${Math.abs(binId - activeId) + 1}`)
 
     if (binId >= activeId && parsedAmountA.greaterThan('0')) {
-      dist_x = (BigInt(2) * weight) / BigInt(nb_x)
+      dist_x = (2n * weight) / BigInt(nb_x)
     }
 
     if (binId <= activeId && parsedAmountB.greaterThan('0')) {
-      dist_y = (BigInt(2) * weight) / BigInt(nb_y)
+      dist_y = (2n * weight) / BigInt(nb_y)
     }
 
     if (
@@ -177,8 +177,8 @@ export const getBidAskDistributionFromBinRange = (
       parsedAmountA.greaterThan('0') &&
       parsedAmountB.greaterThan('0')
     ) {
-      dist_x /= BigInt(2)
-      dist_y /= BigInt(2)
+      dist_x /= 2n
+      dist_y /= 2n
     }
 
     if (dist_x > 0 || dist_y > 0) {
@@ -216,7 +216,7 @@ export const getCurveDistributionFromBinRange = (
 
   const [parsedAmountA, parsedAmountB] = parsedAmounts
 
-  const ONE = BigInt(10) ** BigInt(18)
+  const ONE = 10n ** 18n
 
   const deltaIds: number[] = []
   const distributionX: bigint[] = []
@@ -224,7 +224,7 @@ export const getCurveDistributionFromBinRange = (
 
   Big.RM = Big.roundDown
   const getGaussianDistribution = (x: number, sigma: number): bigint => {
-    if (sigma === 0) return BigInt(10 ** 18)
+    if (sigma === 0) return 10n ** 18n
 
     const val = new Big(Math.exp(-((x / sigma) ** 2) / 2))
       .times(10 ** 18)
@@ -246,20 +246,20 @@ export const getCurveDistributionFromBinRange = (
   const sigma_x = getSigma(radius_x, alpha)
   const sigma_y = getSigma(radius_y, alpha)
 
-  let nb_x = BigInt(0)
-  let nb_y = BigInt(0)
+  let nb_x = 0n
+  let nb_y = 0n
 
   for (let binId = binRange[0]; binId <= binRange[1]; binId++) {
     const deltaId = binId - activeId
-    let dist_x = BigInt(0)
-    let dist_y = BigInt(0)
+    let dist_x = 0n
+    let dist_y = 0n
 
     if (deltaId >= 0 && parsedAmountA.greaterThan('0')) {
-      dist_x = BigInt(2) * getGaussianDistribution(deltaId, sigma_x)
+      dist_x = 2n * getGaussianDistribution(deltaId, sigma_x)
     }
 
     if (deltaId <= 0 && parsedAmountB.greaterThan('0')) {
-      dist_y = BigInt(2) * getGaussianDistribution(deltaId, sigma_y)
+      dist_y = 2n * getGaussianDistribution(deltaId, sigma_y)
     }
 
     if (
@@ -267,8 +267,8 @@ export const getCurveDistributionFromBinRange = (
       parsedAmountA.greaterThan('0') &&
       parsedAmountB.greaterThan('0')
     ) {
-      dist_x /= BigInt(2)
-      dist_y /= BigInt(2)
+      dist_x /= 2n
+      dist_y /= 2n
     }
 
     nb_x += dist_x
@@ -283,14 +283,14 @@ export const getCurveDistributionFromBinRange = (
 
   for (let i = 0; i < distributionX.length; i++) {
     if (nb_x > 0) {
-      distributionX[i] = (BigInt(distributionX[i]) * ONE) / BigInt(nb_x)
+      distributionX[i] = (distributionX[i] * ONE) / nb_x
     } else {
-      distributionX[i] = BigInt(0)
+      distributionX[i] = 0n
     }
     if (nb_y > 0) {
-      distributionY[i] = (BigInt(distributionY[i]) * ONE) / BigInt(nb_y)
+      distributionY[i] = (distributionY[i] * ONE) / nb_y
     } else {
-      distributionY[i] = BigInt(0)
+      distributionY[i] = 0n
     }
   }
 
