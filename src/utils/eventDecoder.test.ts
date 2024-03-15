@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { EventDecoder } from './eventDecoder'
+import { EventDecoder, extractParams } from './eventDecoder'
 
 const DEPOSIT_EVENT =
   'DEPOSITED_TO_BIN:AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX;?!8391258;?!�\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;?!얇࿨\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'
 const SWAP_EVENT =
   'SWAP:AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar;?!8391258;?!true;?!䄥\x0F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!௟\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!0;?!ě\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+const EVENT = 'SWAP:aaa;?!bbb;?!c:c;?!ddd'
 
 describe('decode', () => {
   it('deposit', () => {
@@ -32,5 +33,13 @@ describe('decode', () => {
     expect(amountOutOfBin).toBe(199222843n)
     expect(volatilityAccumulated).toBe(0)
     expect(feesTotal).toBe(283n)
+  })
+  it('u256 with : delimiter inside', () => {
+    const params = extractParams(EVENT)
+    expect(params.length).toBe(4)
+    expect(params[0]).toBe('aaa')
+    expect(params[1]).toBe('bbb')
+    expect(params[2]).toBe('c:c')
+    expect(params[3]).toBe('ddd')
   })
 })

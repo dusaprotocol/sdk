@@ -9,8 +9,14 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
   return new Uint8Array(buf)
 }
 
-const extractParams = (bytes: string): string[] => {
-  return bytes.split(':')[1].split(';?!')
+const keywordDelimiter = ':'
+const argsDelimiter = ';?!'
+export const extractParams = (bytes: string): string[] => {
+  return bytes
+    .split(keywordDelimiter)
+    .slice(1)
+    .join(keywordDelimiter)
+    .split(argsDelimiter)
 }
 
 export type SwapEvent = {
