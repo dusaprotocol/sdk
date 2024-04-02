@@ -1,16 +1,9 @@
-import {
-  Args,
-  Client,
-  bytesToU256,
-  bytesToStr,
-  byteToU8
-} from '@massalabs/massa-web3'
+import { Args, bytesToU256, bytesToStr, byteToU8 } from '@massalabs/massa-web3'
+import { IBaseContract } from './base'
 
 const maxGas = 100_000_000n
 
-export class IERC20 {
-  constructor(public address: string, private client: Client) {}
-
+export class IERC20 extends IBaseContract {
   async balanceOf(address: string): Promise<bigint> {
     return this.client
       .smartContracts()

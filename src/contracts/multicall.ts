@@ -1,11 +1,11 @@
 import {
   Args,
-  Client,
   IContractReadOperationResponse,
   IDeserializedResult,
   ISerializable,
   MAX_GAS_CALL
 } from '@massalabs/massa-web3'
+import { IBaseContract } from './base'
 
 export class Tx implements ISerializable<Tx> {
   constructor(
@@ -36,9 +36,7 @@ export class Tx implements ISerializable<Tx> {
   }
 }
 
-export class IMulticall {
-  constructor(public address: string, private client: Client) {}
-
+export class IMulticall extends IBaseContract {
   async aggregateMulticall(
     data: Tx[]
   ): Promise<IContractReadOperationResponse> {

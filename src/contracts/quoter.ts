@@ -1,9 +1,8 @@
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
+import { Args, ArrayTypes } from '@massalabs/massa-web3'
 import { Address, Quote } from '../types'
+import { IBaseContract } from './base'
 
-export class IQuoter {
-  constructor(public address: string, private client: Client) {}
-
+export class IQuoter extends IBaseContract {
   async findBestPathFromAmountIn(
     route: string[],
     amountIn: string

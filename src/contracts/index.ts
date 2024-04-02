@@ -1,4 +1,5 @@
 export * from './factory'
+export * from './floor'
 export * from './LBPair'
 export * from './multicall'
 export * from './quoter'

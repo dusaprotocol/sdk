@@ -1,5 +1,6 @@
-import { Args, Client, MAX_GAS_CALL } from '@massalabs/massa-web3'
+import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
+import { IBaseContract } from './base'
 
 interface GetSwapParams {
   pairAddress: string
@@ -8,9 +9,7 @@ interface GetSwapParams {
 type GetSwapInParams = GetSwapParams & { amountOut: bigint }
 type GetSwapOutParams = GetSwapParams & { amountIn: bigint }
 
-export class IRouter {
-  constructor(public address: string, private client: Client) {}
-
+export class IRouter extends IBaseContract {
   // EXECUTE
 
   async swap(params: SwapParameters): Promise<string> {

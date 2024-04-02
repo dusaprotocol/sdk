@@ -1,16 +1,11 @@
-import {
-  Args,
-  Client,
-  bytesToSerializableObjectArray
-} from '@massalabs/massa-web3'
+import { Args, bytesToSerializableObjectArray } from '@massalabs/massa-web3'
 import { bytesToArray, ArrayTypes } from '@massalabs/web3-utils'
 import { LBPair, LBPairInformation } from '../types'
+import { IBaseContract } from './base'
 
 const maxGas = 100_000_000n
 
-export class IFactory {
-  constructor(public address: string, private client: Client) {}
-
+export class IFactory extends IBaseContract {
   async getAllLBPairs(
     token0Address: string,
     token1Address: string
