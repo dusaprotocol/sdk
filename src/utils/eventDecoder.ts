@@ -117,6 +117,22 @@ export class EventDecoder {
     }
   }
 
+  static decodeCreateLBPair(bytes: string): {
+    pair: string
+    tokenX: string
+    tokenY: string
+    binStep: number
+  } {
+    const [pair, tokenX, tokenY, binStep] = extractParams(bytes)
+
+    return {
+      pair,
+      tokenX,
+      tokenY,
+      binStep: parseInt(binStep)
+    }
+  }
+
   // PERIPHERY
 
   /**
