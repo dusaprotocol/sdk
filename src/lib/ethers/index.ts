@@ -2,7 +2,7 @@ import { BigintIsh } from './../../constants'
 
 export const parseEther = (ether: string): bigint => parseUnits(ether, 18)
 export const parseUnits = (value: string, decimals: number): bigint => {
-  let [integer, fraction = '0'] = value.split('.')
+  let [integer, fraction = '0'] = value.replace(',', '').split('.')
 
   const negative = integer.startsWith('-')
   if (negative) integer = integer.slice(1)
