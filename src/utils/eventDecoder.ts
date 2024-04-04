@@ -127,14 +127,16 @@ export class EventDecoder {
   }
 
   static decodeLBTransfer(bytes: string): {
+    sender: string
     from: string
     to: string
     id: number
     amount: bigint
   } {
-    const [from, to, id, amount] = EventDecoder.extractParams(bytes)
+    const [sender, from, to, id, amount] = EventDecoder.extractParams(bytes)
 
     return {
+      sender,
       from,
       to,
       id: parseInt(id),
