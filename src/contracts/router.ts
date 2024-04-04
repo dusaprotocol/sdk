@@ -60,6 +60,7 @@ export class IRouter extends IBaseContract {
         maxGas: MAX_GAS_CALL
       })
       .then((res) => BigInt(res.info.gas_cost))
+      .catch(() => MAX_GAS_CALL)
   }
 
   // QUERIES
