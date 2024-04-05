@@ -34,7 +34,7 @@ export class NativeCurrency {
   }
 
   public equals(other: NativeCurrency): boolean {
-    return other.isNative && other.chainId === this.chainId
+    return other.isNative && other.chainId == this.chainId
   }
 }
 
@@ -49,7 +49,7 @@ export class CNATIVE extends NativeCurrency {
   }
 
   public equals(other: NativeCurrency): boolean {
-    return other.isNative && other.chainId === this.chainId
+    return other.isNative && other.chainId == this.chainId
   }
 
   public static onChain(chainId: number): CNATIVE {
