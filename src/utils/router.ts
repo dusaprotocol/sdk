@@ -87,8 +87,19 @@ export const decodeSwapTx = (
   const to = args.nextString()
   const deadline = Number(args.nextU64())
 
+  const storageNeededMethods: SwapRouterMethod[] = [
+    'swapExactMASForTokens',
+    'swapMASForExactTokens',
+    'swapExactMASForTokensSupportingFeeOnTransferTokens'
+  ]
+
+  const storageCost = storageNeededMethods.includes(method)
+    ? args.nextU64()
+    : 0n
+  const amountInWithoutFee = amountIn - storageCost
+
   return {
-    amountIn,
+    amountIn: amountInWithoutFee,
     amountOut,
     binSteps,
     path,

@@ -84,7 +84,35 @@ describe('decodeSwapTx', async () => {
 
   const amountIn = new TokenAmount(inputToken, typedValueInParsed)
 
-  it('should decode correctly', async () => {
+  it('method requiring storage fee', async () => {
+    const isNativeOut = true
+
+    const trades = await TradeV2.getTradesExactIn(
+      allRoutes,
+      amountIn,
+      outputToken,
+      false,
+      isNativeOut,
+      client,
+      CHAIN_ID
+    )
+    const bestTrade = TradeV2.chooseBestTrade(trades, true)
+    const options = {
+      allowedSlippage: new Percent(50n, 10000n),
+      ttl: 1000,
+      recipient: '0x0000000000000000000000000000000000000000'
+    }
+    const params = bestTrade.swapCallParameters(options)
+
+    const decoded = decodeSwapTx(
+      params.methodName,
+      Uint8Array.from(params.args.serialize()),
+      params.value
+    )
+    expect(decoded.amountIn).toStrictEqual(BigInt(typedValueInParsed))
+    expect(decoded.binSteps).toStrictEqual(bestTrade.quote.binSteps)
+  })
+  it('method not requiring storage fee', async () => {
     const isNativeOut = false
 
     const trades = await TradeV2.getTradesExactIn(
@@ -96,15 +124,12 @@ describe('decodeSwapTx', async () => {
       client,
       CHAIN_ID
     )
-
     const bestTrade = TradeV2.chooseBestTrade(trades, true)
-
     const options = {
       allowedSlippage: new Percent(50n, 10000n),
       ttl: 1000,
       recipient: '0x0000000000000000000000000000000000000000'
     }
-
     const params = bestTrade.swapCallParameters(options)
 
     const decoded = decodeSwapTx(
