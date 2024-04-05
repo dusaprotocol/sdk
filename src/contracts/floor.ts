@@ -7,6 +7,7 @@ import {
   MAX_GAS_CALL
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
+import { fee, maxGas } from './base'
 
 const TOKEN_Y = strToBytes('TOKEN_Y')
 const PAIR = strToBytes('PAIR')
@@ -18,9 +19,6 @@ const REBALANCE_PAUSED = strToBytes('REBALANCE_PAUSED')
 
 const TAX_RECIPIENT = strToBytes('TAX_RECIPIENT')
 const TAX_RATE = strToBytes('TAX_RATE')
-
-const maxGas = 100_000_000n
-const fee = 0n
 
 export class IFloorToken extends IERC20 {
   // FLOOR FUNCTIONS

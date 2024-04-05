@@ -1,7 +1,13 @@
-import { Args, bytesToU256, bytesToStr, byteToU8 } from '@massalabs/massa-web3'
-import { IBaseContract } from './base'
+import {
+  Args,
+  bytesToU256,
+  bytesToStr,
+  byteToU8,
+  MassaUnits
+} from '@massalabs/massa-web3'
+import { IBaseContract, fee, maxGas } from './base'
 
-const maxGas = 100_000_000n
+const coins = MassaUnits.mMassa // 0.001 MAS, to cover storage costs
 
 export class IERC20 extends IBaseContract {
   async balanceOf(address: string): Promise<bigint> {
@@ -87,15 +93,14 @@ export class IERC20 extends IBaseContract {
 
     if (currentAllowance >= amount) return ''
     amount -= currentAllowance
-    console.log({ currentAllowance, amount })
 
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: 'increaseAllowance',
       parameter: new Args().addString(spender).addU256(amount).serialize(),
-      maxGas: 100_000_000n,
-      fee: 0n,
-      coins: 0n
+      maxGas,
+      fee,
+      coins
     })
   }
 
@@ -104,9 +109,9 @@ export class IERC20 extends IBaseContract {
       targetAddress: this.address,
       functionName: 'transfer',
       parameter: new Args().addString(to).addU256(amount).serialize(),
-      maxGas: 100_000_000n,
-      fee: 0n,
-      coins: 0n
+      maxGas,
+      fee,
+      coins
     })
   }
 }

@@ -1,6 +1,6 @@
 import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
-import { IBaseContract } from './base'
+import { IBaseContract, fee } from './base'
 
 interface GetSwapParams {
   pairAddress: string
@@ -19,7 +19,7 @@ export class IRouter extends IBaseContract {
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
-      fee: 100_000_000n,
+      fee,
       maxGas: simulatedGas
     })
   }
@@ -31,7 +31,7 @@ export class IRouter extends IBaseContract {
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
-      fee: 100_000_000n,
+      fee,
       maxGas: simulatedGas
     })
   }
@@ -43,7 +43,7 @@ export class IRouter extends IBaseContract {
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
-      fee: 100_000_000n,
+      fee,
       maxGas: simulatedGas
     })
   }

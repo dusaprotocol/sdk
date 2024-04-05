@@ -1,4 +1,4 @@
-import { Args, ArrayTypes } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { Address, Quote } from '../types'
 import { IBaseContract } from './base'
 
@@ -16,7 +16,7 @@ export class IQuoter extends IBaseContract {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU256(BigInt(amountIn))
           .serialize(),
-        maxGas: 1_000_000_000n
+        maxGas: MAX_GAS_CALL
       })
       .then((result) => {
         const args = new Args(result.returnValue)
@@ -56,7 +56,7 @@ export class IQuoter extends IBaseContract {
           .addSerializableObjectArray(route.map((r) => new Address(r)))
           .addU256(BigInt(amountOut))
           .serialize(),
-        maxGas: 1_000_000_000n
+        maxGas: MAX_GAS_CALL
       })
       .then((result) => {
         const args = new Args(result.returnValue)

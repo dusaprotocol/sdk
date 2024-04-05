@@ -1,10 +1,7 @@
 import { Args, bytesToStr, strToBytes } from '@massalabs/massa-web3'
 import { ArrayTypes, byteToBool, bytesToArray } from '@massalabs/web3-utils'
 import { BinReserves, LBPairReservesAndId } from '../types'
-import { IBaseContract } from './base'
-
-const maxGas = 100_000_000n
-const fee = 0n
+import { IBaseContract, fee, maxGas } from './base'
 
 export class ILBPair extends IBaseContract {
   async setApprovalForAll(
