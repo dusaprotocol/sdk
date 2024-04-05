@@ -16,7 +16,7 @@ import {
   Address,
   QuoteSer
 } from '../types'
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -163,11 +163,13 @@ export class TradeV2 {
 
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
+    const SWAP_STORAGE_COST = MassaUnits.oneMassa / 10n // 0.1 MAS
+
     const { methodName, args, value } = ((
       tradeType: TradeType
     ): SwapParameters => {
       const args: Args = new Args()
-      let value = 0n
+      let value = SWAP_STORAGE_COST
       switch (tradeType) {
         case TradeType.EXACT_INPUT:
           if (nativeIn) {
@@ -180,7 +182,8 @@ export class TradeV2 {
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
               .addU64(BigInt(deadline))
-            value = amountIn
+              .addU64(SWAP_STORAGE_COST)
+            value += amountIn
             return { args, methodName, value }
           } else if (nativeOut) {
             const methodName = useFeeOnTransfer
@@ -217,7 +220,8 @@ export class TradeV2 {
               .addSerializableObjectArray(path.tokenPath)
               .addString(to)
               .addU64(BigInt(deadline))
-            value = amountIn
+              .addU64(SWAP_STORAGE_COST)
+            value += amountIn
             return { args, methodName, value }
           } else if (nativeOut) {
             const methodName = 'swapTokensForExactMAS'
