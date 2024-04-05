@@ -84,8 +84,6 @@ export const SWAP_ROUTER_METHODS = [
   'swapMASForExactTokens',
   'swapTokensForExactMAS',
   'swapTokensForExactTokens',
-
-  // not supported yet
   'swapExactMASForTokensSupportingFeeOnTransferTokens',
   'swapExactTokensForMASSupportingFeeOnTransferTokens',
   'swapExactTokensForTokensSupportingFeeOnTransferTokens'
@@ -100,6 +98,15 @@ export interface SwapParameters {
   args: Args
   // The amount of nano to send.
   value: bigint
+}
+
+export interface SwapSettings {
+  amountIn: bigint
+  amountOut: bigint
+  binSteps: bigint[]
+  path: Address[]
+  to: string
+  deadline: number
 }
 
 export interface TradeFee {

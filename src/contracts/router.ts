@@ -13,7 +13,7 @@ export class IRouter extends IBaseContract {
   // EXECUTE
 
   async swap(params: SwapParameters): Promise<string> {
-    const simulatedGas = await this.simulate(params)
+    const simulatedGas = await this.estimateGas(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
@@ -25,7 +25,7 @@ export class IRouter extends IBaseContract {
   }
 
   async add(params: LiquidityParameters) {
-    const simulatedGas = await this.simulate(params)
+    const simulatedGas = await this.estimateGas(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
@@ -37,7 +37,7 @@ export class IRouter extends IBaseContract {
   }
 
   async remove(params: LiquidityParameters) {
-    const simulatedGas = await this.simulate(params)
+    const simulatedGas = await this.estimateGas(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
@@ -48,22 +48,24 @@ export class IRouter extends IBaseContract {
     })
   }
 
-  // ESTIME GAS
+  // SIMULATE
 
-  private async simulate(params: SwapParameters | LiquidityParameters) {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: params.methodName,
-        parameter: params.args,
-        maxGas: MAX_GAS_CALL
-      })
-      .then((res) => BigInt(res.info.gas_cost))
+  async simulate(params: SwapParameters | LiquidityParameters) {
+    return this.client.smartContracts().readSmartContract({
+      targetAddress: this.address,
+      targetFunction: params.methodName,
+      parameter: params.args,
+      maxGas: MAX_GAS_CALL
+    })
+  }
+
+  private async estimateGas(params: SwapParameters | LiquidityParameters) {
+    return this.simulate(params)
+      .then((result) => BigInt(result.info.gas_cost))
       .catch(() => MAX_GAS_CALL)
   }
 
-  // QUERIES
+  // QUERY
 
   async getSwapIn(
     params: GetSwapInParams
