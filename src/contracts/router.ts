@@ -13,30 +13,18 @@ export class IRouter extends IBaseContract {
   // EXECUTE
 
   async swap(params: SwapParameters): Promise<string> {
-    const simulatedGas = await this.estimateGas(params)
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: params.methodName,
-      coins: params.value,
-      parameter: params.args,
-      fee,
-      maxGas: simulatedGas
-    })
+    return this.execute(params)
   }
 
-  async add(params: LiquidityParameters) {
-    const simulatedGas = await this.estimateGas(params)
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: params.methodName,
-      coins: params.value,
-      parameter: params.args,
-      fee,
-      maxGas: simulatedGas
-    })
+  async add(params: LiquidityParameters): Promise<string> {
+    return this.execute(params)
   }
 
-  async remove(params: LiquidityParameters) {
+  async remove(params: LiquidityParameters): Promise<string> {
+    return this.execute(params)
+  }
+
+  private async execute(params: SwapParameters | LiquidityParameters) {
     const simulatedGas = await this.estimateGas(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,

@@ -6,3 +6,4 @@ export class IBaseContract {
 
 export const maxGas = 100_000_000n
 export const fee = MassaUnits.oneMassa / 100n // 0.01 MAS
+export const coins = fee // storage cost
