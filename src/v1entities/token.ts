@@ -83,7 +83,7 @@ const wmasDecimals = 9
 export const WMAS: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12Emra1SrLsFgYdFRQXBjsksWummAs8zG14iFytS73bZBjbVY5v',
+    'AS12A1E4JJ91Dnu7kQYBwEKESNkF3TSZSJiMAFYBDTCe2j5ZFmuJe',
     wmasDecimals,
     wmasSymbol,
     wmasName
@@ -97,7 +97,7 @@ const usdcDecimals = 6
 export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1sKBEGsqtm8vQhQzi7KJ4YhyaKTSkhJrLkRc7mQtPqme3VcFHm',
+    'AS1svv1zDy9YB22VZZVXKNZUMLZApARSzQqUNWeK9aDiQEUuJPjj',
     usdcDecimals,
     usdcSymbol,
     usdcName
@@ -105,13 +105,13 @@ export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: nullToken
 }
 
-const usdtName = 'Tether USD'
-const usdtSymbol = 'USDT'
-const usdtDecimals = 6
+const usdtName = 'DAI'
+const usdtSymbol = 'DAI'
+const usdtDecimals = 18
 export const USDT: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS1217cAveD2H5rkuytUoiMEL1sg8BXwp966daPRoaoxmV8zv7Bdv',
+    'AS1vtEWYpT2TYE6djDHSjR3HryzTXVnBkF5RD3KBWKfEHdXYFwQF',
     usdtDecimals,
     usdtSymbol,
     usdtName
@@ -125,24 +125,10 @@ const wethDecimals = 18
 export const WETH: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    'AS12erzaq5BHooLLsuZ9MKiDJXWcMnpBBoUe78an7L3Cbaz1orgAv',
+    'AS12Dr98ErduZNhY5QQ4JDL8b5L6s8J9SuTqU3Kntjp46zHbXfrjM',
     wethDecimals,
     wethSymbol,
     wethName
-  ),
-  [ChainId.MAINNET]: nullToken
-}
-
-const btcName = 'Bitcoin'
-const btcSymbol = 'WBTC'
-const btcDecimals = 8
-export const WBTC: { [chainId in ChainId]: Token } = {
-  [ChainId.BUILDNET]: new Token(
-    ChainId.BUILDNET,
-    'AS186NRhT6itQ8LuCS7a8n6xQYiXrqDcaaoeiYpTSUsJWKEMgTEw',
-    btcDecimals,
-    btcSymbol,
-    btcName
   ),
   [ChainId.MAINNET]: nullToken
 }
