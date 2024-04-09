@@ -8,7 +8,7 @@ import {
   RouteV2,
   TokenAmount,
   TradeV2,
-  WBTC as _WBTC,
+  DAI as _DAI,
   USDC as _USDC,
   WETH as _WETH,
   WMAS as _WMAS,

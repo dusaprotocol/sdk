@@ -10,7 +10,7 @@ import {
   TokenAmount,
   TradeV2,
   USDC as _USDC,
-  USDT as _USDT,
+  DAI as _DAI,
   parseUnits
 } from '@dusalabs/sdk'
 import {
@@ -42,11 +42,11 @@ export const swapAmountOut = async (executeSwap = false) => {
   )
 
   const CHAIN_ID = ChainId.BUILDNET
-  const USDT = _USDT[CHAIN_ID]
+  const DAI = _DAI[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
   // Init: user inputs
-  const inputToken = USDT
+  const inputToken = DAI
   const outputToken = USDC
   const typedValueOut = '1' // user string input
   const typedValueOutParsed = parseUnits(

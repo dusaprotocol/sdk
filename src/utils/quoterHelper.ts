@@ -3,9 +3,8 @@ import { PairV2, RouteV2, TradeV2 } from '../v2entities'
 import {
   Token,
   TokenAmount,
-  WBTC as _WBTC,
   USDC as _USDC,
-  USDT as _USDT,
+  DAI as _DAI,
   WETH as _WETH,
   WMAS as _WMAS
 } from '../v1entities'
@@ -27,8 +26,7 @@ export class QuoterHelper {
       _WMAS[CHAIN_ID],
       _USDC[CHAIN_ID],
       _WETH[CHAIN_ID],
-      _WBTC[CHAIN_ID],
-      _USDT[CHAIN_ID]
+      _DAI[CHAIN_ID]
     ]
 
     // get all [Token, Token] combinations

@@ -105,16 +105,16 @@ export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: nullToken
 }
 
-const usdtName = 'DAI'
-const usdtSymbol = 'DAI'
-const usdtDecimals = 18
-export const USDT: { [chainId in ChainId]: Token } = {
+const daiName = 'DAI'
+const daiSymbol = 'DAI'
+const daiDecimals = 18
+export const DAI: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
     'AS1vtEWYpT2TYE6djDHSjR3HryzTXVnBkF5RD3KBWKfEHdXYFwQF',
-    usdtDecimals,
-    usdtSymbol,
-    usdtName
+    daiDecimals,
+    daiSymbol,
+    daiName
   ),
   [ChainId.MAINNET]: nullToken
 }
