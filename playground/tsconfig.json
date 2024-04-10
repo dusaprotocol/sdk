@@ -17,9 +17,5 @@
     "exclude": [
       "node_modules"
     ],
-    "experimentalDecorators": true,
-    "ts-node": {
-      "esm": true,
-      "experimentalSpecifierResolution": "node"
-    }
+    "experimentalDecorators": true
   }

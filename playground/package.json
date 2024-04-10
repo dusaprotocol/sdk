@@ -4,12 +4,12 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "postinstall": "cd .. && pnpm build && npm link && cd playground && npm link @dusalabs/sdk",
-    "start": "ts-node src/index.ts"
+    "postinstall": "cd .. && npm run build && pnpm link --global && cd playground && pnpm link --global @dusalabs/sdk",
+    "start": "tsx src/index.ts"
   },
   "dependencies": {
     "dotenv": "^16.0.1",
-    "ts-node": "^10.9.1"
+    "tsx": "^4.7.2"
   },
   "engines": {
     "node": ">=10"
