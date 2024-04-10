@@ -1,6 +1,6 @@
 import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
-import { IBaseContract, fee } from './base'
+import { IBaseContract } from './base'
 
 interface GetSwapParams {
   pairAddress: string
@@ -26,12 +26,10 @@ export class IRouter extends IBaseContract {
 
   private async execute(params: SwapParameters | LiquidityParameters) {
     const simulatedGas = await this.estimateGas(params)
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: params.methodName,
+    return this.call({
+      targetFunction: params.methodName,
       coins: params.value,
       parameter: params.args,
-      fee,
       maxGas: simulatedGas
     })
   }
@@ -39,8 +37,7 @@ export class IRouter extends IBaseContract {
   // SIMULATE
 
   async simulate(params: SwapParameters | LiquidityParameters) {
-    return this.client.smartContracts().readSmartContract({
-      targetAddress: this.address,
+    return this.read({
       targetFunction: params.methodName,
       parameter: params.args,
       maxGas: MAX_GAS_CALL
@@ -58,46 +55,38 @@ export class IRouter extends IBaseContract {
   async getSwapIn(
     params: GetSwapInParams
   ): Promise<{ amountIn: bigint; feesIn: bigint }> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'getSwapIn',
-        parameter: new Args()
-          .addString(params.pairAddress)
-          .addU256(params.amountOut)
-          .addBool(params.swapForY),
-        maxGas: MAX_GAS_CALL
-      })
-      .then((result) => {
-        const args = new Args(result.returnValue)
-        return {
-          amountIn: args.nextU256(),
-          feesIn: args.nextU256()
-        }
-      })
+    return this.read({
+      targetFunction: 'getSwapIn',
+      parameter: new Args()
+        .addString(params.pairAddress)
+        .addU256(params.amountOut)
+        .addBool(params.swapForY),
+      maxGas: MAX_GAS_CALL
+    }).then((result) => {
+      const args = new Args(result.returnValue)
+      return {
+        amountIn: args.nextU256(),
+        feesIn: args.nextU256()
+      }
+    })
   }
 
   async getSwapOut(
     params: GetSwapOutParams
   ): Promise<{ amountOut: bigint; feesIn: bigint }> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'getSwapOut',
-        parameter: new Args()
-          .addString(params.pairAddress)
-          .addU256(params.amountIn)
-          .addBool(params.swapForY),
-        maxGas: MAX_GAS_CALL
-      })
-      .then((result) => {
-        const args = new Args(result.returnValue)
-        return {
-          amountOut: args.nextU256(),
-          feesIn: args.nextU256()
-        }
-      })
+    return this.read({
+      targetFunction: 'getSwapOut',
+      parameter: new Args()
+        .addString(params.pairAddress)
+        .addU256(params.amountIn)
+        .addBool(params.swapForY),
+      maxGas: MAX_GAS_CALL
+    }).then((result) => {
+      const args = new Args(result.returnValue)
+      return {
+        amountOut: args.nextU256(),
+        feesIn: args.nextU256()
+      }
+    })
   }
 }

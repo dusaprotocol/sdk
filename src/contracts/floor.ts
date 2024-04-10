@@ -7,7 +7,7 @@ import {
   MAX_GAS_CALL
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
-import { fee, maxGas } from './base'
+import { maxGas } from './base'
 
 const TOKEN_Y = strToBytes('TOKEN_Y')
 const PAIR = strToBytes('PAIR')
@@ -25,24 +25,20 @@ export class IFloorToken extends IERC20 {
   async raiseRoof(nbBins: number) {
     const parameter = new Args().addU32(nbBins)
     const simulatedGas = await this.simulate('raiseRoof', parameter)
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'raiseRoof',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'raiseRoof',
       parameter: parameter,
-      maxGas: simulatedGas,
-      fee
+      maxGas: simulatedGas
     })
   }
 
   async reduceRoof(nbBins: number) {
     const parameter = new Args().addU32(nbBins)
     const simulatedGas = await this.simulate('reduceRoof', parameter)
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'reduceRoof',
-      targetAddress: this.address,
-      parameter: parameter,
-      maxGas: simulatedGas,
-      fee
+    return this.call({
+      targetFunction: 'reduceRoof',
+      parameter,
+      maxGas: simulatedGas
     })
   }
 
@@ -107,15 +103,11 @@ export class IFloorToken extends IERC20 {
   }
 
   async floorPrice(): Promise<bigint> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'floorPrice',
-        parameter: new Args(),
-        maxGas
-      })
-      .then((res) => bytesToU256(res.returnValue))
+    return this.read({
+      targetFunction: 'floorPrice',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => bytesToU256(res.returnValue))
   }
 
   async rebalancePaused(): Promise<boolean> {
@@ -129,63 +121,49 @@ export class IFloorToken extends IERC20 {
   }
 
   async tokensInPair(): Promise<{ amountFloor: bigint; amountY: bigint }> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'tokensInPair',
-        parameter: new Args(),
-        maxGas
-      })
-      .then((res) => {
-        const args = new Args(res.returnValue)
-        return {
-          amountFloor: args.nextU256(),
-          amountY: args.nextU256()
-        }
-      })
+    return this.read({
+      targetFunction: 'tokensInPair',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => {
+      const args = new Args(res.returnValue)
+      return {
+        amountFloor: args.nextU256(),
+        amountY: args.nextU256()
+      }
+    })
   }
 
   async calculateNewFloorId(): Promise<number> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'calculateNewFloorId',
-        parameter: new Args(),
-        maxGas
-      })
-      .then((res) => bytesToU32(res.returnValue))
+    return this.read({
+      targetFunction: 'calculateNewFloorId',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => bytesToU32(res.returnValue))
   }
 
   async rebalanceFloor(): Promise<string> {
     const simulatedGas = await this.simulate('rebalanceFloor', new Args())
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'rebalanceFloor',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'rebalanceFloor',
       parameter: new Args(),
-      maxGas: simulatedGas,
-      fee
+      maxGas: simulatedGas
     })
   }
 
   async pauseRebalance(): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'pauseRebalance',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'pauseRebalance',
       parameter: new Args(),
-      maxGas,
-      fee
+      maxGas
     })
   }
 
   async unpauseRebalance(): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'unpauseRebalance',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'unpauseRebalance',
       parameter: new Args(),
-      maxGas,
-      fee
+      maxGas
     })
   }
 
@@ -212,36 +190,29 @@ export class IFloorToken extends IERC20 {
   }
 
   setTaxRate(taxRate: bigint): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'setTaxRate',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'setTaxRate',
       parameter: new Args().addU256(taxRate),
-      maxGas,
-      fee
+      maxGas
     })
   }
 
   setTaxRecipient(taxRecipient: string): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      functionName: 'setTaxRecipient',
-      targetAddress: this.address,
+    return this.call({
+      targetFunction: 'setTaxRecipient',
       parameter: new Args().addString(taxRecipient),
-      maxGas,
-      fee
+      maxGas
     })
   }
 
   // ESTIME GAS
 
   private async simulate(targetFunction: string, parameter: Args) {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction,
-        parameter,
-        maxGas: MAX_GAS_CALL
-      })
+    return this.read({
+      targetFunction,
+      parameter,
+      maxGas: MAX_GAS_CALL
+    })
       .then((res) => BigInt(res.info.gas_cost))
       .catch(() => MAX_GAS_CALL)
   }

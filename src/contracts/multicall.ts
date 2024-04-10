@@ -43,8 +43,7 @@ export class IMulticall extends IBaseContract {
     // const datastore = new Map<Uint8Array, Uint8Array>()
     // datastore.set(new Uint8Array([0x00]), new Args().addSerializableObjectArray(data).serialize())
 
-    return this.client.smartContracts().readSmartContract({
-      targetAddress: this.address,
+    return this.read({
       targetFunction: 'multicall',
       parameter: new Args().addSerializableObjectArray(data).serialize(),
       maxGas: MAX_GAS_CALL

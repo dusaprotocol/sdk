@@ -6,26 +6,13 @@ import {
   USDC as _USDC,
   WMAS as _WMAS
 } from '@dusalabs/sdk'
-import {
-  BUILDNET_CHAIN_ID,
-  ClientFactory,
-  DefaultProviderUrls,
-  ProviderType
-} from '@massalabs/massa-web3'
+import { createClient } from './utils'
 
 export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
-  const client = await ClientFactory.createCustomClient(
-    [
-      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
-      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
-    ],
-    BUILDNET_CHAIN_ID,
-    true
-  )
+  const client = await createClient()
 
   const CHAIN_ID = ChainId.BUILDNET
   const USDC = _USDC[CHAIN_ID]

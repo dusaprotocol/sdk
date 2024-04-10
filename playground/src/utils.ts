@@ -1,4 +1,11 @@
-import { Client, EOperationStatus, IEvent } from '@massalabs/massa-web3'
+import {
+  BUILDNET_CHAIN_ID,
+  Client,
+  ClientFactory,
+  DefaultProviderUrls,
+  EOperationStatus,
+  IAccount
+} from '@massalabs/massa-web3'
 
 export const awaitFinalization = async (
   client: Client,
@@ -27,3 +34,11 @@ export const logEvents = (client: Client, txId: string): void => {
     })
     .then((r) => r.forEach((e) => console.log(e.data)))
 }
+
+export const createClient = (baseAccount?: IAccount) =>
+  ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
+    BUILDNET_CHAIN_ID,
+    false,
+    baseAccount
+  )

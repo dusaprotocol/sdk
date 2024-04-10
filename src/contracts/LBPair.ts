@@ -6,88 +6,68 @@ import {
   bytesToU256
 } from '@massalabs/web3-utils'
 import { BinReserves, LBPairReservesAndId } from '../types'
-import { IBaseContract, coins, fee, maxGas } from './base'
+import { IBaseContract, maxGas } from './base'
 
 export class ILBPair extends IBaseContract {
   async setApprovalForAll(
     operator: string,
     approved: boolean
   ): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: 'setApprovalForAll',
-      parameter: new Args().addBool(approved).addString(operator).serialize(),
-      maxGas,
-      fee,
-      coins
+    return this.call({
+      targetFunction: 'setApprovalForAll',
+      parameter: new Args().addBool(approved).addString(operator).serialize()
     })
   }
 
   async collectFees(account: string, ids: number[]): Promise<string> {
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: 'collectFees',
+    return this.call({
+      targetFunction: 'collectFees',
       parameter: new Args()
         .addString(account)
         .addArray(ids.map(BigInt), ArrayTypes.U64)
-        .serialize(),
-      maxGas,
-      fee,
-      coins
+        .serialize()
     })
   }
 
   async balanceOf(account: string, id: number): Promise<bigint> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'balanceOf',
-        parameter: new Args().addString(account).addU64(BigInt(id)).serialize(),
-        maxGas
-      })
-      .then((res) => bytesToU256(res.returnValue))
+    return this.read({
+      targetFunction: 'balanceOf',
+      parameter: new Args().addString(account).addU64(BigInt(id)).serialize(),
+      maxGas
+    }).then((res) => bytesToU256(res.returnValue))
   }
 
   async balanceOfBatch(accounts: string[], ids: number[]): Promise<bigint[]> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'balanceOfBatch',
-        parameter: new Args()
-          .addArray(accounts, ArrayTypes.STRING)
-          .addArray(ids.map(BigInt), ArrayTypes.U64)
-          .serialize(),
-        maxGas
-      })
-      .then((res) => bytesToArray(res.returnValue, ArrayTypes.U256))
+    return this.read({
+      targetFunction: 'balanceOfBatch',
+      parameter: new Args()
+        .addArray(accounts, ArrayTypes.STRING)
+        .addArray(ids.map(BigInt), ArrayTypes.U64)
+        .serialize(),
+      maxGas
+    }).then((res) => bytesToArray(res.returnValue, ArrayTypes.U256))
   }
 
   async getReservesAndId(): Promise<LBPairReservesAndId> {
-    return await this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'getPairInformation',
-        parameter: new Args(),
-        maxGas
-      })
-      .then((res) => {
-        const args = new Args(res.returnValue)
-        const activeId = args.nextU32()
-        const reserveX = args.nextU256()
-        const reserveY = args.nextU256()
-        const feesX = {
-          total: args.nextU256(),
-          protocol: args.nextU256()
-        }
-        const feesY = {
-          total: args.nextU256(),
-          protocol: args.nextU256()
-        }
-        return { activeId, reserveX, reserveY, feesX, feesY }
-      })
+    return await this.read({
+      targetFunction: 'getPairInformation',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => {
+      const args = new Args(res.returnValue)
+      const activeId = args.nextU32()
+      const reserveX = args.nextU256()
+      const reserveY = args.nextU256()
+      const feesX = {
+        total: args.nextU256(),
+        protocol: args.nextU256()
+      }
+      const feesY = {
+        total: args.nextU256(),
+        protocol: args.nextU256()
+      }
+      return { activeId, reserveX, reserveY, feesX, feesY }
+    })
   }
 
   async getTokens(): Promise<[string, string]> {
@@ -186,19 +166,15 @@ export class ILBPair extends IBaseContract {
   }
 
   async getUserBinIds(user: string): Promise<number[]> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'getUserBins',
-        parameter: new Args().addString(user).serialize(),
-        maxGas
-      })
-      .then((res) => {
-        const args = new Args(res.returnValue)
-        const bins: number[] = args.nextArray(ArrayTypes.U32)
-        return bins.sort((a, b) => a - b)
-      })
+    return this.read({
+      targetFunction: 'getUserBins',
+      parameter: new Args().addString(user).serialize(),
+      maxGas
+    }).then((res) => {
+      const args = new Args(res.returnValue)
+      const bins: number[] = args.nextArray(ArrayTypes.U32)
+      return bins.sort((a, b) => a - b)
+    })
   }
 
   async pendingFees(
@@ -208,34 +184,26 @@ export class ILBPair extends IBaseContract {
     amount0: bigint
     amount1: bigint
   }> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'pendingFees',
-        parameter: new Args()
-          .addString(account)
-          .addArray(ids.map(BigInt), ArrayTypes.U64)
-          .serialize(),
-        maxGas
-      })
-      .then((res) => {
-        const args = new Args(res.returnValue)
-        const amount0 = args.nextU256()
-        const amount1 = args.nextU256()
-        return { amount0, amount1 }
-      })
+    return this.read({
+      targetFunction: 'pendingFees',
+      parameter: new Args()
+        .addString(account)
+        .addArray(ids.map(BigInt), ArrayTypes.U64)
+        .serialize(),
+      maxGas
+    }).then((res) => {
+      const args = new Args(res.returnValue)
+      const amount0 = args.nextU256()
+      const amount1 = args.nextU256()
+      return { amount0, amount1 }
+    })
   }
 
   async isApprovedForAll(owner: string, operator: string): Promise<boolean> {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: 'isApprovedForAll',
-        parameter: new Args().addString(owner).addString(operator).serialize(),
-        maxGas
-      })
-      .then((res) => byteToBool(res.returnValue))
+    return this.read({
+      targetFunction: 'isApprovedForAll',
+      parameter: new Args().addString(owner).addString(operator).serialize(),
+      maxGas
+    }).then((res) => byteToBool(res.returnValue))
   }
 }
