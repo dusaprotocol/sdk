@@ -10,7 +10,7 @@ import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
-import { Args, ArrayTypes, Client } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import { IFactory } from '../contracts'
 import invariant from 'tiny-invariant'
 
@@ -342,8 +342,14 @@ export class PairV2 {
             .addArray(options.distributionY, ArrayTypes.U256)
             .addString(to)
             .addU64(BigInt(deadline))
-          if (isNative)
-            value = this.token0.isNative ? options.amount0 : options.amount1
+
+          const STORAGE_COST = MassaUnits.oneMassa / 2n // 0.5 MAS
+          value += STORAGE_COST
+          if (isNative) {
+            args.addU64(STORAGE_COST)
+            value += this.token0.isNative ? options.amount0 : options.amount1
+          }
+
           return {
             args,
             methodName: isNative ? 'addLiquidityMAS' : 'addLiquidity',
@@ -361,10 +367,11 @@ export class PairV2 {
             .addArray(options.amounts, ArrayTypes.U256)
             .addString(to)
             .addU64(BigInt(deadline))
+
           return {
             args,
             methodName: isNative ? 'removeLiquidityMAS' : 'removeLiquidity',
-            value
+            value: MassaUnits.oneMassa / 10n // 0.1 MAS
           }
       }
     })(isAdd)

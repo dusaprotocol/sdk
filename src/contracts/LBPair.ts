@@ -1,10 +1,12 @@
 import { Args, bytesToStr, strToBytes } from '@massalabs/massa-web3'
-import { ArrayTypes, byteToBool, bytesToArray } from '@massalabs/web3-utils'
+import {
+  ArrayTypes,
+  byteToBool,
+  bytesToArray,
+  bytesToU256
+} from '@massalabs/web3-utils'
 import { BinReserves, LBPairReservesAndId } from '../types'
-import { IBaseContract } from './base'
-
-const maxGas = 100_000_000n
-const fee = 0n
+import { IBaseContract, coins, fee, maxGas } from './base'
 
 export class ILBPair extends IBaseContract {
   async setApprovalForAll(
@@ -16,7 +18,8 @@ export class ILBPair extends IBaseContract {
       functionName: 'setApprovalForAll',
       parameter: new Args().addBool(approved).addString(operator).serialize(),
       maxGas,
-      fee
+      fee,
+      coins
     })
   }
 
@@ -29,8 +32,21 @@ export class ILBPair extends IBaseContract {
         .addArray(ids.map(BigInt), ArrayTypes.U64)
         .serialize(),
       maxGas,
-      fee
+      fee,
+      coins
     })
+  }
+
+  async balanceOf(account: string, id: number): Promise<bigint> {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction: 'balanceOf',
+        parameter: new Args().addString(account).addU64(BigInt(id)).serialize(),
+        maxGas
+      })
+      .then((res) => bytesToU256(res.returnValue))
   }
 
   async balanceOfBatch(accounts: string[], ids: number[]): Promise<bigint[]> {
@@ -45,9 +61,7 @@ export class ILBPair extends IBaseContract {
           .serialize(),
         maxGas
       })
-      .then((res) => {
-        return bytesToArray(res.returnValue, ArrayTypes.U256)
-      })
+      .then((res) => bytesToArray(res.returnValue, ArrayTypes.U256))
   }
 
   async getReservesAndId(): Promise<LBPairReservesAndId> {
@@ -116,8 +130,7 @@ export class ILBPair extends IBaseContract {
         return res.map((r) => {
           if (!r.candidate_value || !r.candidate_value.length) return 0n
           const args = new Args(r.candidate_value)
-          const supply = args.nextU256()
-          return supply
+          return args.nextU256()
         })
       })
   }
@@ -223,8 +236,6 @@ export class ILBPair extends IBaseContract {
         parameter: new Args().addString(owner).addString(operator).serialize(),
         maxGas
       })
-      .then((res) => {
-        return byteToBool(res.returnValue)
-      })
+      .then((res) => byteToBool(res.returnValue))
   }
 }

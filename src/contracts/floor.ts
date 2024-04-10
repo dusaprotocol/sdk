@@ -3,9 +3,11 @@ import {
   bytesToStr,
   bytesToU256,
   bytesToU32,
-  strToBytes
+  strToBytes,
+  MAX_GAS_CALL
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
+import { fee, maxGas } from './base'
 
 const TOKEN_Y = strToBytes('TOKEN_Y')
 const PAIR = strToBytes('PAIR')
@@ -18,27 +20,28 @@ const REBALANCE_PAUSED = strToBytes('REBALANCE_PAUSED')
 const TAX_RECIPIENT = strToBytes('TAX_RECIPIENT')
 const TAX_RATE = strToBytes('TAX_RATE')
 
-const maxGas = 100_000_000n
-const fee = 0n
-
 export class IFloorToken extends IERC20 {
   // FLOOR FUNCTIONS
   async raiseRoof(nbBins: number) {
+    const parameter = new Args().addU32(nbBins)
+    const simulatedGas = await this.simulate('raiseRoof', parameter)
     return this.client.smartContracts().callSmartContract({
       functionName: 'raiseRoof',
       targetAddress: this.address,
-      parameter: new Args().addU32(nbBins).serialize(),
-      maxGas,
+      parameter: parameter,
+      maxGas: simulatedGas,
       fee
     })
   }
 
   async reduceRoof(nbBins: number) {
+    const parameter = new Args().addU32(nbBins)
+    const simulatedGas = await this.simulate('reduceRoof', parameter)
     return this.client.smartContracts().callSmartContract({
       functionName: 'reduceRoof',
       targetAddress: this.address,
-      parameter: new Args().addU32(nbBins).serialize(),
-      maxGas,
+      parameter: parameter,
+      maxGas: simulatedGas,
       fee
     })
   }
@@ -109,7 +112,7 @@ export class IFloorToken extends IERC20 {
       .readSmartContract({
         targetAddress: this.address,
         targetFunction: 'floorPrice',
-        parameter: new Args().serialize(),
+        parameter: new Args(),
         maxGas
       })
       .then((res) => bytesToU256(res.returnValue))
@@ -131,7 +134,7 @@ export class IFloorToken extends IERC20 {
       .readSmartContract({
         targetAddress: this.address,
         targetFunction: 'tokensInPair',
-        parameter: new Args().serialize(),
+        parameter: new Args(),
         maxGas
       })
       .then((res) => {
@@ -149,18 +152,19 @@ export class IFloorToken extends IERC20 {
       .readSmartContract({
         targetAddress: this.address,
         targetFunction: 'calculateNewFloorId',
-        parameter: new Args().serialize(),
+        parameter: new Args(),
         maxGas
       })
       .then((res) => bytesToU32(res.returnValue))
   }
 
   async rebalanceFloor(): Promise<string> {
+    const simulatedGas = await this.simulate('rebalanceFloor', new Args())
     return this.client.smartContracts().callSmartContract({
       functionName: 'rebalanceFloor',
       targetAddress: this.address,
-      parameter: new Args().serialize(),
-      maxGas,
+      parameter: new Args(),
+      maxGas: simulatedGas,
       fee
     })
   }
@@ -169,7 +173,7 @@ export class IFloorToken extends IERC20 {
     return this.client.smartContracts().callSmartContract({
       functionName: 'pauseRebalance',
       targetAddress: this.address,
-      parameter: new Args().serialize(),
+      parameter: new Args(),
       maxGas,
       fee
     })
@@ -179,7 +183,7 @@ export class IFloorToken extends IERC20 {
     return this.client.smartContracts().callSmartContract({
       functionName: 'unpauseRebalance',
       targetAddress: this.address,
-      parameter: new Args().serialize(),
+      parameter: new Args(),
       maxGas,
       fee
     })
@@ -211,7 +215,7 @@ export class IFloorToken extends IERC20 {
     return this.client.smartContracts().callSmartContract({
       functionName: 'setTaxRate',
       targetAddress: this.address,
-      parameter: new Args().addU256(taxRate).serialize(),
+      parameter: new Args().addU256(taxRate),
       maxGas,
       fee
     })
@@ -221,9 +225,24 @@ export class IFloorToken extends IERC20 {
     return this.client.smartContracts().callSmartContract({
       functionName: 'setTaxRecipient',
       targetAddress: this.address,
-      parameter: new Args().addString(taxRecipient).serialize(),
+      parameter: new Args().addString(taxRecipient),
       maxGas,
       fee
     })
+  }
+
+  // ESTIME GAS
+
+  private async simulate(targetFunction: string, parameter: Args) {
+    return this.client
+      .smartContracts()
+      .readSmartContract({
+        targetAddress: this.address,
+        targetFunction,
+        parameter,
+        maxGas: MAX_GAS_CALL
+      })
+      .then((res) => BigInt(res.info.gas_cost))
+      .catch(() => MAX_GAS_CALL)
   }
 }

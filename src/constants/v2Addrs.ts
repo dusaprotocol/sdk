@@ -4,17 +4,17 @@ import { ChainId } from './internal'
  * DEX core SDK
  */
 export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12kpx6rSt36HpqipqSSNVQmw7WXZyC3GjLATNenoyoMYX1bP4XV',
+  [ChainId.BUILDNET]: 'AS12JQSdhJRvAMeeWxJHiX5Rd51yMtsdcxTddzaM7qLXunpg1va35',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS1qCXCY5AF7SpZUk2bwiHneYb5MLVgeWEiRs8BxorYArLWMavZ',
+  [ChainId.BUILDNET]: 'AS124G4Z34xx7Ys19VYZXf52eRJ6khCB8DD5NPZDNT3jUrTLAYzCa',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
-  [ChainId.BUILDNET]: 'AS12o8B3xPdY7a9ZbedwxRStLQAiDqp531LR7fChwqhkhfR3rurCB',
+  [ChainId.BUILDNET]: 'AS12PDi8c4LZr41ypAJ8Gjppes3CVAz2J3xrQjGvTrQv7wea7Y68U',
   [ChainId.MAINNET]: ''
 }
 

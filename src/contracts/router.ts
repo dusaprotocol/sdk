@@ -1,6 +1,6 @@
 import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
-import { IBaseContract } from './base'
+import { IBaseContract, fee } from './base'
 
 interface GetSwapParams {
   pairAddress: string
@@ -13,56 +13,47 @@ export class IRouter extends IBaseContract {
   // EXECUTE
 
   async swap(params: SwapParameters): Promise<string> {
-    const simulatedGas = await this.simulate(params)
+    return this.execute(params)
+  }
+
+  async add(params: LiquidityParameters): Promise<string> {
+    return this.execute(params)
+  }
+
+  async remove(params: LiquidityParameters): Promise<string> {
+    return this.execute(params)
+  }
+
+  private async execute(params: SwapParameters | LiquidityParameters) {
+    const simulatedGas = await this.estimateGas(params)
     return this.client.smartContracts().callSmartContract({
       targetAddress: this.address,
       functionName: params.methodName,
       coins: params.value,
       parameter: params.args,
-      fee: 100_000_000n,
+      fee,
       maxGas: simulatedGas
     })
   }
 
-  async add(params: LiquidityParameters) {
-    const simulatedGas = await this.simulate(params)
-    return this.client.smartContracts().callSmartContract({
+  // SIMULATE
+
+  async simulate(params: SwapParameters | LiquidityParameters) {
+    return this.client.smartContracts().readSmartContract({
       targetAddress: this.address,
-      functionName: params.methodName,
-      coins: params.value,
+      targetFunction: params.methodName,
       parameter: params.args,
-      fee: 100_000_000n,
-      maxGas: simulatedGas
+      maxGas: MAX_GAS_CALL
     })
   }
 
-  async remove(params: LiquidityParameters) {
-    const simulatedGas = await this.simulate(params)
-    return this.client.smartContracts().callSmartContract({
-      targetAddress: this.address,
-      functionName: params.methodName,
-      coins: params.value,
-      parameter: params.args,
-      fee: 100_000_000n,
-      maxGas: simulatedGas
-    })
+  private async estimateGas(params: SwapParameters | LiquidityParameters) {
+    return this.simulate(params)
+      .then((result) => BigInt(result.info.gas_cost))
+      .catch(() => MAX_GAS_CALL)
   }
 
-  // ESTIME GAS
-
-  private async simulate(params: SwapParameters | LiquidityParameters) {
-    return this.client
-      .smartContracts()
-      .readSmartContract({
-        targetAddress: this.address,
-        targetFunction: params.methodName,
-        parameter: params.args,
-        maxGas: MAX_GAS_CALL
-      })
-      .then((res) => BigInt(res.info.gas_cost))
-  }
-
-  // QUERIES
+  // QUERY
 
   async getSwapIn(
     params: GetSwapInParams

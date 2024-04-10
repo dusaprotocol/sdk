@@ -11,13 +11,6 @@ const strEncodeUTF16 = (str: string): Uint8Array => {
 
 const keywordDelimiter = ':'
 const argsDelimiter = ';?!'
-export const extractParams = (bytes: string): string[] => {
-  return bytes
-    .split(keywordDelimiter)
-    .slice(1)
-    .join(keywordDelimiter)
-    .split(argsDelimiter)
-}
 
 export type SwapEvent = {
   to: string
@@ -82,7 +75,7 @@ export class EventDecoder {
       amountOutOfBin,
       volatilityAccumulated,
       feesTotal
-    ] = extractParams(bytes)
+    ] = EventDecoder.extractParams(bytes)
 
     return {
       to,
@@ -96,7 +89,7 @@ export class EventDecoder {
   }
 
   static decodeLiquidity = (bytes: string): LiquidityEvent => {
-    const [to, id, amountX, amountY] = extractParams(bytes)
+    const [to, id, amountX, amountY] = EventDecoder.extractParams(bytes)
 
     return {
       to,
@@ -107,7 +100,7 @@ export class EventDecoder {
   }
 
   static decodeCollectFees = (bytes: string): CollectFeesEvent => {
-    const [caller, to, amountX, amountY] = extractParams(bytes)
+    const [caller, to, amountX, amountY] = EventDecoder.extractParams(bytes)
 
     return {
       caller,
@@ -123,13 +116,31 @@ export class EventDecoder {
     tokenY: string
     binStep: number
   } {
-    const [pair, tokenX, tokenY, binStep] = extractParams(bytes)
+    const [pair, tokenX, tokenY, binStep] = EventDecoder.extractParams(bytes)
 
     return {
       pair,
       tokenX,
       tokenY,
       binStep: parseInt(binStep)
+    }
+  }
+
+  static decodeLBTransfer(bytes: string): {
+    sender: string
+    from: string
+    to: string
+    id: number
+    amount: bigint
+  } {
+    const [sender, from, to, id, amount] = EventDecoder.extractParams(bytes)
+
+    return {
+      sender,
+      from,
+      to,
+      id: parseInt(id),
+      amount: EventDecoder.decodeU256(amount)
     }
   }
 
@@ -140,7 +151,7 @@ export class EventDecoder {
    * @param bytes
    */
   static decodeDCA = (bytes: string): DCAEvent => {
-    const [user, id] = extractParams(bytes)
+    const [user, id] = EventDecoder.extractParams(bytes)
 
     return {
       user,
@@ -149,7 +160,7 @@ export class EventDecoder {
   }
 
   static decodeDCAExecution = (bytes: string): DCAExecutionEvent => {
-    const [user, id, amountOut] = extractParams(bytes)
+    const [user, id, amountOut] = EventDecoder.extractParams(bytes)
 
     return {
       user,
@@ -163,7 +174,7 @@ export class EventDecoder {
    * @param bytes
    */
   static decodeVault = (bytes: string): VaultEvent => {
-    const [from, amountX, amountY, shares] = extractParams(bytes)
+    const [from, amountX, amountY, shares] = EventDecoder.extractParams(bytes)
 
     return {
       from,
@@ -178,7 +189,7 @@ export class EventDecoder {
    * @param bytes
    */
   static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
-    const [id] = extractParams(bytes)
+    const [id] = EventDecoder.extractParams(bytes)
 
     return {
       id: parseInt(id)
@@ -188,7 +199,7 @@ export class EventDecoder {
   static decodeLimitOrderExecution = (
     bytes: string
   ): LimitOrderExecutionEvent => {
-    const [id, amountOut] = extractParams(bytes)
+    const [id, amountOut] = EventDecoder.extractParams(bytes)
 
     return {
       id: parseInt(id),
@@ -204,5 +215,13 @@ export class EventDecoder {
   static decodeError = (bytes: string): string => {
     const errorSplit = bytes.split('error: ')
     return errorSplit[errorSplit.length - 1].split(' at')[0]
+  }
+
+  static extractParams = (bytes: string): string[] => {
+    return bytes
+      .split(keywordDelimiter)
+      .slice(1)
+      .join(keywordDelimiter)
+      .split(argsDelimiter)
   }
 }

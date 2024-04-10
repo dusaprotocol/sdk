@@ -9,7 +9,7 @@ import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
-import { ChainId } from '../constants'
+import { ChainId, LB_ROUTER_ADDRESS } from '../constants'
 import {
   BUILDNET_CHAIN_ID,
   ClientFactory,
@@ -17,6 +17,7 @@ import {
   ProviderType
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
+import { ILBPair, IRouter } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const BUILDNET_URL = DefaultProviderUrls.BUILDNET
@@ -46,7 +47,7 @@ describe('TradeV2 entity', async () => {
     outputToken,
     BASES
   )
-  const allPairs = PairV2.initPairs(allTokenPairs) // console.log('allPairs', allPairs)
+  const allPairs = PairV2.initPairs(allTokenPairs)
 
   // all routes
   const allRoutes = RouteV2.createAllRoutes(
@@ -102,33 +103,36 @@ describe('TradeV2 entity', async () => {
 
       expect(trades.length).toBeGreaterThan(0)
     })
-    // it('calculates price impact correctly', async () => {
-    //   const reserves = await lbPairContract.getReservesAndId()
-    //   const amountOut = new TokenAmount(
-    //     outputToken,
-    //     BigInt(
-    //       inputToken.sortsBefore(outputToken)
-    //         ? reserves.reserveY
-    //         : reserves.reserveX
-    //     )
-    //   )
+    it('calculates price impact correctly', async () => {
+      const pairAddress = await allPairs[0]
+        .fetchLBPair(20, client, CHAIN_ID)
+        .then((r) => r.LBPair)
+      const reserves = await new ILBPair(pairAddress, client).getReservesAndId()
+      const amountOut = new TokenAmount(
+        outputToken,
+        BigInt(
+          inputToken.sortsBefore(outputToken)
+            ? reserves.reserveY
+            : reserves.reserveX
+        )
+      )
 
-    //   const trades = await TradeV2.getTradesExactOut(
-    //     allRoutes,
-    //     amountOut,
-    //     inputToken,
-    //     false,
-    //     false,
-    //     client,
-    //     CHAIN_ID
-    //   )
+      const trades = await TradeV2.getTradesExactOut(
+        allRoutes,
+        amountOut,
+        inputToken,
+        false,
+        false,
+        client,
+        CHAIN_ID
+      )
 
-    //   if (!trades[0]) {
-    //     throw new Error('No trades')
-    //   }
+      if (!trades[0]) {
+        throw new Error('No trades')
+      }
 
-    //   expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(5)
-    // })
+      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(1)
+    })
   })
   describe('TradeV2.chooseBestTrade()', () => {
     it('chooses the best trade among exactIn trades', async () => {
@@ -280,6 +284,32 @@ describe('TradeV2 entity', async () => {
       expect(bestTrade?.swapCallParameters(options)?.methodName).toBe(
         'swapExactTokensForTokens'
       )
+    })
+    it('generates args correctly', async () => {
+      const isNativeOut = false
+
+      const trades = await TradeV2.getTradesExactIn(
+        allRoutes,
+        amountIn,
+        outputToken,
+        false,
+        isNativeOut,
+        client,
+        CHAIN_ID
+      )
+
+      const bestTrade = TradeV2.chooseBestTrade(trades, true)
+
+      const options = {
+        allowedSlippage: new Percent(50n, 10000n),
+        ttl: 1000,
+        recipient: '0x0000000000000000000000000000000000000000'
+      }
+      const params = bestTrade.swapCallParameters(options)
+
+      expect(() =>
+        new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).simulate(params)
+      ).not.toThrowError('is missing')
     })
   })
 })

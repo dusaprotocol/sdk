@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { EventDecoder, extractParams } from './eventDecoder'
+import { EventDecoder } from './eventDecoder'
 
 const DEPOSIT_EVENT =
   'DEPOSITED_TO_BIN:AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX;?!8391258;?!�\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;?!얇࿨\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'
@@ -35,7 +35,7 @@ describe('decode', () => {
     expect(feesTotal).toBe(283n)
   })
   it('u256 with : delimiter inside', () => {
-    const params = extractParams(EVENT)
+    const params = EventDecoder.extractParams(EVENT)
     expect(params.length).toBe(4)
     expect(params[0]).toBe('aaa')
     expect(params[1]).toBe('bbb')
