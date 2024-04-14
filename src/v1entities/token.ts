@@ -92,7 +92,7 @@ export const WMAS: { [chainId in ChainId]: Token } = {
 }
 
 const usdcName = 'USD Coin'
-const usdcSymbol = 'USDC'
+const usdcSymbol = 'USDC.e'
 const usdcDecimals = 6
 export const USDC: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
@@ -106,7 +106,7 @@ export const USDC: { [chainId in ChainId]: Token } = {
 }
 
 const daiName = 'DAI'
-const daiSymbol = 'DAI'
+const daiSymbol = 'DAI.e'
 const daiDecimals = 18
 export const DAI: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
@@ -120,7 +120,7 @@ export const DAI: { [chainId in ChainId]: Token } = {
 }
 
 const wethName = 'Wrapped Ether'
-const wethSymbol = 'WETH'
+const wethSymbol = 'WETH.e'
 const wethDecimals = 18
 export const WETH: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
