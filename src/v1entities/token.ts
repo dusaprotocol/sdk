@@ -75,8 +75,6 @@ export function currencyEquals(
   }
 }
 
-const nullToken = new Token(ChainId.MAINNET, '', 0, '', '')
-
 const wmasName = 'Wrapped Massa'
 const wmasSymbol = 'WMAS'
 const wmasDecimals = 9
@@ -88,7 +86,13 @@ export const WMAS: { [chainId in ChainId]: Token } = {
     wmasSymbol,
     wmasName
   ),
-  [ChainId.MAINNET]: nullToken
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS12U4TZfNK7qoLyEERBBRDMu8nm5MKoRzPXDXans4v9wdATZedz9',
+    wmasDecimals,
+    wmasSymbol,
+    wmasName
+  )
 }
 
 const usdcName = 'USD Coin'
@@ -102,7 +106,13 @@ export const USDC: { [chainId in ChainId]: Token } = {
     usdcSymbol,
     usdcName
   ),
-  [ChainId.MAINNET]: nullToken
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS1hCJXjndR4c9vekLWsXGnrdigp4AaZ7uYG3UKFzzKnWVsrNLPJ',
+    usdcDecimals,
+    usdcSymbol,
+    usdcName
+  )
 }
 
 const daiName = 'DAI'
@@ -116,7 +126,13 @@ export const DAI: { [chainId in ChainId]: Token } = {
     daiSymbol,
     daiName
   ),
-  [ChainId.MAINNET]: nullToken
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS1ZGF1upwp9kPRvDKLxFAKRebgg7b3RWDnhgV7VvdZkZsUL7Nuv',
+    daiDecimals,
+    daiSymbol,
+    daiName
+  )
 }
 
 const wethName = 'Wrapped Ether'
@@ -130,5 +146,11 @@ export const WETH: { [chainId in ChainId]: Token } = {
     wethSymbol,
     wethName
   ),
-  [ChainId.MAINNET]: nullToken
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS124vf3YfAJCSCQVYKczzuWWpXrximFpbTmX4rheLs5uNSftiiRY',
+    wethDecimals,
+    wethSymbol,
+    wethName
+  )
 }

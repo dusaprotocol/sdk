@@ -10,12 +10,12 @@ export const LB_QUOTER_ADDRESS: { [chainId in ChainId]: string } = {
 
 export const LB_ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.BUILDNET]: 'AS1XqtvX3rz2RWbnqLfaYVKEjM3VS5pny9yKDdXcmJ5C1vrcLEFd',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS12UMSUxgpRBB6ArZDJ19arHoxNkkpdfofQGekAiAJqsuE6PEFJy'
 }
 
 export const LB_FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.BUILDNET]: 'AS125Y3UWiMoEx3w71jf7iq1RwkxXdwkEVdoucBTAmvyzGh2KUqXS',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS1rahehbQkvtynTomfoeLmwRgymJYgktGv5xd1jybRtiJMdu8XX'
 }
 
 /**
