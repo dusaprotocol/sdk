@@ -7,7 +7,7 @@ import {
 } from '@massalabs/massa-web3'
 
 export class IBaseContract {
-  fee: Promise<bigint>
+  protected fee: Promise<bigint>
 
   constructor(public address: string, protected client: Client) {
     this.fee = client.publicApi().getMinimalFees()
