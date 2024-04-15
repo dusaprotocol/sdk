@@ -10,7 +10,10 @@ export class IBaseContract {
   protected fee: Promise<bigint>
 
   constructor(public address: string, protected client: Client) {
-    this.fee = client.publicApi().getMinimalFees()
+    this.fee = client
+      .publicApi()
+      .getMinimalFees()
+      .catch(() => Promise.resolve(MassaUnits.mMassa))
   }
 
   protected async call(
