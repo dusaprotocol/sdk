@@ -6,18 +6,7 @@ import {
 } from '@massalabs/massa-web3'
 import { Percent, TokenAmount } from '../v1entities/fractions'
 import { Address } from './serializable'
-
-/** Interface representing a quote */
-export interface Quote {
-  route: string[]
-  pairs: string[]
-  binSteps: bigint[]
-  amounts: bigint[]
-  virtualAmountsWithoutSlippage: bigint[]
-  fees: bigint[]
-}
-
-export class QuoteSer implements ISerializable<QuoteSer> {
+export class Quote implements ISerializable<Quote> {
   constructor(
     public route: string[] = [],
     public pairs: string[] = [],
@@ -38,7 +27,10 @@ export class QuoteSer implements ISerializable<QuoteSer> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset: number): IDeserializedResult<QuoteSer> {
+  deserialize(
+    data: Uint8Array,
+    offset: number = 0
+  ): IDeserializedResult<Quote> {
     const args = new Args(data, offset)
 
     this.route = args.nextArray(ArrayTypes.STRING)

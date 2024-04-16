@@ -30,7 +30,7 @@ export class LimitOrder implements ISerializable<LimitOrder> {
 
   deserialize(
     data: Uint8Array,
-    offset: number
+    offset: number = 0
   ): IDeserializedResult<LimitOrder> {
     const args = new Args(data, offset)
 

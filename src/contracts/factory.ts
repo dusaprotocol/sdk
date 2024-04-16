@@ -35,7 +35,7 @@ export class IFactory extends IBaseContract {
         .serialize(),
       maxGas
     }).then((res) => {
-      return new LBPairInformation().deserialize(res.returnValue, 0).instance
+      return new LBPairInformation().deserialize(res.returnValue).instance
     })
   }
 

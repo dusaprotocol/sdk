@@ -13,8 +13,7 @@ import {
   SwapParameters,
   Quote,
   RouterPathParameters,
-  Address,
-  QuoteSer
+  Address
 } from '../types'
 import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import {
@@ -347,7 +346,7 @@ export class TradeV2 {
       )
     })
 
-    const quotes: QuoteSer[] = await new IMulticall(
+    const quotes: Quote[] = await new IMulticall(
       MULTICALL_ADDRESS[chainId],
       client
     )
@@ -355,7 +354,7 @@ export class TradeV2 {
       .then((res) => {
         const bs = new Args(res.returnValue)
         return routes.map(() => {
-          return new QuoteSer().deserialize(bs.nextUint8Array(), 0).instance
+          return new Quote().deserialize(bs.nextUint8Array(), 0).instance
         })
       })
     const trades: Array<TradeV2 | undefined> = quotes.map((quote, i) => {
@@ -426,7 +425,7 @@ export class TradeV2 {
       )
     })
 
-    const quotes: QuoteSer[] = await new IMulticall(
+    const quotes: Quote[] = await new IMulticall(
       MULTICALL_ADDRESS[chainId],
       client
     )
@@ -434,7 +433,7 @@ export class TradeV2 {
       .then((res) => {
         const bs = new Args(res.returnValue)
         return routes.map(() => {
-          return new QuoteSer().deserialize(bs.nextUint8Array(), 0).instance
+          return new Quote().deserialize(bs.nextUint8Array(), 0).instance
         })
       })
     const trades: Array<TradeV2 | undefined> = quotes.map((quote, i) => {
