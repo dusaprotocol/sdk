@@ -39,15 +39,18 @@ export const swapAmountOut = async (executeSwap = false) => {
     outputToken.decimals
   ).toString() // returns 1000000
   const amountOut = new TokenAmount(outputToken, typedValueOutParsed) // wrap into TokenAmount
+  const isNativeIn = false
+  const isNativeOut = false
+  const maxHops = 2
 
   const bestTrade = await QuoterHelper.findBestPath(
     inputToken,
-    false,
+    isNativeIn,
     outputToken,
-    false,
+    isNativeOut,
     amountOut,
     false,
-    3,
+    maxHops,
     client,
     CHAIN_ID
   )

@@ -31,25 +31,29 @@ export const swapAmountIn = async (executeSwap = false) => {
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
 
   // Init: user inputs
-  const inputToken = USDC
-  const outputToken = WMAS
+  const inputToken = WMAS
+  const outputToken = WETH
   const typedValueIn = '20' // user string input
   const typedValueInParsed = parseUnits(
     typedValueIn,
     inputToken.decimals
   ).toString() // returns 20000000
   const amountIn = new TokenAmount(inputToken, typedValueInParsed) // wrap into TokenAmount
+  const isNativeIn = true
+  const isNativeOut = false
+  const maxHops = 3
 
   const bestTrade = await QuoterHelper.findBestPath(
     inputToken,
-    false,
+    isNativeIn,
     outputToken,
-    true,
+    isNativeOut,
     amountIn,
     true,
-    3,
+    maxHops,
     client,
     CHAIN_ID
   )
