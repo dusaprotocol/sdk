@@ -9,7 +9,6 @@ import {
   Token,
   TokenAmount,
   USDC as _USDC,
-  WETH as _WETH,
   WMAS as _WMAS
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'

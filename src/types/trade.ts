@@ -27,10 +27,7 @@ export class Quote implements ISerializable<Quote> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(
-    data: Uint8Array,
-    offset: number = 0
-  ): IDeserializedResult<Quote> {
+  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<Quote> {
     const args = new Args(data, offset)
 
     this.route = args.nextArray(ArrayTypes.STRING)

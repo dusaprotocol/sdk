@@ -26,7 +26,7 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
 
   deserialize(
     data: Uint8Array,
-    offset: number = 0
+    offset = 0
   ): IDeserializedResult<LBPairInformation> {
     const args = new Args(data, offset)
 

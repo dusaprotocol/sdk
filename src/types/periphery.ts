@@ -28,10 +28,7 @@ export class LimitOrder implements ISerializable<LimitOrder> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(
-    data: Uint8Array,
-    offset: number = 0
-  ): IDeserializedResult<LimitOrder> {
+  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<LimitOrder> {
     const args = new Args(data, offset)
 
     this.pair = args.nextString()

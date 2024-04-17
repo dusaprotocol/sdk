@@ -8,10 +8,7 @@ export class Address implements ISerializable<Address> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(
-    data: Uint8Array,
-    offset: number = 0
-  ): IDeserializedResult<Address> {
+  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<Address> {
     const args = new Args(data, offset)
 
     this.str = args.nextString()

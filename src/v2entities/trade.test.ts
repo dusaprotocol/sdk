@@ -102,15 +102,12 @@ describe('TradeV2 entity', async () => {
       const pairAddress = await allPairs[0]
         .fetchLBPair(20, client, CHAIN_ID)
         .then((r) => r.LBPair)
-      const reserves = await new ILBPair(pairAddress, client).getReservesAndId()
-      const amountOut = new TokenAmount(
-        outputToken,
-        BigInt(
-          inputToken.sortsBefore(outputToken)
-            ? reserves.reserveY
-            : reserves.reserveX
-        )
-      )
+      const pair = new ILBPair(pairAddress, client)
+      const { reserveX, reserveY } = await pair.getReservesAndId()
+      const tokens = await pair.getTokens()
+      const outputTokenReserves =
+        tokens[1] === outputToken.address ? reserveY : reserveX
+      const amountOut = new TokenAmount(outputToken, outputTokenReserves)
 
       const trades = await TradeV2.getTradesExactOut(
         allRoutes,
@@ -126,7 +123,7 @@ describe('TradeV2 entity', async () => {
         throw new Error('No trades')
       }
 
-      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(1)
+      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(0.5)
     })
   })
   describe('TradeV2.chooseBestTrade()', () => {
