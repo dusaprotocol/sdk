@@ -6,19 +6,14 @@ import { WMAS as _WMAS } from '../v1entities'
 import {
   BUILDNET_CHAIN_ID,
   ClientFactory,
-  ProviderType,
   DefaultProviderUrls
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
-  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
-  const client = await ClientFactory.createCustomClient(
-    [
-      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
-      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
-    ],
+  const client = await ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
     BUILDNET_CHAIN_ID,
     true
   )

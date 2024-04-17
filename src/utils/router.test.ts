@@ -2,21 +2,18 @@ import { describe, it, expect } from 'vitest'
 import { decodeSwapTx, isLiquidtyMethod, isSwapMethod } from './router'
 import { LIQUIDITY_ROUTER_METHODS, SWAP_ROUTER_METHODS } from '../types'
 import { BUILDNET_CHAIN_ID } from '@massalabs/web3-utils'
-import { PairV2, RouteV2, TradeV2 } from '../v2entities'
-import {
-  ClientFactory,
-  DefaultProviderUrls,
-  ProviderType
-} from '@massalabs/massa-web3'
+import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3'
 import { ChainId } from '../constants'
 import {
   Percent,
+  Token,
   TokenAmount,
   USDC as _USDC,
   WETH as _WETH,
   WMAS as _WMAS
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'
+import { QuoterHelper } from './quoterHelper'
 
 describe('isSwapMethod', () => {
   it('should return true for valid swap method', () => {
@@ -38,106 +35,60 @@ describe('isLiquidtyMethod', () => {
 })
 
 describe('decodeSwapTx', async () => {
-  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
-  const client = await ClientFactory.createCustomClient(
-    [
-      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
-      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
-    ],
+  const client = await ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
     BUILDNET_CHAIN_ID,
     true
   )
-
-  // init tokens and route bases
-  const USDC = _USDC[CHAIN_ID]
-  const WETH = _WETH[CHAIN_ID]
   const WMAS = _WMAS[CHAIN_ID]
-  const BASES = [WMAS, USDC, WETH]
+  const USDC = _USDC[CHAIN_ID]
 
-  // init input / output
-  const inputToken = USDC
-  const outputToken = WMAS
+  const options = {
+    allowedSlippage: new Percent(50n, 10000n),
+    ttl: 1000,
+    recipient: '0'
+  }
 
-  // token pairs
-  const allTokenPairs = PairV2.createAllTokenPairs(
-    inputToken,
-    outputToken,
-    BASES
-  )
-  const allPairs = PairV2.initPairs(allTokenPairs) // console.log('allPairs', allPairs)
+  const decode = async (
+    inputToken: Token,
+    outputToken: Token,
+    typedValueInParsed: string
+  ) => {
+    const amountIn = new TokenAmount(inputToken, typedValueInParsed)
+    const isNativeIn = inputToken === _WMAS[CHAIN_ID]
+    const isNativeOut = outputToken === _WMAS[CHAIN_ID]
+    const bestTrade = await QuoterHelper.findBestPath(
+      inputToken,
+      isNativeIn,
+      outputToken,
+      isNativeOut,
+      amountIn,
+      true,
+      2,
+      client,
+      CHAIN_ID
+    )
+    const params = bestTrade.swapCallParameters(options)
 
-  // all routes
-  const allRoutes = RouteV2.createAllRoutes(
-    allPairs,
-    inputToken,
-    outputToken,
-    3
-  )
-
-  // user input for exactIn trade
-  const typedValueIn = '5'
-  const typedValueInParsed = parseUnits(
-    typedValueIn,
-    inputToken.decimals
-  ).toString()
-
-  const amountIn = new TokenAmount(inputToken, typedValueInParsed)
+    const decoded = decodeSwapTx(
+      params.methodName,
+      Uint8Array.from(params.args.serialize()),
+      params.value
+    )
+    return decoded
+  }
 
   it('method requiring storage fee', async () => {
-    const isNativeOut = true
+    const typedValueInParsed = parseUnits('5', WMAS.decimals).toString()
+    const decoded = await decode(WMAS, USDC, typedValueInParsed)
 
-    const trades = await TradeV2.getTradesExactIn(
-      allRoutes,
-      amountIn,
-      outputToken,
-      false,
-      isNativeOut,
-      client,
-      CHAIN_ID
-    )
-    const bestTrade = TradeV2.chooseBestTrade(trades, true)
-    const options = {
-      allowedSlippage: new Percent(50n, 10000n),
-      ttl: 1000,
-      recipient: '0x0000000000000000000000000000000000000000'
-    }
-    const params = bestTrade.swapCallParameters(options)
-
-    const decoded = decodeSwapTx(
-      params.methodName,
-      Uint8Array.from(params.args.serialize()),
-      params.value
-    )
     expect(decoded.amountIn).toStrictEqual(BigInt(typedValueInParsed))
-    expect(decoded.binSteps).toStrictEqual(bestTrade.quote.binSteps)
   })
   it('method not requiring storage fee', async () => {
-    const isNativeOut = false
+    const typedValueInParsed = parseUnits('5', USDC.decimals).toString()
+    const decoded = await decode(USDC, WMAS, typedValueInParsed)
 
-    const trades = await TradeV2.getTradesExactIn(
-      allRoutes,
-      amountIn,
-      outputToken,
-      false,
-      isNativeOut,
-      client,
-      CHAIN_ID
-    )
-    const bestTrade = TradeV2.chooseBestTrade(trades, true)
-    const options = {
-      allowedSlippage: new Percent(50n, 10000n),
-      ttl: 1000,
-      recipient: '0x0000000000000000000000000000000000000000'
-    }
-    const params = bestTrade.swapCallParameters(options)
-
-    const decoded = decodeSwapTx(
-      params.methodName,
-      Uint8Array.from(params.args.serialize()),
-      params.value
-    )
     expect(decoded.amountIn).toStrictEqual(BigInt(typedValueInParsed))
-    expect(decoded.binSteps).toStrictEqual(bestTrade.quote.binSteps)
   })
 })

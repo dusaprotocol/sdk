@@ -13,20 +13,15 @@ import { ChainId, LB_ROUTER_ADDRESS } from '../constants'
 import {
   BUILDNET_CHAIN_ID,
   ClientFactory,
-  DefaultProviderUrls,
-  ProviderType
+  DefaultProviderUrls
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 import { ILBPair, IRouter } from '../contracts'
 
 describe('TradeV2 entity', async () => {
-  const BUILDNET_URL = DefaultProviderUrls.BUILDNET
   const CHAIN_ID = ChainId.BUILDNET
-  const client = await ClientFactory.createCustomClient(
-    [
-      { url: BUILDNET_URL, type: ProviderType.PUBLIC },
-      { url: BUILDNET_URL, type: ProviderType.PRIVATE }
-    ],
+  const client = await ClientFactory.createDefaultClient(
+    DefaultProviderUrls.BUILDNET,
     BUILDNET_CHAIN_ID,
     true
   )

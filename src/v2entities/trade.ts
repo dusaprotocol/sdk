@@ -29,25 +29,21 @@ import { IMulticall, Tx } from '../contracts'
 
 /** Class representing a trade */
 export class TradeV2 {
-  public readonly quote: Quote // quote returned by the LBQuoter contract
-  public readonly route: RouteV2 // The route of the trade, i.e. which pairs the trade goes through.
   public readonly tradeType: TradeType // The type of the trade, either exact in or exact out.
   public readonly inputAmount: TokenAmount // The input amount for the trade returned by the quote
   public readonly outputAmount: TokenAmount // The output amount for the trade returned by the quote
   public readonly executionPrice: Price // The price expressed in terms of output amount/input amount.
   public readonly exactQuote: TokenAmount // The exact amount if there was not slippage
   public readonly priceImpact: Percent // The percent difference between the executionPrice and the midPrice due to trade size
-  public readonly isNativeIn: boolean
-  public readonly isNativeOut: boolean
 
   public constructor(
-    route: RouteV2,
+    public readonly route: RouteV2, // The route of the trade, i.e. which pairs the trade goes through.
     tokenIn: Token,
     tokenOut: Token,
-    quote: Quote,
+    public readonly quote: Quote, // quote returned by the LBQuoter contract
     isExactIn: boolean,
-    isNativeIn: boolean,
-    isNativeOut: boolean
+    public readonly isNativeIn: boolean,
+    public readonly isNativeOut: boolean
   ) {
     const inputAmount = new TokenAmount(tokenIn, quote.amounts[0])
     const outputAmount = new TokenAmount(
@@ -55,10 +51,7 @@ export class TradeV2 {
       quote.amounts[quote.amounts.length - 1]
     )
 
-    this.route = route
     this.tradeType = isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
-    this.quote = quote
-    this.isNativeIn = isNativeIn
     this.isNativeOut = isNativeOut
     this.inputAmount = inputAmount
     this.outputAmount = outputAmount
