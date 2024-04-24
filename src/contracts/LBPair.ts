@@ -1,11 +1,11 @@
-import { Args, bytesToStr, strToBytes } from '@massalabs/massa-web3'
+import { Args, bytesToStr } from '@massalabs/massa-web3'
 import {
   ArrayTypes,
   byteToBool,
   bytesToArray,
   bytesToU256
 } from '@massalabs/web3-utils'
-import { BinReserves, LBPairReservesAndId } from '../types'
+import { BinReserves, FeeParameters, LBPairReservesAndId } from '../types'
 import { IBaseContract, maxGas } from './base'
 
 export class ILBPair extends IBaseContract {
@@ -71,84 +71,44 @@ export class ILBPair extends IBaseContract {
   }
 
   async getTokens(): Promise<[string, string]> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([
-        {
-          address: this.address,
-          key: strToBytes('TOKEN_X')
-        },
-        {
-          address: this.address,
-          key: strToBytes('TOKEN_Y')
-        }
-      ])
-      .then((r) => {
-        if (
-          !r[0].candidate_value ||
-          !r[1].candidate_value ||
-          !r[0].candidate_value.length ||
-          !r[1].candidate_value.length
-        )
-          throw new Error()
-        return [
-          bytesToStr(r[0].candidate_value),
-          bytesToStr(r[1].candidate_value)
-        ]
-      })
+    return this.extract(['TOKEN_X', 'TOKEN_Y']).then((r) => {
+      if (!r[0] || !r[1] || !r[0].length || !r[1].length) throw new Error()
+      return [bytesToStr(r[0]), bytesToStr(r[1])]
+    })
   }
 
   async getSupplies(ids: number[]): Promise<bigint[]> {
-    const keys = ids.map((id) => ({
-      address: this.address,
-      key: strToBytes(`total_supplies::${id}`)
-    }))
-    return this.client
-      .publicApi()
-      .getDatastoreEntries(keys)
-      .then((res) => {
-        return res.map((r) => {
-          if (!r.candidate_value || !r.candidate_value.length) return 0n
-          const args = new Args(r.candidate_value)
-          return args.nextU256()
-        })
+    const keys = ids.map((id) => `total_supplies::${id}`)
+    return this.extract(keys).then((res) => {
+      return res.map((r) => {
+        if (!r || !r.length) return 0n
+        const args = new Args(r)
+        return args.nextU256()
       })
+    })
   }
 
   async getBins(ids: number[]): Promise<BinReserves[]> {
-    const keys = ids.map((id) => ({
-      address: this.address,
-      key: strToBytes(`bin::${id}`)
-    }))
-    return this.client
-      .publicApi()
-      .getDatastoreEntries(keys)
-      .then((res) => {
-        return res.map((r) => {
-          if (!r.candidate_value || !r.candidate_value.length)
-            return { reserveX: 0n, reserveY: 0n }
-          const args = new Args(r.candidate_value)
-          const reserveX = args.nextU256()
-          const reserveY = args.nextU256()
-          return { reserveX, reserveY }
-        })
-      })
-  }
-
-  async getBin(id: number): Promise<BinReserves> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([
-        { address: this.address, key: strToBytes(`bin::${id}`) }
-      ])
-      .then((res) => {
-        if (!res[0].candidate_value || !res[0].candidate_value.length)
-          return { reserveX: 0n, reserveY: 0n }
-        const args = new Args(res[0].candidate_value)
+    const keys = ids.map((id) => `bin::${id}`)
+    return this.extract(keys).then((res) => {
+      return res.map((r) => {
+        if (!r || !r.length) return { reserveX: 0n, reserveY: 0n }
+        const args = new Args(r)
         const reserveX = args.nextU256()
         const reserveY = args.nextU256()
         return { reserveX, reserveY }
       })
+    })
+  }
+
+  async getBin(id: number): Promise<BinReserves> {
+    return this.extract([`bin::${id}`]).then((res) => {
+      if (!res[0] || !res[0].length) return { reserveX: 0n, reserveY: 0n }
+      const args = new Args(res[0])
+      const reserveX = args.nextU256()
+      const reserveY = args.nextU256()
+      return { reserveX, reserveY }
+    })
   }
 
   async getBinIds(): Promise<number[]> {
@@ -205,5 +165,26 @@ export class ILBPair extends IBaseContract {
       parameter: new Args().addString(owner).addString(operator).serialize(),
       maxGas
     }).then((res) => byteToBool(res.returnValue))
+  }
+
+  async feeParameters(): Promise<FeeParameters> {
+    return this.extract(['FEES_PARAMETERS']).then((res) => {
+      if (!res[0] || !res[0].length) throw new Error()
+      const args = new Args(res[0])
+      return {
+        binStep: args.nextU32(),
+        baseFactor: args.nextU32(),
+        filterPeriod: args.nextU32(),
+        decayPeriod: args.nextU32(),
+        reductionFactor: args.nextU32(),
+        variableFeeControl: args.nextU32(),
+        protocolShare: args.nextU32(),
+        maxVolatilityAccumulated: args.nextU32(),
+        volatilityAccumulated: args.nextU32(),
+        volatilityReference: args.nextU32(),
+        indexRef: args.nextU32(),
+        time: args.nextU64()
+      }
+    })
   }
 }

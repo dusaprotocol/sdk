@@ -3,7 +3,8 @@ import {
   ICallData,
   IContractReadOperationResponse,
   IReadData,
-  MassaUnits
+  MassaUnits,
+  strToBytes
 } from '@massalabs/massa-web3'
 
 export class IBaseContract {
@@ -39,6 +40,15 @@ export class IBaseContract {
       targetAddress: this.address,
       maxGas
     })
+  }
+
+  protected async extract(keys: string[]): Promise<(Uint8Array | null)[]> {
+    return this.client
+      .publicApi()
+      .getDatastoreEntries(
+        keys.map((key) => ({ address: this.address, key: strToBytes(key) }))
+      )
+      .then((res) => res.map((r) => r.candidate_value))
   }
 }
 

@@ -3,22 +3,10 @@ import {
   bytesToStr,
   bytesToU256,
   bytesToU32,
-  strToBytes,
   MAX_GAS_CALL
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
 import { maxGas } from './base'
-
-const TOKEN_Y = strToBytes('TOKEN_Y')
-const PAIR = strToBytes('PAIR')
-const BIN_STEP = strToBytes('BIN_STEP')
-const FLOOR_PER_BIN = strToBytes('FLOOR_PER_BIN')
-const FLOOR_ID = strToBytes('FLOOR_ID')
-const ROOF_ID = strToBytes('ROOF_ID')
-const REBALANCE_PAUSED = strToBytes('REBALANCE_PAUSED')
-
-const TAX_RECIPIENT = strToBytes('TAX_RECIPIENT')
-const TAX_RATE = strToBytes('TAX_RATE')
 
 export class IFloorToken extends IERC20 {
   // FLOOR FUNCTIONS
@@ -43,63 +31,45 @@ export class IFloorToken extends IERC20 {
   }
 
   async floorId(): Promise<number> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: FLOOR_ID }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToU32(res[0].candidate_value)
-      })
+    return this.extract(['FLOOR_ID']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToU32(res[0])
+    })
   }
 
   async roofId(): Promise<number> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: ROOF_ID }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToU32(res[0].candidate_value)
-      })
+    return this.extract(['ROOF_ID']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToU32(res[0])
+    })
   }
 
   async pair(): Promise<string> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: PAIR }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToStr(res[0].candidate_value)
-      })
+    return this.extract(['PAIR']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToStr(res[0])
+    })
   }
 
   async tokenY(): Promise<string> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: TOKEN_Y }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToStr(res[0].candidate_value)
-      })
+    return this.extract(['TOKEN_Y']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToStr(res[0])
+    })
   }
 
   async binStep(): Promise<number> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: BIN_STEP }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToU32(res[0].candidate_value)
-      })
+    return this.extract(['BIN_STEP']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToU32(res[0])
+    })
   }
 
   async floorPerBin(): Promise<bigint> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: FLOOR_PER_BIN }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToU256(res[0].candidate_value)
-      })
+    return this.extract(['FLOOR_PER_BIN']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToU256(res[0])
+    })
   }
 
   async floorPrice(): Promise<bigint> {
@@ -111,13 +81,10 @@ export class IFloorToken extends IERC20 {
   }
 
   async rebalancePaused(): Promise<boolean> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: REBALANCE_PAUSED }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return !!bytesToU32(res[0].candidate_value)
-      })
+    return this.extract(['REBALANCE_PAUSED']).then((res) => {
+      if (!res[0]) throw new Error()
+      return !!bytesToU32(res[0])
+    })
   }
 
   async tokensInPair(): Promise<{ amountFloor: bigint; amountY: bigint }> {
@@ -170,23 +137,17 @@ export class IFloorToken extends IERC20 {
   // TRANSFER TAX FUNCTIONS
 
   async taxRecipient(): Promise<string> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: TAX_RECIPIENT }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToStr(res[0].candidate_value)
-      })
+    return this.extract(['TAX_RECIPIENT']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToStr(res[0])
+    })
   }
 
   async taxRate(): Promise<bigint> {
-    return this.client
-      .publicApi()
-      .getDatastoreEntries([{ address: this.address, key: TAX_RATE }])
-      .then((res) => {
-        if (!res[0].candidate_value) throw new Error()
-        return bytesToU256(res[0].candidate_value)
-      })
+    return this.extract(['TAX_RATE']).then((res) => {
+      if (!res[0]) throw new Error()
+      return bytesToU256(res[0])
+    })
   }
 
   setTaxRate(taxRate: bigint): Promise<string> {

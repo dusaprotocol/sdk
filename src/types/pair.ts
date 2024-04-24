@@ -56,6 +56,21 @@ export interface LBPairReservesAndId {
   activeId: number
 }
 
+export interface FeeParameters {
+  binStep: number
+  baseFactor: number
+  filterPeriod: number
+  decayPeriod: number
+  reductionFactor: number
+  variableFeeControl: number
+  protocolShare: number
+  maxVolatilityAccumulated: number
+  volatilityAccumulated: number
+  volatilityReference: number
+  indexRef: number
+  time: bigint
+}
+
 export interface BinReserves {
   reserveX: bigint
   reserveY: bigint
