@@ -29,6 +29,13 @@ export type LiquidityEvent = {
   amountY: bigint
 }
 
+export type CompositionFeeEvent = {
+  to: string
+  id: number
+  activeFeeX: bigint
+  activeFeeY: bigint
+}
+
 export type CollectFeesEvent = {
   caller: string
   to: string
@@ -96,6 +103,22 @@ export class EventDecoder {
       id: parseInt(id),
       amountX: EventDecoder.decodeU256(amountX),
       amountY: EventDecoder.decodeU256(amountY)
+    }
+  }
+
+  static decodeCompositionFee = (bytes: string): CompositionFeeEvent => {
+    const [
+      to,
+      id,
+      activeFeeX,
+      activeFeeY,
+    ] = EventDecoder.extractParams(bytes)
+
+    return {
+      to,
+      id: parseInt(id),
+      activeFeeX: EventDecoder.decodeU256(activeFeeX),
+      activeFeeY: EventDecoder.decodeU256(activeFeeY),
     }
   }
 
