@@ -25,29 +25,11 @@ export class IRouter extends IBaseContract {
   }
 
   private async execute(params: SwapParameters | LiquidityParameters) {
-    const simulatedGas = await this.estimateGas(params)
     return this.call({
       targetFunction: params.methodName,
       coins: params.value,
-      parameter: params.args,
-      maxGas: simulatedGas
+      parameter: params.args
     })
-  }
-
-  // SIMULATE
-
-  async simulate(params: SwapParameters | LiquidityParameters) {
-    return this.read({
-      targetFunction: params.methodName,
-      parameter: params.args,
-      maxGas: MAX_GAS_CALL
-    })
-  }
-
-  private async estimateGas(params: SwapParameters | LiquidityParameters) {
-    return this.simulate(params)
-      .then((result) => BigInt(result.info.gas_cost))
-      .catch(() => MAX_GAS_CALL)
   }
 
   // QUERY

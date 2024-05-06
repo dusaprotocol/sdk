@@ -107,18 +107,13 @@ export class EventDecoder {
   }
 
   static decodeCompositionFee = (bytes: string): CompositionFeeEvent => {
-    const [
-      to,
-      id,
-      activeFeeX,
-      activeFeeY,
-    ] = EventDecoder.extractParams(bytes)
+    const [to, id, activeFeeX, activeFeeY] = EventDecoder.extractParams(bytes)
 
     return {
       to,
       id: parseInt(id),
       activeFeeX: EventDecoder.decodeU256(activeFeeX),
-      activeFeeY: EventDecoder.decodeU256(activeFeeY),
+      activeFeeY: EventDecoder.decodeU256(activeFeeY)
     }
   }
 

@@ -16,9 +16,9 @@ export class IFactory extends IBaseContract {
         .addString(token0Address)
         .addString(token1Address)
         .serialize()
-    }).then((res) => {
-      return bytesToSerializableObjectArray(res.returnValue, LBPairInformation)
-    })
+    }).then((res) =>
+      bytesToSerializableObjectArray(res.returnValue, LBPairInformation)
+    )
   }
 
   async getLBPairInformation(
@@ -34,9 +34,9 @@ export class IFactory extends IBaseContract {
         .addU32(binStep)
         .serialize(),
       maxGas
-    }).then((res) => {
-      return new LBPairInformation().deserialize(res.returnValue).instance
-    })
+    }).then(
+      (res) => new LBPairInformation().deserialize(res.returnValue).instance
+    )
   }
 
   async getAvailableLBPairBinSteps(
@@ -50,8 +50,6 @@ export class IFactory extends IBaseContract {
         .addString(token1Address)
         .serialize(),
       maxGas
-    }).then((res) => {
-      return bytesToArray<number>(res.returnValue, ArrayTypes.U32)
-    })
+    }).then((res) => bytesToArray<number>(res.returnValue, ArrayTypes.U32))
   }
 }

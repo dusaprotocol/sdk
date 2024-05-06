@@ -2,8 +2,7 @@ import {
   Args,
   bytesToStr,
   bytesToU256,
-  bytesToU32,
-  MAX_GAS_CALL
+  bytesToU32
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
 import { maxGas } from './base'
@@ -12,21 +11,17 @@ export class IFloorToken extends IERC20 {
   // FLOOR FUNCTIONS
   async raiseRoof(nbBins: number) {
     const parameter = new Args().addU32(nbBins)
-    const simulatedGas = await this.simulate('raiseRoof', parameter)
     return this.call({
       targetFunction: 'raiseRoof',
-      parameter: parameter,
-      maxGas: simulatedGas
+      parameter: parameter
     })
   }
 
   async reduceRoof(nbBins: number) {
     const parameter = new Args().addU32(nbBins)
-    const simulatedGas = await this.simulate('reduceRoof', parameter)
     return this.call({
       targetFunction: 'reduceRoof',
-      parameter,
-      maxGas: simulatedGas
+      parameter
     })
   }
 
@@ -110,11 +105,9 @@ export class IFloorToken extends IERC20 {
   }
 
   async rebalanceFloor(): Promise<string> {
-    const simulatedGas = await this.simulate('rebalanceFloor', new Args())
     return this.call({
       targetFunction: 'rebalanceFloor',
-      parameter: new Args(),
-      maxGas: simulatedGas
+      parameter: new Args()
     })
   }
 
@@ -164,17 +157,5 @@ export class IFloorToken extends IERC20 {
       parameter: new Args().addString(taxRecipient),
       maxGas
     })
-  }
-
-  // ESTIME GAS
-
-  private async simulate(targetFunction: string, parameter: Args) {
-    return this.read({
-      targetFunction,
-      parameter,
-      maxGas: MAX_GAS_CALL
-    })
-      .then((res) => BigInt(res.info.gas_cost))
-      .catch(() => MAX_GAS_CALL)
   }
 }
