@@ -25,7 +25,7 @@ export class IBaseContract {
     params: BaseCallData & {
       maxGas?: bigint
     },
-    estimate: boolean = true
+    estimate = true
   ): Promise<string> {
     const prom = estimate && this.simulate(params)
     const coinsNeeded = prom ? await this.estimateCoins(prom) : params.coins
