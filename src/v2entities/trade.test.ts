@@ -9,14 +9,16 @@ import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
-import { ChainId, LB_ROUTER_ADDRESS } from '../constants'
+import { ChainId } from '../constants'
 import {
+  Args,
+  ArrayTypes,
   BUILDNET_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
-import { ILBPair, IRouter } from '../contracts'
+import { ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const CHAIN_ID = ChainId.BUILDNET
@@ -299,9 +301,16 @@ describe('TradeV2 entity', async () => {
       }
       const params = bestTrade.swapCallParameters(options)
 
-      expect(() =>
-        new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).simulate(params)
-      ).not.toThrowError('is missing')
+      const args = new Args(params?.args.serialize())
+
+      expect(args.nextU256()).toBe(amountIn.raw)
+      expect(args.nextU256()).toBe(
+        bestTrade?.minimumAmountOut(options.allowedSlippage).raw
+      )
+      expect(args.nextArray(ArrayTypes.U64)).toBeInstanceOf(Array)
+      expect(args.nextArray(ArrayTypes.STRING)).toBeInstanceOf(Array)
+      expect(args.nextString()).toBe(options.recipient)
+      expect(args.nextU64()).toBeGreaterThan(0)
     })
   })
 })

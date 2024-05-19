@@ -343,7 +343,10 @@ export class PairV2 {
             .addString(to)
             .addU64(BigInt(deadline))
 
-          const STORAGE_COST = MassaUnits.oneMassa / 2n // 0.5 MAS
+          // calculate storage cost based on number of ids
+          const STORAGE_COST =
+            140_100n * MassaUnits.uMassa +
+            BigInt(options.deltaIds.length) * 45_600n * MassaUnits.uMassa
           value += STORAGE_COST
           if (isNative) {
             args.addU64(STORAGE_COST)
@@ -368,10 +371,14 @@ export class PairV2 {
             .addString(to)
             .addU64(BigInt(deadline))
 
+          // calculate storage cost based on number of ids
+          value =
+            109_600n * MassaUnits.uMassa +
+            BigInt(options.ids.length) * 10_200n * MassaUnits.uMassa
           return {
             args,
             methodName: isNative ? 'removeLiquidityMAS' : 'removeLiquidity',
-            value: MassaUnits.oneMassa / 10n // 0.1 MAS
+            value
           }
       }
     })(isAdd)
