@@ -65,7 +65,6 @@ export class IBaseContract {
   }
 
   private async simulate(params: BaseCallData) {
-    console.log('Simulating call', params)
     const callerAddress = this.client.wallet().getBaseAccount()?.address()
     if (!callerAddress) throw new Error('No caller address')
     return this.read({
@@ -82,12 +81,11 @@ export class IBaseContract {
   }
 
   protected async estimateCoins(params: BaseCallData) {
-    return this.simulate(params)
+    return this.simulate({ ...params, coins: 0n })
       .then(() => 0n)
       .catch((err: Error) => {
         try {
           const errMsg = EventDecoder.decodeError(err.message)
-          console.log({ errMsg })
           const coinErrorKeyword = 'Storage__NotEnoughCoinsSent:'
           const [needed] = errMsg.split(coinErrorKeyword)[1].split(',')
           return BigInt(needed)
@@ -98,5 +96,5 @@ export class IBaseContract {
   }
 }
 
-export const maxGas = 4_294_167_295n
+export const maxGas = MAX_GAS_CALL
 export const coins = MassaUnits.oneMassa / 100n // storage cost
