@@ -25,11 +25,15 @@ export class IBaseContract {
     params: BaseCallData & {
       maxGas?: bigint
     },
-    estimate = true
+    estimateCoins = true,
+    estimateGas = true
   ): Promise<string> {
-    const prom = estimate && this.simulate(params)
-    const coinsNeeded = prom ? await this.estimateCoins(prom) : params.coins
-    const gasNeeded = prom ? await this.estimateGas(prom) : params.maxGas
+    const coinsNeeded = estimateCoins
+      ? await this.estimateCoins(params)
+      : params.coins
+    const gasNeeded = estimateGas
+      ? await this.estimateGas({ ...params, coins: coinsNeeded })
+      : params.maxGas
     return this.client.smartContracts().callSmartContract({
       ...params,
       targetAddress: this.address,
@@ -71,16 +75,14 @@ export class IBaseContract {
     })
   }
 
-  protected async estimateGas(
-    promise: Promise<IContractReadOperationResponse>
-  ) {
-    return promise.then((r) => BigInt(r.info.gas_cost))
+  protected async estimateGas(params: BaseCallData) {
+    return this.simulate(params)
+      .then((r) => BigInt(r.info.gas_cost))
+      .catch(() => MAX_GAS_CALL)
   }
 
-  protected async estimateCoins(
-    promise: Promise<IContractReadOperationResponse>
-  ) {
-    return promise
+  protected async estimateCoins(params: BaseCallData) {
+    return this.simulate(params)
       .then(() => 0n)
       .catch((err: Error) => {
         try {
