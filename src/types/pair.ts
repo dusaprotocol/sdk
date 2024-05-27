@@ -1,11 +1,6 @@
 import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
 
-export interface LBPair {
-  binStep: number
-  LBPair: string
-  createdByOwner: boolean
-  isBlacklisted: boolean
-}
+export type LBPair = IDeserializedResult<LBPairInformation>['instance']
 
 export class LBPairInformation implements ISerializable<LBPairInformation> {
   constructor(

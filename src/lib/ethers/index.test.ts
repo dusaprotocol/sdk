@@ -18,4 +18,8 @@ describe('parseUnits', () => {
     const units = parseUnits('0.027701573454366149', 18)
     expect(units).toBe(27701573454366149n)
   })
+  it('should handle large numbers', () => {
+    const units = parseUnits('1,234,567.89', 6)
+    expect(units).toBe(1234567890000n)
+  })
 })
