@@ -9,9 +9,8 @@ describe('RouteV2.createAllRoute()', () => {
 
   const CHAIN_ID = ChainId.BUILDNET
   const USDC = _USDC[CHAIN_ID]
-  const WETH = _WETH[CHAIN_ID]
   const WMAS = _WMAS[CHAIN_ID]
-  const BASES = [WMAS, USDC, WETH]
+  const BASES = [WMAS, USDC]
 
   // init input / output
   const inputToken = USDC
