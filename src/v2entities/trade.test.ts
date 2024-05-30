@@ -2,7 +2,6 @@ import {
   Percent,
   TokenAmount,
   USDC as _USDC,
-  WETH as _WETH,
   WMAS as _WMAS
 } from '../v1entities'
 import { PairV2 } from './pair'
@@ -108,7 +107,10 @@ describe('TradeV2 entity', async () => {
       const tokens = await pair.getTokens()
       const outputTokenReserves =
         tokens[1] === outputToken.address ? reserveY : reserveX
-      const amountOut = new TokenAmount(outputToken, outputTokenReserves)
+      const amountOut = new TokenAmount(
+        outputToken,
+        (4n * outputTokenReserves) / 5n
+      )
 
       const trades = await TradeV2.getTradesExactOut(
         allRoutes,

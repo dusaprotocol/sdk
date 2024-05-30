@@ -1,5 +1,5 @@
 import { ChainId } from '../constants'
-import { USDC as _USDC, WETH as _WETH, WMAS as _WMAS } from '../v1entities'
+import { USDC as _USDC, WMAS as _WMAS } from '../v1entities'
 import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { describe, it, expect } from 'vitest'
