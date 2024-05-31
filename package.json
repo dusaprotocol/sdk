@@ -35,6 +35,7 @@
     "@types/big.js": "^6.2.2",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "babel-plugin-transform-async-to-promises": "^0.8.18",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
