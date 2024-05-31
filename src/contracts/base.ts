@@ -76,7 +76,9 @@ export class IBaseContract {
 
   protected async estimateGas(params: BaseCallData) {
     return this.simulate(params)
-      .then((r) => BigInt(Math.min(r.info.gas_cost * 1.1, Number(MAX_GAS_CALL)))) // 10% extra gas for safety
+      .then((r) =>
+        BigInt(Math.min(r.info.gas_cost * 1.1, Number(MAX_GAS_CALL)))
+      ) // 10% extra gas for safety
       .catch(() => MAX_GAS_CALL)
   }
 
