@@ -431,8 +431,8 @@ export class TradeV2 {
         if (!quote) return undefined
         const trade: TradeV2 = new TradeV2(
           routes[i],
-          tokenAmount.token,
-          isExactIn ? tokenOut : tokenIn,
+          tokenIn,
+          tokenOut,
           quote,
           isExactIn,
           isNativeIn,
