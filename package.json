@@ -14,8 +14,10 @@
     "lint:fix": "npx lint --fix",
     "build": "tsdx build",
     "start": "tsdx watch",
-    "test": "vitest --config ./vitest.config.ts",
-    "prepublishOnly": "tsdx build"
+    "test:unit": "vitest --config ./vitest.config.ts",
+    "test:e2e": "cd playground && npm start",
+    "test": "pnpm test:unit -- run && pnpm test:e2e",
+    "prepublishOnly": "tsdx build && npm test"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
