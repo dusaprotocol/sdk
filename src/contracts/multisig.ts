@@ -8,7 +8,7 @@ import {
   bytesToSerializableObjectArray
 } from '@massalabs/massa-web3'
 import { IBaseContract, maxGas } from './base'
-import { Transaction } from 'types/periphery'
+import { Transaction } from '../types/periphery'
 
 export class IMultisig extends IBaseContract {
   async getTransactions(): Promise<Transaction[]> {
