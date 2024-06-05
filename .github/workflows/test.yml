@@ -26,13 +26,10 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm i && cd playground && pnpm i --ignore-scripts
+        run: pnpm i && cd playground && pnpm i
 
       - name: Linting
         run: pnpm lint
-
-      - name: Building
-        run: pnpm build
 
       - name: Testing
         run: pnpm test
