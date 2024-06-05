@@ -1,7 +1,6 @@
 import { Args, ArrayTypes } from '@massalabs/web3-utils'
 import {
   AddLiquidityParameters,
-  Address,
   LIQUIDITY_ROUTER_METHODS,
   LiquidityRouterMethod,
   RemoveLiquidityParameters,
@@ -83,7 +82,7 @@ export const decodeSwapTx = (
   const { amountIn, amountOut } = extractAmountInOut(method, args, coins)
 
   const binSteps = args.nextArray<bigint>(ArrayTypes.U64)
-  const path = args.nextSerializableObjectArray(Address)
+  const path = args.nextArray<string>(ArrayTypes.STRING)
   const to = args.nextString()
   const deadline = Number(args.nextU64())
 

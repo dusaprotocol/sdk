@@ -131,9 +131,9 @@ export class ILBPair extends IBaseContract {
       parameter: new Args().addString(user).serialize(),
       maxGas
     }).then((res) =>
-      (new Args(res.returnValue).nextArray(ArrayTypes.U32) as number[]).sort(
-        (a, b) => a - b
-      )
+      new Args(res.returnValue)
+        .nextArray<number>(ArrayTypes.U32)
+        .sort((a, b) => a - b)
     )
   }
 
