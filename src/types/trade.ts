@@ -5,7 +5,7 @@ import {
   ISerializable
 } from '@massalabs/massa-web3'
 import { Percent, TokenAmount } from '../v1entities/fractions'
-import { Address } from './serializable'
+
 export class Quote implements ISerializable<Quote> {
   constructor(
     public route: string[] = [],
@@ -63,7 +63,7 @@ export interface TradeOptionsDeadline extends Omit<TradeOptions, 'ttl'> {
 
 export interface RouterPathParameters {
   pairBinSteps: string[]
-  tokenPath: Address[]
+  tokenPath: string[]
 }
 
 export const SWAP_ROUTER_METHODS = [
@@ -93,7 +93,7 @@ export interface SwapSettings {
   amountIn: bigint
   amountOut: bigint
   binSteps: bigint[]
-  path: Address[]
+  path: string[]
   to: string
   deadline: number
 }

@@ -130,11 +130,11 @@ export class ILBPair extends IBaseContract {
       targetFunction: 'getUserBins',
       parameter: new Args().addString(user).serialize(),
       maxGas
-    }).then((res) => {
-      const args = new Args(res.returnValue)
-      const bins: number[] = args.nextArray(ArrayTypes.U32)
-      return bins.sort((a, b) => a - b)
-    })
+    }).then((res) =>
+      (new Args(res.returnValue).nextArray(ArrayTypes.U32) as number[]).sort(
+        (a, b) => a - b
+      )
+    )
   }
 
   async pendingFees(

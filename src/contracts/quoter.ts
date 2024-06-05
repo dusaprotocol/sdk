@@ -1,5 +1,5 @@
-import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
-import { Address, Quote } from '../types'
+import { Args, ArrayTypes, MAX_GAS_CALL } from '@massalabs/massa-web3'
+import { Quote } from '../types'
 import { IBaseContract } from './base'
 
 export class IQuoter extends IBaseContract {
@@ -27,7 +27,7 @@ export class IQuoter extends IBaseContract {
         ? 'findBestPathFromAmountIn'
         : 'findBestPathFromAmountOut',
       parameter: new Args()
-        .addSerializableObjectArray(route.map((r) => new Address(r)))
+        .addArray(route, ArrayTypes.STRING)
         .addU256(BigInt(amount))
         .addBool(isExactIn)
         .serialize(),

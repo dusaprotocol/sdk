@@ -40,9 +40,6 @@ export class IMulticall extends IBaseContract {
   async aggregateMulticall(
     data: Tx[]
   ): Promise<IContractReadOperationResponse> {
-    // const datastore = new Map<Uint8Array, Uint8Array>()
-    // datastore.set(new Uint8Array([0x00]), new Args().addSerializableObjectArray(data).serialize())
-
     return this.read({
       targetFunction: 'multicall',
       parameter: new Args().addSerializableObjectArray(data).serialize(),

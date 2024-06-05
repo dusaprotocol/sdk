@@ -26,7 +26,7 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm i && cd playground && pnpm i --ignore-scripts
 
       - name: Linting
         run: pnpm lint

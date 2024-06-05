@@ -12,8 +12,7 @@ import {
   TradeFee,
   SwapParameters,
   Quote,
-  RouterPathParameters,
-  Address
+  RouterPathParameters
 } from '../types'
 import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import {
@@ -146,7 +145,7 @@ export class TradeV2 {
     const binSteps: string[] = this.quote.binSteps.map((bin) => bin.toString())
     const path: RouterPathParameters = {
       pairBinSteps: binSteps,
-      tokenPath: this.quote.route.map((t) => new Address(t))
+      tokenPath: this.quote.route
     }
     const deadline =
       'ttl' in options
@@ -171,7 +170,7 @@ export class TradeV2 {
             args
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
               .addU64(SWAP_STORAGE_COST)
@@ -185,7 +184,7 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
             return { args, methodName, value }
@@ -197,7 +196,7 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
             return { args, methodName, value }
@@ -209,7 +208,7 @@ export class TradeV2 {
             args
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
               .addU64(SWAP_STORAGE_COST)
@@ -221,7 +220,7 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
             return { args, methodName, value }
@@ -231,7 +230,7 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addSerializableObjectArray(path.tokenPath)
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
             return { args, methodName, value }
