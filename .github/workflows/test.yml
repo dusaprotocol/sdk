@@ -31,5 +31,8 @@ jobs:
       - name: Linting
         run: pnpm lint
 
+      - name: Building
+        run: pnpm build
+
       - name: Testing
         run: pnpm test
