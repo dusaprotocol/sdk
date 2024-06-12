@@ -232,7 +232,7 @@ export class EventDecoder {
 
   static decodeError = (bytes: string): string => {
     const errorSplit = bytes.split('error: ')
-    return errorSplit[errorSplit.length - 1].split(' at')[0]
+    return errorSplit[errorSplit.length - 1].split(' at')[0].split('"')[0]
   }
 
   static extractParams = (bytes: string): string[] => {
