@@ -6,8 +6,10 @@ const DEPOSIT_EVENT =
 const SWAP_EVENT =
   'SWAP:AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar;?!8391258;?!true;?!䄥\x0F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!௟\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!0;?!ě\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 const EVENT = 'SWAP:aaa;?!bbb;?!c:c;?!ddd'
-const ERROR_EVENT =
+const ERROR_EVENT1 =
   '{"massa_execution_error":"Runtime error: runtime error when executing operation O1fmxudzfQWK6sFxnoqVJ7LBa4xS28wh7ZLYRgbp3pU2xLtahRt: VM Error in CallSC context: VM execution error: RuntimeError: Runtime error: error transferring 21 coins from AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi to AS1vnaHDB5ixK56S1LPh2nGgsaHXjoeaWuPnh3ggiK6BqTBeGM2B: Runtime error: failed to transfer 21 coins from spending address AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi due to insufficient balance 15.1897"}'
+const ERROR_EVENT2 =
+  '{"massa_execution_error":"Runtime error: runtime error when executing operation O1FtHYwvQRDSeYCrEnaZeUPPEzf5BeYFb3FBVZGZXJD1454VGP4: VM Error in CallSC context: VM execution error: RuntimeError: Runtime error: error: Storage__NotEnoughCoinsSent: 28804200000, 20000000000 at assembly/libraries/Utils.ts:89 col: 5"}'
 
 describe('decode', () => {
   it('deposit', () => {
@@ -45,9 +47,14 @@ describe('decode', () => {
     expect(params[3]).toBe('ddd')
   })
   it('error msg', () => {
-    const decodedMsg = EventDecoder.decodeError(ERROR_EVENT)
-    expect(decodedMsg).toBe(
+    const decodedMsg1 = EventDecoder.decodeError(ERROR_EVENT1)
+    expect(decodedMsg1).toBe(
       'failed to transfer 21 coins from spending address AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi due to insufficient balance 15.1897'
+    )
+
+    const decodedMsg2 = EventDecoder.decodeError(ERROR_EVENT2)
+    expect(decodedMsg2).toBe(
+      'Storage__NotEnoughCoinsSent: 28804200000, 20000000000'
     )
   })
 })
