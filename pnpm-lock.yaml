@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: 4.0.1
-    version: 4.0.1
+    specifier: ^4.0.3
+    version: 4.0.3
   '@massalabs/web3-utils':
     specifier: ^1.4.7
     version: 1.4.7
@@ -1789,11 +1789,11 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /@massalabs/massa-web3@4.0.1:
-    resolution: {integrity: sha512-zkJgIt/iOr4E+a4dKOWHBF6Tx7Ov8vbNqG0OWyY1Pufq6TZY6BsoCTPiSUtJYHhgZYA+KCpogOeGmlG14MvtYA==}
+  /@massalabs/massa-web3@4.0.3:
+    resolution: {integrity: sha512-W1TtxMrTiqLfUgvIqO641M/2do6Z2Kvvq44JYhiUbteXI5S+VvCJ+HaRtIZ23r9k2wTSlSikE6j6U5bkKDMABA==}
     dependencies:
       '@massalabs/wallet-provider': 2.0.0
-      '@massalabs/web3-utils': 1.4.9
+      '@massalabs/web3-utils': 1.4.11
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.3.2
       '@types/ws': 8.5.10
@@ -1821,7 +1821,7 @@ packages:
     resolution: {integrity: sha512-3BKtYszSfKMOi85cxOB1q60uiMWYmdteV28stx2NjT42VtSyKOuWiTJq4KaWbf3ov+fkg+/HknXdl5bhDghbSQ==}
     dependencies:
       '@hicaru/bearby.js': 0.5.8
-      '@massalabs/web3-utils': 1.4.9
+      '@massalabs/web3-utils': 1.4.11
       axios: 0.28.1
       bs58check: 3.0.1
       buffer: 6.0.3
@@ -1833,18 +1833,18 @@ packages:
       - debug
     dev: false
 
-  /@massalabs/web3-utils@1.4.7:
-    resolution: {integrity: sha512-nD7yf5P8ldg2wdyAKFI8sz3XEUTklz29dXcOjZdXn4fKzrHF4mqvq2OUZ+uR31OziZboKxTGK5r8AxcZTKL5Zg==}
+  /@massalabs/web3-utils@1.4.11:
+    resolution: {integrity: sha512-9iUoSc9OZxrvx8UbDor934z0cetenEU3PlDqTa9Hsh3EuZJ9jalcEU8Q9Z+hjLn2S9Ojmqu2ldcOAxVzYeNCbw==}
     dependencies:
+      bignumber.js: 9.1.2
       buffer: 6.0.3
       events: 3.3.0
       string_decoder: 1.3.0
     dev: false
 
-  /@massalabs/web3-utils@1.4.9:
-    resolution: {integrity: sha512-8G91gs6HqpPpR860QDUOzugr81WJTGkBgXQS1gq/oXqt16fPkw2xlsq4c2CFHDjRF9/ftE/JaybiNZ4ilcbEyg==}
+  /@massalabs/web3-utils@1.4.7:
+    resolution: {integrity: sha512-nD7yf5P8ldg2wdyAKFI8sz3XEUTklz29dXcOjZdXn4fKzrHF4mqvq2OUZ+uR31OziZboKxTGK5r8AxcZTKL5Zg==}
     dependencies:
-      bignumber.js: 9.1.2
       buffer: 6.0.3
       events: 3.3.0
       string_decoder: 1.3.0
