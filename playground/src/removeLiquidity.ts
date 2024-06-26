@@ -6,7 +6,6 @@ import {
   WMAS as _WMAS,
   USDC as _USDC,
   ILBPair,
-  Percent
 } from '@dusalabs/sdk'
 import { WalletClient } from '@massalabs/massa-web3'
 import { awaitFinalization, createClient, logEvents } from './utils'
@@ -29,7 +28,7 @@ export const removeLiquidity = async () => {
   const router = LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // set amount slipage tolerance
-  const allowedAmountSlippage = 50 // in bips, 0.5% in this case
+  const allowedAmountSlippage = 50n // in bips, 0.5% in this case
 
   // set deadline for the transaction
   const currenTimeInMs = new Date().getTime()
@@ -70,7 +69,7 @@ export const removeLiquidity = async () => {
     bins,
     totalSupplies,
     nonZeroAmounts.map(String),
-    new Percent(BigInt(allowedAmountSlippage))
+    allowedAmountSlippage
   )
 
   const params = pair.liquidityCallParameters({

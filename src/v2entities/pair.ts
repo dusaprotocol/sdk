@@ -9,7 +9,7 @@ import {
 import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
-import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
+import { Fraction, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
 import { IFactory } from '../contracts'
 import invariant from 'tiny-invariant'
@@ -208,8 +208,8 @@ export class PairV2 {
     binStep: number,
     token0Amount: TokenAmount,
     token1Amount: TokenAmount,
-    amountSlippage: Percent,
-    priceSlippage: Percent,
+    amountSlippage: bigint,
+    priceSlippage: bigint,
     liquidityDistribution: LiquidityDistribution
   ): Omit<AddLiquidityParameters, 'to' | 'deadline' | 'activeIdDesired'> {
     const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
@@ -218,16 +218,11 @@ export class PairV2 {
     const amount0: bigint = token0isX ? token0Amount.raw : token1Amount.raw
     const amount1: bigint = token0isX ? token1Amount.raw : token0Amount.raw
 
-    const amount0Min = new Fraction(1n)
-      .add(amountSlippage)
-      .invert()
-      .multiply(amount0).quotient
-    const amount1Min = new Fraction(1n)
-      .add(amountSlippage)
-      .invert()
-      .multiply(amount1).quotient
+    const amountSlippagePercent = new Fraction(amountSlippage, 10_000n)
+    const amount0Min = amountSlippagePercent.multiply(amount0).quotient
+    const amount1Min = amountSlippagePercent.multiply(amount1).quotient
 
-    const _priceSlippage: number = Number(priceSlippage.toSignificant()) / 100
+    const _priceSlippage: number = Number(new Fraction(priceSlippage, 10_000n).toSignificant(5))
     const idSlippage = Bin.getIdSlippageFromPriceSlippage(
       _priceSlippage,
       binStep
@@ -269,7 +264,7 @@ export class PairV2 {
     bins: BinReserves[],
     totalSupplies: bigint[],
     amountsToRemove: string[],
-    amountSlippage: Percent
+    amountSlippage: bigint
   ): {
     amountX: bigint
     amountY: bigint
@@ -285,16 +280,12 @@ export class PairV2 {
       amountsToRemove
     )
 
-    // compute min amounts taking into consideration slippage
-    const amountXMin = new Fraction(1n)
-      .add(amountSlippage)
-      .invert()
-      .multiply(amountX).quotient
+    const amountSlippagePercent = new Fraction(amountSlippage, 10_000n)
 
-    const amountYMin = new Fraction(1n)
-      .add(amountSlippage)
-      .invert()
-      .multiply(amountY).quotient
+    // compute min amounts taking into consideration slippage
+    const amountXMin = amountSlippagePercent.multiply(amountX).quotient
+
+    const amountYMin = amountSlippagePercent.multiply(amountY).quotient
 
     // return
     return {
