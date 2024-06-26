@@ -57,7 +57,7 @@ export const addLiquidity = async () => {
   if (approveTxId1) await awaitFinalization(client, approveTxId1)
   if (approveTxId2) await awaitFinalization(client, approveTxId2)
 
-  // set amount slipage tolerance
+  // set amount slippage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
 
   // set price slippage tolerance

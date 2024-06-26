@@ -28,7 +28,7 @@ export const removeLiquidity = async () => {
 
   const router = LB_ROUTER_ADDRESS[CHAIN_ID]
 
-  // set amount slipage tolerance
+  // set amount slippage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
 
   // set deadline for the transaction
