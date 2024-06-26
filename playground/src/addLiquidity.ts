@@ -77,8 +77,8 @@ export const addLiquidity = async () => {
     binStep,
     tokenAmountUSDC,
     tokenAmountWMAS,
-    new Percent(BigInt(allowedAmountSlippage)),
-    new Percent(BigInt(allowedPriceSlippage)),
+    new Percent(BigInt(allowedAmountSlippage), 1000n),
+    new Percent(BigInt(allowedPriceSlippage), 1000n),
     LiquidityDistribution.SPOT
   )
 

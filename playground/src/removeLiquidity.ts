@@ -70,7 +70,7 @@ export const removeLiquidity = async () => {
     bins,
     totalSupplies,
     nonZeroAmounts.map(String),
-    new Percent(BigInt(allowedAmountSlippage))
+    new Percent(BigInt(allowedAmountSlippage), 1000n)
   )
 
   const params = pair.liquidityCallParameters({
