@@ -21,7 +21,7 @@ export class IBaseContract {
       .catch(() => Promise.resolve(MassaUnits.mMassa))
   }
 
-  protected async call(
+  public async call(
     params: BaseCallData & {
       maxGas?: bigint
     },
@@ -43,7 +43,7 @@ export class IBaseContract {
     })
   }
 
-  protected async read(
+  public async read(
     params: Omit<IReadData, 'maxGas' | 'targetAddress'> & {
       maxGas?: bigint
     }
@@ -55,7 +55,7 @@ export class IBaseContract {
     })
   }
 
-  protected async extract(keys: string[]): Promise<(Uint8Array | null)[]> {
+  public async extract(keys: string[]): Promise<(Uint8Array | null)[]> {
     return this.client
       .publicApi()
       .getDatastoreEntries(
@@ -64,9 +64,10 @@ export class IBaseContract {
       .then((res) => res.map((r) => r.candidate_value))
   }
 
-  private async simulate(params: BaseCallData) {
+  public async simulate(params: BaseCallData) {
     const callerAddress = this.client.wallet().getBaseAccount()?.address()
     if (!callerAddress) throw new Error('No caller address')
+
     return this.read({
       ...params,
       maxGas: MAX_GAS_CALL,
@@ -74,7 +75,7 @@ export class IBaseContract {
     })
   }
 
-  protected async estimateGas(params: BaseCallData) {
+  public async estimateGas(params: BaseCallData) {
     return this.simulate(params)
       .then((r) =>
         BigInt(Math.min(r.info.gas_cost * 1.1, Number(MAX_GAS_CALL)))
@@ -82,7 +83,7 @@ export class IBaseContract {
       .catch(() => MAX_GAS_CALL)
   }
 
-  protected async estimateCoins(params: BaseCallData) {
+  public async estimateCoins(params: BaseCallData) {
     return this.simulate({ ...params, coins: 0n })
       .then(() => 0n)
       .catch((err: Error) => {
