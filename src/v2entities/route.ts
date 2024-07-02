@@ -13,9 +13,9 @@ export class RouteV2 {
 
     for (const [i, pair] of pairs.entries()) {
       const currentInput = path[i]
-      const output = currentInput.equals(pair.token0)
-        ? pair.token1
-        : pair.token0
+      const output = currentInput.equals(pair.tokenA)
+        ? pair.tokenB
+        : pair.tokenA
       path.push(output)
     }
 
@@ -60,13 +60,13 @@ export class RouteV2 {
       const pair = pairs[i]
 
       // pair irrelevant
-      if (!pair.token0.equals(inputToken) && !pair.token1.equals(inputToken))
+      if (!pair.tokenA.equals(inputToken) && !pair.tokenB.equals(inputToken))
         continue
 
       // next token to consider
-      const nextToken = pair.token0.equals(inputToken)
-        ? pair.token1
-        : pair.token0
+      const nextToken = pair.tokenA.equals(inputToken)
+        ? pair.tokenB
+        : pair.tokenA
 
       // arrived at the output token
       if (nextToken.equals(outputToken)) {

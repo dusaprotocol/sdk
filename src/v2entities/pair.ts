@@ -11,23 +11,20 @@ import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
-import { IFactory } from '../contracts'
+import { IFactory, ILBPair } from '../contracts'
 import invariant from 'tiny-invariant'
+
+type PartialAddParams = Omit<
+  AddLiquidityParameters,
+  'to' | 'deadline' | 'activeIdDesired'
+>
 
 /** Class representing a pair of tokens. */
 export class PairV2 {
-  public readonly token0: Token
-  public readonly token1: Token
-
-  public constructor(tokenA: Token, tokenB: Token) {
-    if (tokenA.sortsBefore(tokenB)) {
-      this.token0 = tokenA
-      this.token1 = tokenB
-    } else {
-      this.token0 = tokenB
-      this.token1 = tokenA
-    }
-  }
+  public constructor(
+    public readonly tokenA: Token,
+    public readonly tokenB: Token
+  ) {}
 
   /**
    * Returns all available LBPairs for this pair
@@ -42,9 +39,10 @@ export class PairV2 {
   ): Promise<LBPair[]> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
 
+    // no need for sorted tokens
     const LBPairs: LBPair[] = await factory.getAllLBPairs(
-      this.token0.address,
-      this.token1.address
+      this.tokenA.address,
+      this.tokenB.address
     )
     return LBPairs
   }
@@ -63,9 +61,11 @@ export class PairV2 {
     chainId: ChainId
   ): Promise<LBPair> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
-    const LBPair: LBPair = await factory.getLBPairInformation(
-      this.token0.address,
-      this.token1.address,
+
+    // no need for sorted tokens
+    const LBPair = await factory.getLBPairInformation(
+      this.tokenA.address,
+      this.tokenB.address,
       binStep
     )
     return LBPair
@@ -79,8 +79,10 @@ export class PairV2 {
    */
   public equals(pair: PairV2): boolean {
     if (
-      this.token0.address === pair.token0.address &&
-      this.token1.address === pair.token1.address
+      (this.tokenA.address === pair.tokenA.address &&
+        this.tokenB.address === pair.tokenB.address) ||
+      (this.tokenA.address === pair.tokenB.address &&
+        this.tokenB.address === pair.tokenA.address)
     ) {
       return true
     }
@@ -196,6 +198,7 @@ export class PairV2 {
   /**
    * Returns the amount and distribution args for on-chain addLiquidity() method
    *
+   * @param LBPair
    * @param binStep
    * @param token0Amount
    * @param token1Amount
@@ -204,15 +207,20 @@ export class PairV2 {
    * @param liquidityDistribution
    * @returns
    */
-  public addLiquidityParameters(
+  public async addLiquidityParameters(
+    LBPair: string,
     binStep: number,
     token0Amount: TokenAmount,
     token1Amount: TokenAmount,
     amountSlippage: Percent,
     priceSlippage: Percent,
-    liquidityDistribution: LiquidityDistribution
-  ): Omit<AddLiquidityParameters, 'to' | 'deadline' | 'activeIdDesired'> {
-    const token0isX = token0Amount.token.sortsBefore(token1Amount.token)
+    liquidityDistribution: LiquidityDistribution,
+    client: Client
+  ): Promise<PartialAddParams> {
+    const tokenX = await new ILBPair(LBPair, client)
+      .getTokens()
+      .then((r) => r[0])
+    const token0isX = token0Amount.token.address === tokenX
     const token0 = (token0isX ? token0Amount : token1Amount).token.address
     const token1 = (token0isX ? token1Amount : token0Amount).token.address
     const amount0: bigint = token0isX ? token0Amount.raw : token1Amount.raw
@@ -315,9 +323,12 @@ export class PairV2 {
     options: AddLiquidityParameters | RemoveLiquidityParameters
   ): LiquidityParameters {
     const isAdd = 'distributionX' in options
-    const isNative = this.token0.isNative || this.token1.isNative
+    const isNative = this.tokenA.isNative || this.tokenB.isNative
 
     const { to, deadline } = options
+
+    const token0 =
+      this.tokenA.address === options.token0 ? this.tokenA : this.tokenB
 
     const { methodName, args, value } = ((
       isAdd: boolean
@@ -328,8 +339,8 @@ export class PairV2 {
         case true:
           invariant('distributionX' in options, 'INVALID')
           args
-            .addString(this.token0.address)
-            .addString(this.token1.address)
+            .addString(options.token0)
+            .addString(options.token1)
             .addU64(BigInt(options.binStep))
             .addU256(options.amount0)
             .addU256(options.amount1)
@@ -350,7 +361,7 @@ export class PairV2 {
           value += STORAGE_COST
           if (isNative) {
             args.addU64(STORAGE_COST)
-            value += this.token0.isNative ? options.amount0 : options.amount1
+            value += token0.isNative ? options.amount0 : options.amount1
           }
 
           return {
@@ -360,9 +371,9 @@ export class PairV2 {
           }
         case false:
           invariant(!('distributionX' in options), 'INVALID')
-          if (!isNative) args.addString(this.token0.address)
+          if (!isNative) args.addString(options.token0)
           args
-            .addString(this.token1.address)
+            .addString(options.token1)
             .addU32(options.binStep)
             .addU256(options.amount0Min)
             .addU256(options.amount1Min)
@@ -389,4 +400,7 @@ export class PairV2 {
       value
     }
   }
+
+  // protected get token0(): Token {
+  //   return new ILBPair()
 }

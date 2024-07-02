@@ -73,13 +73,15 @@ export const addLiquidity = async () => {
   const lbPairData = await new ILBPair(lbPair.LBPair, client).getReservesAndId()
 
   // declare liquidity parameters
-  const addLiquidityInput = pair.addLiquidityParameters(
+  const addLiquidityInput = await pair.addLiquidityParameters(
+    lbPair.LBPair,
     binStep,
     tokenAmountUSDC,
     tokenAmountWMAS,
     new Percent(BigInt(allowedAmountSlippage), 10_000n),
     new Percent(BigInt(allowedPriceSlippage), 10_000n),
-    LiquidityDistribution.SPOT
+    LiquidityDistribution.SPOT,
+    client
   )
 
   const params = pair.liquidityCallParameters({
