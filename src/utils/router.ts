@@ -107,6 +107,14 @@ export const decodeSwapTx = (
   }
 }
 
+/**
+ *
+ * @notice `token0` and `token1` are not necessarily the same as
+ * the `tokenX` and `tokenY` in the `Pair` contract.
+ * @param method
+ * @param params
+ * @returns
+ */
 export const decodeLiquidityTx = (
   method: LiquidityRouterMethod,
   params: Uint8Array,
