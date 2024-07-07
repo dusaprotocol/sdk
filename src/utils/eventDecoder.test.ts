@@ -46,6 +46,10 @@ describe('decode', () => {
     expect(params[2]).toBe('c:c')
     expect(params[3]).toBe('ddd')
   })
+  it('empty params', () => {
+    const params = EventDecoder.extractParams('TRANSFER SUCCESS')
+    expect(params.length).toBe(0)
+  })
   it('error msg', () => {
     const decodedMsg1 = EventDecoder.decodeError(ERROR_EVENT1)
     expect(decodedMsg1).toBe(

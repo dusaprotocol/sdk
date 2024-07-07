@@ -235,11 +235,11 @@ export class EventDecoder {
     return errorSplit[errorSplit.length - 1].split(' at')[0].split('"')[0]
   }
 
-  static extractParams = (bytes: string): string[] => {
-    return bytes
+  static extractParams = (bytes: string): string[] =>
+    bytes
       .split(keywordDelimiter)
       .slice(1)
       .join(keywordDelimiter)
       .split(argsDelimiter)
-  }
+      .filter((x) => x !== '')
 }
