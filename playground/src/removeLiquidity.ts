@@ -40,10 +40,11 @@ export const removeLiquidity = async () => {
   const pairAddress = await pair
     .fetchLBPair(binStep, client, CHAIN_ID)
     .then((r) => r.LBPair)
-  const lbPairData = await new ILBPair(pairAddress, client).getReservesAndId()
+  const pairContract = new ILBPair(pairAddress, client)
+  const lbPairData = await pairContract.getReservesAndId()
+  const tokens = await pairContract.getTokens()
   const activeBinId = lbPairData.activeId
 
-  const pairContract = new ILBPair(pairAddress, client)
   const approved = await pairContract.isApprovedForAll(address, router)
   if (!approved) {
     const txIdApprove = await pairContract.setApprovalForAll(router, true)
@@ -79,8 +80,8 @@ export const removeLiquidity = async () => {
     amount1Min: removeLiquidityInput.amountYMin,
     ids: userPositionIds,
     amounts: nonZeroAmounts,
-    token0: USDC.address,
-    token1: WMAS.address,
+    token0: tokens[0],
+    token1: tokens[1],
     binStep,
     to: address,
     deadline
