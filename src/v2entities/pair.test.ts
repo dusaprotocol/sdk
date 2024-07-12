@@ -4,17 +4,17 @@ import { PairV2 } from './pair'
 import { Token, USDC as _USDC, WETH as _WETH } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
 import {
-  BUILDNET_CHAIN_ID,
+  CHAIN_ID as MASSA_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
 
 describe('PairV2 entity', async () => {
-  const CHAIN_ID = ChainId.BUILDNET
+  const CHAIN_ID = ChainId.MAINNET
   const client = await ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    BUILDNET_CHAIN_ID,
+    DefaultProviderUrls.MAINNET,
+    MASSA_CHAIN_ID.MainNet,
     true
   )
 

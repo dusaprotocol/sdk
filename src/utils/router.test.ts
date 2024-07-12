@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { decodeSwapTx, isLiquidtyMethod, isSwapMethod } from './router'
 import { LIQUIDITY_ROUTER_METHODS, SWAP_ROUTER_METHODS } from '../types'
-import { BUILDNET_CHAIN_ID } from '@massalabs/web3-utils'
+import { CHAIN_ID as MASSA_CHAIN_ID } from '@massalabs/web3-utils'
 import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3'
 import { ChainId } from '../constants'
 import {
@@ -34,10 +34,10 @@ describe('isLiquidtyMethod', () => {
 })
 
 describe('decodeSwapTx', async () => {
-  const CHAIN_ID = ChainId.BUILDNET
+  const CHAIN_ID = ChainId.MAINNET
   const client = await ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    BUILDNET_CHAIN_ID,
+    DefaultProviderUrls.MAINNET,
+    MASSA_CHAIN_ID.MainNet,
     true
   )
   const WMAS = _WMAS[CHAIN_ID]

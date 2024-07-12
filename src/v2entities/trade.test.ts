@@ -12,7 +12,7 @@ import { ChainId } from '../constants'
 import {
   Args,
   ArrayTypes,
-  BUILDNET_CHAIN_ID,
+  CHAIN_ID as MASSA_CHAIN_ID,
   ClientFactory,
   DefaultProviderUrls
 } from '@massalabs/massa-web3'
@@ -20,10 +20,10 @@ import { describe, it, expect } from 'vitest'
 import { ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
-  const CHAIN_ID = ChainId.BUILDNET
+  const CHAIN_ID = ChainId.MAINNET
   const client = await ClientFactory.createDefaultClient(
-    DefaultProviderUrls.BUILDNET,
-    BUILDNET_CHAIN_ID,
+    DefaultProviderUrls.MAINNET,
+    MASSA_CHAIN_ID.MainNet,
     true
   )
 
@@ -103,14 +103,12 @@ describe('TradeV2 entity', async () => {
         .fetchLBPair(20, client, CHAIN_ID)
         .then((r) => r.LBPair)
       const pair = new ILBPair(pairAddress, client)
-      const { reserveX, reserveY } = await pair.getReservesAndId()
+      const { activeId } = await pair.getReservesAndId()
+      const { reserveX, reserveY } = await pair.getBin(activeId)
       const tokens = await pair.getTokens()
       const outputTokenReserves =
         tokens[1] === outputToken.address ? reserveY : reserveX
-      const amountOut = new TokenAmount(
-        outputToken,
-        (4n * outputTokenReserves) / 5n
-      )
+      const amountOut = new TokenAmount(outputToken, outputTokenReserves * 2n)
 
       const trades = await TradeV2.getTradesExactOut(
         allRoutes,
@@ -126,7 +124,8 @@ describe('TradeV2 entity', async () => {
         throw new Error('No trades')
       }
 
-      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(0.5)
+      expect(Number(trades[0].priceImpact.toFixed(2))).toBeGreaterThan(0.1)
+      expect(Number(trades[0].priceImpact.toFixed(2))).toBeLessThan(0.5)
     })
   })
   describe('TradeV2.chooseBestTrade()', () => {
