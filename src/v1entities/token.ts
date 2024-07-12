@@ -140,3 +140,39 @@ export const WETH: { [chainId in ChainId]: Token } = {
     wethName
   )
 }
+
+export const WETH_B: { [chainId in ChainId]: Token } = {
+  [ChainId.BUILDNET]: new Token(
+    ChainId.BUILDNET,
+    'AS12RmCXTA9NZaTBUBnRJuH66AGNmtEfEoqXKxLdmrTybS6GFJPFs',
+    wethDecimals,
+    'WETH.bt',
+    wethName
+  ),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS125oPLYRTtfVjpWisPZVTLjBhCFfQ1jDsi75XNtRm1NZux54eCj',
+    wethDecimals,
+    'WETH.b',
+    wethName
+  )
+}
+
+const usdtName = 'Binance-peg USD'
+const usdtDecimals = 18
+export const USDT: { [chainId in ChainId]: Token } = {
+  [ChainId.BUILDNET]: new Token(
+    ChainId.BUILDNET,
+    'AS12ix1Qfpue7BB8q6mWVtjNdNE9UV3x4MaUo7WhdUubov8sJ3CuP',
+    usdtDecimals,
+    'USDT.bt',
+    usdtName
+  ),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS12LKs9txoSSy8JgFJgV96m8k5z9pgzjYMYSshwN67mFVuj3bdUV',
+    usdtDecimals,
+    'USDT.b',
+    usdtName
+  )
+}
