@@ -1,6 +1,6 @@
 import { Client } from '@massalabs/massa-web3'
 import { PairV2, RouteV2, TradeV2 } from '../v2entities'
-import { Token, TokenAmount, USDC as _USDC, WMAS as _WMAS } from '../v1entities'
+import { Token, TokenAmount, USDC, WMAS, WETH } from '../v1entities'
 import { ChainId } from '../constants'
 
 export class QuoterHelper {
@@ -15,7 +15,7 @@ export class QuoterHelper {
     baseClient: Client,
     CHAIN_ID: ChainId
   ) {
-    const BASES: Token[] = [_WMAS[CHAIN_ID], _USDC[CHAIN_ID]]
+    const BASES: Token[] = [WMAS, USDC, WETH].map((token) => token[CHAIN_ID])
 
     // get all [Token, Token] combinations
     const allTokenPairs = PairV2.createAllTokenPairs(
