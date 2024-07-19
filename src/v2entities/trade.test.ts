@@ -17,7 +17,6 @@ import {
   DefaultProviderUrls
 } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
-import { ILBPair } from '../contracts'
 
 describe('TradeV2 entity', async () => {
   const CHAIN_ID = ChainId.MAINNET

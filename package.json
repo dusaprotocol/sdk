@@ -11,7 +11,7 @@
   "module": "dist/sdk.esm.js",
   "scripts": {
     "lint": "eslint --ext .ts --ext .tsx src/",
-    "lint:fix": "npx lint --fix",
+    "lint:fix": "eslint --ext .ts --ext .tsx src/ --fix",
     "build": "tsdx build",
     "start": "tsdx watch",
     "test:unit": "vitest --config ./vitest.config.ts",
