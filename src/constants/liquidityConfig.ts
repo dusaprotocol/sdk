@@ -57,3 +57,10 @@ export const wide = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
   ].map((el) => parseEther(el.toString()))
 }
+
+export const LiquidityConfig = {
+  spotUniform,
+  curve,
+  bidAsk,
+  wide
+}

@@ -6,7 +6,8 @@ export {
   LIMIT_ORDER_MANAGER_ADDRESS,
   VAULT_MANAGER_ADDRESS,
   MULTICALL_ADDRESS,
-  ChainId
+  ChainId,
+  LiquidityConfig
 } from './constants'
 
 export * from './v2entities'
