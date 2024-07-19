@@ -17,7 +17,7 @@
     "test:unit": "vitest --config ./vitest.config.ts",
     "test:e2e": "cd playground && npm start",
     "test": "npm run test:unit -- run && pnpm test:e2e",
-    "prepublishOnly": "tsdx build && npm test"
+    "prepublishOnly": "tsdx build && cd playground && pnpm i && npm test"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
