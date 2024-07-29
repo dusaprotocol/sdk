@@ -2,7 +2,8 @@ import {
   Args,
   bytesToStr,
   bytesToU256,
-  bytesToU32
+  bytesToU32,
+  byteToBool
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
 import { maxGas } from './base'
@@ -132,7 +133,7 @@ export class IFloorToken extends IERC20 {
         tokenY: bytesToStr(res[3]),
         binStep: bytesToU32(res[4]),
         floorPerBin: bytesToU256(res[5]),
-        rebalancePaused: !!bytesToU32(res[6])
+        rebalancePaused: byteToBool(res[6])
       }
     })
   }
