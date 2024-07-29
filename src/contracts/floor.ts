@@ -8,7 +8,7 @@ import { IERC20 } from './token'
 import { maxGas } from './base'
 
 export class IFloorToken extends IERC20 {
-  // FLOOR FUNCTIONS
+  // FLOOR CALLS
   async raiseRoof(nbBins: number) {
     const parameter = new Args().addU32(nbBins)
     return this.call({
@@ -23,85 +23,6 @@ export class IFloorToken extends IERC20 {
       targetFunction: 'reduceRoof',
       parameter
     })
-  }
-
-  async floorId(): Promise<number> {
-    return this.extract(['FLOOR_ID']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToU32(res[0])
-    })
-  }
-
-  async roofId(): Promise<number> {
-    return this.extract(['ROOF_ID']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToU32(res[0])
-    })
-  }
-
-  async pair(): Promise<string> {
-    return this.extract(['PAIR']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToStr(res[0])
-    })
-  }
-
-  async tokenY(): Promise<string> {
-    return this.extract(['TOKEN_Y']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToStr(res[0])
-    })
-  }
-
-  async binStep(): Promise<number> {
-    return this.extract(['BIN_STEP']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToU32(res[0])
-    })
-  }
-
-  async floorPerBin(): Promise<bigint> {
-    return this.extract(['FLOOR_PER_BIN']).then((res) => {
-      if (!res[0]) throw new Error()
-      return bytesToU256(res[0])
-    })
-  }
-
-  async floorPrice(): Promise<bigint> {
-    return this.read({
-      targetFunction: 'floorPrice',
-      parameter: new Args(),
-      maxGas
-    }).then((res) => bytesToU256(res.returnValue))
-  }
-
-  async rebalancePaused(): Promise<boolean> {
-    return this.extract(['REBALANCE_PAUSED']).then((res) => {
-      if (!res[0]) throw new Error()
-      return !!bytesToU32(res[0])
-    })
-  }
-
-  async tokensInPair(): Promise<{ amountFloor: bigint; amountY: bigint }> {
-    return this.read({
-      targetFunction: 'tokensInPair',
-      parameter: new Args(),
-      maxGas
-    }).then((res) => {
-      const args = new Args(res.returnValue)
-      return {
-        amountFloor: args.nextU256(),
-        amountY: args.nextU256()
-      }
-    })
-  }
-
-  async calculateNewFloorId(): Promise<number> {
-    return this.read({
-      targetFunction: 'calculateNewFloorId',
-      parameter: new Args(),
-      maxGas
-    }).then((res) => bytesToU32(res.returnValue))
   }
 
   async rebalanceFloor(): Promise<string> {
@@ -124,6 +45,95 @@ export class IFloorToken extends IERC20 {
       targetFunction: 'unpauseRebalance',
       parameter: new Args(),
       maxGas
+    })
+  }
+
+  // FLOOR GETTERS
+
+  async floorId() {
+    return this.all().then((res) => res.floorId)
+  }
+
+  async roofId() {
+    return this.all().then((res) => res.roofId)
+  }
+
+  async pair() {
+    return this.all().then((res) => res.pair)
+  }
+
+  async tokenY() {
+    return this.all().then((res) => res.tokenY)
+  }
+
+  async binStep() {
+    return this.all().then((res) => res.binStep)
+  }
+
+  async floorPerBin() {
+    return this.all().then((res) => res.floorPerBin)
+  }
+
+  async floorPrice(): Promise<bigint> {
+    return this.read({
+      targetFunction: 'floorPrice',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => bytesToU256(res.returnValue))
+  }
+
+  async rebalancePaused(): Promise<boolean> {
+    return this.all().then((res) => res.rebalancePaused)
+  }
+
+  async tokensInPair(): Promise<{ amountFloor: bigint; amountY: bigint }> {
+    return this.read({
+      targetFunction: 'tokensInPair',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => {
+      const args = new Args(res.returnValue)
+      return { amountFloor: args.nextU256(), amountY: args.nextU256() }
+    })
+  }
+
+  async calculateNewFloorId(): Promise<number> {
+    return this.read({
+      targetFunction: 'calculateNewFloorId',
+      parameter: new Args(),
+      maxGas
+    }).then((res) => bytesToU32(res.returnValue))
+  }
+
+  async all(): Promise<{
+    floorId: number
+    roofId: number
+    pair: string
+    tokenY: string
+    binStep: number
+    floorPerBin: bigint
+    rebalancePaused: boolean
+  }> {
+    return this.extract([
+      'FLOOR_ID',
+      'ROOF_ID',
+      'PAIR',
+      'TOKEN_Y',
+      'BIN_STEP',
+      'FLOOR_PER_BIN',
+      'REBALANCE_PAUSED'
+    ]).then((_res) => {
+      if (_res.some((r) => !r)) throw new Error()
+      const res = _res as Uint8Array[]
+      return {
+        floorId: bytesToU32(res[0]),
+        roofId: bytesToU32(res[1]),
+        pair: bytesToStr(res[2]),
+        tokenY: bytesToStr(res[3]),
+        binStep: bytesToU32(res[4]),
+        floorPerBin: bytesToU256(res[5]),
+        rebalancePaused: !!bytesToU32(res[6])
+      }
     })
   }
 
