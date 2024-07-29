@@ -18,12 +18,12 @@ export class Quote implements ISerializable<Quote> {
 
   serialize(): Uint8Array {
     const args = new Args()
-    args.addArray(this.route, ArrayTypes.STRING)
-    args.addArray(this.pairs, ArrayTypes.STRING)
-    args.addArray(this.binSteps, ArrayTypes.U64)
-    args.addArray(this.amounts, ArrayTypes.U256)
-    args.addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
-    args.addArray(this.fees, ArrayTypes.U256)
+      .addArray(this.route, ArrayTypes.STRING)
+      .addArray(this.pairs, ArrayTypes.STRING)
+      .addArray(this.binSteps, ArrayTypes.U64)
+      .addArray(this.amounts, ArrayTypes.U256)
+      .addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
+      .addArray(this.fees, ArrayTypes.U256)
     return Uint8Array.from(args.serialize())
   }
 

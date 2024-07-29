@@ -85,12 +85,12 @@ export class Transaction implements ISerializable<Transaction> {
 
   serialize(): Uint8Array {
     const args = new Args()
-    args.addString(this.to)
-    args.addString(this.method)
-    args.addU64(this.value)
-    args.addUint8Array(this.data)
-    args.addU64(this.timestamp)
-    args.addBool(this.executed)
+      .addString(this.to)
+      .addString(this.method)
+      .addU64(this.value)
+      .addUint8Array(this.data)
+      .addU64(this.timestamp)
+      .addBool(this.executed)
     return Uint8Array.from(args.serialize())
   }
 

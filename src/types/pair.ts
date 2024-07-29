@@ -12,10 +12,10 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
 
   serialize(): Uint8Array {
     const args = new Args()
-    args.addU32(this.binStep)
-    args.addString(this.LBPair)
-    args.addBool(this.createdByOwner)
-    args.addBool(this.isBlacklisted)
+      .addU32(this.binStep)
+      .addString(this.LBPair)
+      .addBool(this.createdByOwner)
+      .addBool(this.isBlacklisted)
     return Uint8Array.from(args.serialize())
   }
 

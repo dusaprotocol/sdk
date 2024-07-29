@@ -62,7 +62,7 @@ export class IMultisig extends IBaseContract {
   }
 
   async hasApproved(txId: bigint, owner: string): Promise<boolean> {
-    return this.extract(['approved' + '::' + txId.toString() + owner]).then(
+    return this.extract(['approved::' + txId.toString() + owner]).then(
       (res) => {
         if (!res[0]) throw new Error()
         return byteToBool(res[0])

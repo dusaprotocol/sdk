@@ -46,10 +46,7 @@ export class IRouter extends IBaseContract {
       maxGas: MAX_GAS_CALL
     }).then((result) => {
       const args = new Args(result.returnValue)
-      return {
-        amountIn: args.nextU256(),
-        feesIn: args.nextU256()
-      }
+      return { amountIn: args.nextU256(), feesIn: args.nextU256() }
     })
   }
 
@@ -65,10 +62,7 @@ export class IRouter extends IBaseContract {
       maxGas: MAX_GAS_CALL
     }).then((result) => {
       const args = new Args(result.returnValue)
-      return {
-        amountOut: args.nextU256(),
-        feesIn: args.nextU256()
-      }
+      return { amountOut: args.nextU256(), feesIn: args.nextU256() }
     })
   }
 }

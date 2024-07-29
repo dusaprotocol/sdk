@@ -58,14 +58,8 @@ export class ILBPair extends IBaseContract {
       const activeId = args.nextU32()
       const reserveX = args.nextU256()
       const reserveY = args.nextU256()
-      const feesX = {
-        total: args.nextU256(),
-        protocol: args.nextU256()
-      }
-      const feesY = {
-        total: args.nextU256(),
-        protocol: args.nextU256()
-      }
+      const feesX = { total: args.nextU256(), protocol: args.nextU256() }
+      const feesY = { total: args.nextU256(), protocol: args.nextU256() }
       return { activeId, reserveX, reserveY, feesX, feesY }
     })
   }
@@ -82,8 +76,7 @@ export class ILBPair extends IBaseContract {
     return this.extract(keys).then((res) => {
       return res.map((r) => {
         if (!r || !r.length) return 0n
-        const args = new Args(r)
-        return args.nextU256()
+        return new Args(r).nextU256()
       })
     })
   }
@@ -94,9 +87,7 @@ export class ILBPair extends IBaseContract {
       return res.map((r) => {
         if (!r || !r.length) return { reserveX: 0n, reserveY: 0n }
         const args = new Args(r)
-        const reserveX = args.nextU256()
-        const reserveY = args.nextU256()
-        return { reserveX, reserveY }
+        return { reserveX: args.nextU256(), reserveY: args.nextU256() }
       })
     })
   }
@@ -105,9 +96,7 @@ export class ILBPair extends IBaseContract {
     return this.extract([`bin::${id}`]).then((res) => {
       if (!res[0] || !res[0].length) return { reserveX: 0n, reserveY: 0n }
       const args = new Args(res[0])
-      const reserveX = args.nextU256()
-      const reserveY = args.nextU256()
-      return { reserveX, reserveY }
+      return { reserveX: args.nextU256(), reserveY: args.nextU256() }
     })
   }
 
@@ -153,9 +142,7 @@ export class ILBPair extends IBaseContract {
       maxGas
     }).then((res) => {
       const args = new Args(res.returnValue)
-      const amount0 = args.nextU256()
-      const amount1 = args.nextU256()
-      return { amount0, amount1 }
+      return { amount0: args.nextU256(), amount1: args.nextU256() }
     })
   }
 

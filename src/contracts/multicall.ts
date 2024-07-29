@@ -16,9 +16,9 @@ export class Tx implements ISerializable<Tx> {
 
   serialize(): Uint8Array {
     const args = new Args()
-    args.addString(this.method)
-    args.addUint8Array(this.args)
-    args.addString(this.to)
+      .addString(this.method)
+      .addUint8Array(this.args)
+      .addString(this.to)
     return Uint8Array.from(args.serialize())
   }
 
