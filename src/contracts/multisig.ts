@@ -43,7 +43,7 @@ export class IMultisig extends IBaseContract {
   async owners(): Promise<string[]> {
     return this.extract(['owners']).then((res) => {
       if (!res[0]) throw new Error()
-      return bytesToArray(res[0], ArrayTypes.STRING)
+      return new Args(res[0]).nextArray(ArrayTypes.STRING)
     })
   }
 
