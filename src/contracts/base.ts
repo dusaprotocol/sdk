@@ -51,7 +51,7 @@ export class IBaseContract {
     return this.client.smartContracts().readSmartContract({
       ...params,
       targetAddress: this.address,
-      maxGas
+      maxGas: params.maxGas || MAX_GAS_CALL
     })
   }
 
@@ -101,5 +101,4 @@ export class IBaseContract {
   }
 }
 
-export const maxGas = MAX_GAS_CALL
 export const coins = MassaUnits.oneMassa / 100n // storage cost

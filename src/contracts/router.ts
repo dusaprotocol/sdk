@@ -1,4 +1,4 @@
-import { Args, MAX_GAS_CALL } from '@massalabs/massa-web3'
+import { Args } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
 import { IBaseContract } from './base'
 
@@ -42,8 +42,7 @@ export class IRouter extends IBaseContract {
       parameter: new Args()
         .addString(params.pairAddress)
         .addU256(params.amountOut)
-        .addBool(params.swapForY),
-      maxGas: MAX_GAS_CALL
+        .addBool(params.swapForY)
     }).then((result) => {
       const args = new Args(result.returnValue)
       return { amountIn: args.nextU256(), feesIn: args.nextU256() }
@@ -58,8 +57,7 @@ export class IRouter extends IBaseContract {
       parameter: new Args()
         .addString(params.pairAddress)
         .addU256(params.amountIn)
-        .addBool(params.swapForY),
-      maxGas: MAX_GAS_CALL
+        .addBool(params.swapForY)
     }).then((result) => {
       const args = new Args(result.returnValue)
       return { amountOut: args.nextU256(), feesIn: args.nextU256() }

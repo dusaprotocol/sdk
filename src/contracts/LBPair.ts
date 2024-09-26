@@ -6,7 +6,7 @@ import {
   bytesToU256
 } from '@massalabs/web3-utils'
 import { BinReserves, FeeParameters, LBPairReservesAndId } from '../types'
-import { IBaseContract, maxGas } from './base'
+import { IBaseContract } from './base'
 
 export class ILBPair extends IBaseContract {
   async setApprovalForAll(
@@ -32,8 +32,7 @@ export class ILBPair extends IBaseContract {
   async balanceOf(account: string, id: number): Promise<bigint> {
     return this.read({
       targetFunction: 'balanceOf',
-      parameter: new Args().addString(account).addU64(BigInt(id)).serialize(),
-      maxGas
+      parameter: new Args().addString(account).addU64(BigInt(id)).serialize()
     }).then((res) => bytesToU256(res.returnValue))
   }
 
@@ -43,16 +42,14 @@ export class ILBPair extends IBaseContract {
       parameter: new Args()
         .addArray(accounts, ArrayTypes.STRING)
         .addArray(ids.map(BigInt), ArrayTypes.U64)
-        .serialize(),
-      maxGas
+        .serialize()
     }).then((res) => bytesToArray(res.returnValue, ArrayTypes.U256))
   }
 
   async getReservesAndId(): Promise<LBPairReservesAndId> {
     return await this.read({
       targetFunction: 'getPairInformation',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     }).then((res) => {
       const args = new Args(res.returnValue)
       const activeId = args.nextU32()
@@ -117,8 +114,7 @@ export class ILBPair extends IBaseContract {
   async getUserBinIds(user: string): Promise<number[]> {
     return this.read({
       targetFunction: 'getUserBins',
-      parameter: new Args().addString(user).serialize(),
-      maxGas
+      parameter: new Args().addString(user).serialize()
     }).then((res) =>
       new Args(res.returnValue)
         .nextArray<number>(ArrayTypes.U32)
@@ -138,8 +134,7 @@ export class ILBPair extends IBaseContract {
       parameter: new Args()
         .addString(account)
         .addArray(ids.map(BigInt), ArrayTypes.U64)
-        .serialize(),
-      maxGas
+        .serialize()
     }).then((res) => {
       const args = new Args(res.returnValue)
       return { amount0: args.nextU256(), amount1: args.nextU256() }
@@ -149,8 +144,7 @@ export class ILBPair extends IBaseContract {
   async isApprovedForAll(owner: string, operator: string): Promise<boolean> {
     return this.read({
       targetFunction: 'isApprovedForAll',
-      parameter: new Args().addString(owner).addString(operator).serialize(),
-      maxGas
+      parameter: new Args().addString(owner).addString(operator).serialize()
     }).then((res) => byteToBool(res.returnValue))
   }
 

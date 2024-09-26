@@ -7,15 +7,14 @@ import {
   bytesToU64,
   bytesToSerializableObjectArray
 } from '@massalabs/massa-web3'
-import { IBaseContract, maxGas } from './base'
+import { IBaseContract } from './base'
 import { Transaction } from '../types/periphery'
 
 export class IMultisig extends IBaseContract {
   async getTransactions(): Promise<Transaction[]> {
     return this.read({
       targetFunction: 'getTransactions',
-      parameter: new Args().serialize(),
-      maxGas
+      parameter: new Args().serialize()
     }).then((res) =>
       bytesToSerializableObjectArray(res.returnValue, Transaction)
     )
@@ -24,8 +23,7 @@ export class IMultisig extends IBaseContract {
   async getApprovals(txId: bigint): Promise<string[]> {
     return this.read({
       targetFunction: 'getApprovals',
-      parameter: new Args().addU64(txId).serialize(),
-      maxGas
+      parameter: new Args().addU64(txId).serialize()
     }).then((res) => bytesToArray(res.returnValue, ArrayTypes.STRING))
   }
 
@@ -33,9 +31,7 @@ export class IMultisig extends IBaseContract {
     const _owners = await this.owners()
     let count = 0
     for (let i = 0; i < _owners.length; i++) {
-      if (await this.hasApproved(txId, _owners[i])) {
-        count++
-      }
+      if (await this.hasApproved(txId, _owners[i])) count++
     }
     return count
   }
@@ -68,6 +64,16 @@ export class IMultisig extends IBaseContract {
         return byteToBool(res[0])
       }
     )
+  }
+
+  async hasApprovedBatch(
+    txIds: bigint[],
+    owners: string[]
+  ): Promise<boolean[]> {
+    const res = await this.extract(
+      txIds.map((txId, i) => 'approved::' + txId.toString() + owners[i])
+    )
+    return res.map((r) => (r ? byteToBool(r) : false))
   }
 
   async submit(

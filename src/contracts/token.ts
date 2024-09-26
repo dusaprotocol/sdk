@@ -1,52 +1,46 @@
 import { Args, bytesToU256, bytesToStr, byteToU8 } from '@massalabs/massa-web3'
-import { IBaseContract, maxGas } from './base'
+import { IBaseContract } from './base'
 
 export class IERC20 extends IBaseContract {
   async balanceOf(address: string): Promise<bigint> {
     return this.read({
       targetFunction: 'balanceOf',
-      parameter: new Args().addString(address).serialize(),
-      maxGas
+      parameter: new Args().addString(address).serialize()
     }).then((res) => bytesToU256(res.returnValue))
   }
 
   async allowance(address: string, spender: string): Promise<bigint> {
     return this.read({
       targetFunction: 'allowance',
-      parameter: new Args().addString(address).addString(spender).serialize(),
-      maxGas
+      parameter: new Args().addString(address).addString(spender).serialize()
     }).then((res) => bytesToU256(res.returnValue))
   }
 
   async totalSupply(): Promise<bigint> {
     return this.read({
       targetFunction: 'totalSupply',
-      parameter: new Args().serialize(),
-      maxGas
+      parameter: new Args().serialize()
     }).then((res) => bytesToU256(res.returnValue))
   }
 
   async decimals(): Promise<number> {
     return this.read({
       targetFunction: 'decimals',
-      parameter: new Args().serialize(),
-      maxGas
+      parameter: new Args().serialize()
     }).then((res) => byteToU8(res.returnValue))
   }
 
   async name(): Promise<string> {
     return this.read({
       targetFunction: 'name',
-      parameter: new Args().serialize(),
-      maxGas
+      parameter: new Args().serialize()
     }).then((res) => bytesToStr(res.returnValue))
   }
 
   async symbol(): Promise<string> {
     return this.read({
       targetFunction: 'symbol',
-      parameter: new Args().serialize(),
-      maxGas
+      parameter: new Args().serialize()
     }).then((res) => bytesToStr(res.returnValue))
   }
 
@@ -72,6 +66,35 @@ export class IERC20 extends IBaseContract {
     return this.call({
       targetFunction: 'transfer',
       parameter: new Args().addString(to).addU256(amount).serialize()
+    })
+  }
+
+  async transferFrom(
+    from: string,
+    to: string,
+    amount: bigint
+  ): Promise<string> {
+    return this.call({
+      targetFunction: 'transferFrom',
+      parameter: new Args()
+        .addString(from)
+        .addString(to)
+        .addU256(amount)
+        .serialize()
+    })
+  }
+
+  async mint(to: string, amount: bigint): Promise<string> {
+    return this.call({
+      targetFunction: 'mint',
+      parameter: new Args().addString(to).addU256(amount).serialize()
+    })
+  }
+
+  async burn(amount: bigint): Promise<string> {
+    return this.call({
+      targetFunction: 'burn',
+      parameter: new Args().addU256(amount).serialize()
     })
   }
 }

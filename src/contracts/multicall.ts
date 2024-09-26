@@ -2,8 +2,7 @@ import {
   Args,
   IContractReadOperationResponse,
   IDeserializedResult,
-  ISerializable,
-  MAX_GAS_CALL
+  ISerializable
 } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 
@@ -42,8 +41,7 @@ export class IMulticall extends IBaseContract {
   ): Promise<IContractReadOperationResponse> {
     return this.read({
       targetFunction: 'multicall',
-      parameter: new Args().addSerializableObjectArray(data).serialize(),
-      maxGas: MAX_GAS_CALL
+      parameter: new Args().addSerializableObjectArray(data).serialize()
     })
   }
 }

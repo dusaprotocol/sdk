@@ -3,8 +3,6 @@ import { bytesToArray, ArrayTypes } from '@massalabs/web3-utils'
 import { LBPair, LBPairInformation } from '../types'
 import { IBaseContract } from './base'
 
-const maxGas = 100_000_000n
-
 export class IFactory extends IBaseContract {
   async getAllLBPairs(
     token0Address: string,
@@ -32,8 +30,7 @@ export class IFactory extends IBaseContract {
         .addString(token0Address)
         .addString(token1Address)
         .addU32(binStep)
-        .serialize(),
-      maxGas
+        .serialize()
     }).then(
       (res) => new LBPairInformation().deserialize(res.returnValue).instance
     )
@@ -48,8 +45,7 @@ export class IFactory extends IBaseContract {
       parameter: new Args()
         .addString(token0Address)
         .addString(token1Address)
-        .serialize(),
-      maxGas
+        .serialize()
     }).then((res) => bytesToArray<number>(res.returnValue, ArrayTypes.U32))
   }
 }

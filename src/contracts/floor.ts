@@ -6,7 +6,6 @@ import {
   byteToBool
 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
-import { maxGas } from './base'
 
 export class IFloorToken extends IERC20 {
   // FLOOR CALLS
@@ -14,7 +13,7 @@ export class IFloorToken extends IERC20 {
     const parameter = new Args().addU32(nbBins)
     return this.call({
       targetFunction: 'raiseRoof',
-      parameter: parameter
+      parameter
     })
   }
 
@@ -36,16 +35,14 @@ export class IFloorToken extends IERC20 {
   async pauseRebalance(): Promise<string> {
     return this.call({
       targetFunction: 'pauseRebalance',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     })
   }
 
   async unpauseRebalance(): Promise<string> {
     return this.call({
       targetFunction: 'unpauseRebalance',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     })
   }
 
@@ -78,8 +75,7 @@ export class IFloorToken extends IERC20 {
   async floorPrice(): Promise<bigint> {
     return this.read({
       targetFunction: 'floorPrice',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     }).then((res) => bytesToU256(res.returnValue))
   }
 
@@ -90,8 +86,7 @@ export class IFloorToken extends IERC20 {
   async tokensInPair(): Promise<{ amountFloor: bigint; amountY: bigint }> {
     return this.read({
       targetFunction: 'tokensInPair',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     }).then((res) => {
       const args = new Args(res.returnValue)
       return { amountFloor: args.nextU256(), amountY: args.nextU256() }
@@ -101,8 +96,7 @@ export class IFloorToken extends IERC20 {
   async calculateNewFloorId(): Promise<number> {
     return this.read({
       targetFunction: 'calculateNewFloorId',
-      parameter: new Args(),
-      maxGas
+      parameter: new Args()
     }).then((res) => bytesToU32(res.returnValue))
   }
 
@@ -157,16 +151,14 @@ export class IFloorToken extends IERC20 {
   setTaxRate(taxRate: bigint): Promise<string> {
     return this.call({
       targetFunction: 'setTaxRate',
-      parameter: new Args().addU256(taxRate),
-      maxGas
+      parameter: new Args().addU256(taxRate)
     })
   }
 
   setTaxRecipient(taxRecipient: string): Promise<string> {
     return this.call({
       targetFunction: 'setTaxRecipient',
-      parameter: new Args().addString(taxRecipient),
-      maxGas
+      parameter: new Args().addString(taxRecipient)
     })
   }
 }
