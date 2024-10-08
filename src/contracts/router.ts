@@ -24,6 +24,24 @@ export class IRouter extends IBaseContract {
     return this.execute(params)
   }
 
+  async createPair(
+    tokenA: string,
+    tokenB: string,
+    activeId: number,
+    binstep: number,
+    masToSend: bigint
+  ): Promise<string> {
+    return this.call({
+      targetFunction: 'createLBPair',
+      coins: masToSend,
+      parameter: new Args()
+        .addString(tokenA)
+        .addString(tokenB)
+        .addU32(activeId)
+        .addU32(binstep)
+    })
+  }
+
   private async execute(params: SwapParameters | LiquidityParameters) {
     return this.call({
       targetFunction: params.methodName,
