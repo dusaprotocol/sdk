@@ -6,6 +6,8 @@ export {
   LIMIT_ORDER_MANAGER_ADDRESS,
   VAULT_MANAGER_ADDRESS,
   MULTICALL_ADDRESS,
+  PUMP_DEPLOYER,
+  PUMP_FACTORY,
   ChainId,
   LiquidityConfig
 } from './constants'

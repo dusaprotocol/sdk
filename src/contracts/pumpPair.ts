@@ -1,5 +1,5 @@
 import { Args, bytesToStr } from '@massalabs/massa-web3'
-import { bytesToU256 } from '@massalabs/web3-utils'
+import { bytesToU256, byteToBool } from '@massalabs/web3-utils'
 import { IBaseContract } from './base'
 
 export class IPumpPair extends IBaseContract {
@@ -34,21 +34,21 @@ export class IPumpPair extends IBaseContract {
 
   async getTokens(): Promise<[string, string]> {
     return this.extract(['token0', 'token1']).then((r) => {
-      if (!r[0] || !r[1] || !r[0].length || !r[1].length) throw new Error()
+      if (!r[0]?.length || !r[1]?.length) throw new Error()
       return [bytesToStr(r[0]), bytesToStr(r[1])]
     })
   }
 
-  async isLocked(): Promise<string> {
+  async isLocked(): Promise<boolean> {
     return this.extract(['LOCKED']).then((r) => {
       if (!r[0] || !r[0].length) throw new Error()
-      return bytesToStr(r[0])
+      return byteToBool(r[0])
     })
   }
 
   async getReserves(): Promise<[bigint, bigint]> {
     return this.extract(['reserve0', 'reserve1']).then((r) => {
-      if (!r[0] || !r[1] || !r[0].length || !r[1].length) throw new Error()
+      if (!r[0]?.length || !r[1]?.length) throw new Error()
       return [bytesToU256(r[0]), bytesToU256(r[1])]
     })
   }

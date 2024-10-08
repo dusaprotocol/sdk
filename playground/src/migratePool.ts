@@ -10,14 +10,16 @@ import {
     parseEther,
     Token,
     WMAS as _WMAS,
-    PUMP_DEPLOYER as _DEPLOYER,
+    PUMP_DEPLOYER,
     parseUnits,
-    IPumpPair
+    IPumpPair,
+    IBaseContract
   } from '@dusalabs/sdk'
   import {
     WalletClient,
     MassaUnits,
-    EOperationStatus
+    EOperationStatus,
+    Args
   } from '@massalabs/massa-web3'
   import { createClient } from './utils'
   
@@ -31,14 +33,17 @@ import {
   
     const CHAIN_ID = ChainId.BUILDNET
     const WMAS = _WMAS[CHAIN_ID]
-    const pumpDeployer = _DEPLOYER[CHAIN_ID]
+    const pumpDeployer = PUMP_DEPLOYER[CHAIN_ID]
     const router = LB_ROUTER_ADDRESS[CHAIN_ID]
   
-    const tokenAddress = await new IPumpPair(pairPump, client).getTokens()[0]
+    const tokenAddress = (await new IPumpPair(pairPump, client).getTokens())[0]
     const token = new Token(CHAIN_ID, tokenAddress, 18)
-    const txIdMigrate = pumpDeployer.migratePool(pairPump)
-  
-    const balanceWmas = await new IERC20(WMAS, client).balanceOf(account.address)
+    const txIdMigrate = await new IBaseContract( pumpDeployer ,client).call({
+      targetFunction: 'migratePool',
+      parameter: new Args().addString(pairPump)
+    })
+    
+    const balanceWmas = await new IERC20(WMAS.address, client).balanceOf(account.address)
     const balanceWmasWithoutFee = (balanceWmas * 93n) / 100n
     const wmasAmount = new TokenAmount(WMAS, balanceWmasWithoutFee)
     const tokenAmount = new TokenAmount(
@@ -56,7 +61,7 @@ import {
     const currentTimeInMs = new Date().getTime()
     const deadline = currentTimeInMs + 3_600_000
   
-    const pair = new PairV2(Token, WMAS)
+    const pair = new PairV2(token, WMAS)
     const binStep = 100
     const activeId = 8385906 // 1 token = 0.002107 MAS
   
@@ -68,7 +73,7 @@ import {
       throw new Error('Something went wrong')
   
     // create Pair
-    const txIdPair = router.createPair(
+    const txIdPair =await new IRouter( router,client).createPair(
       tokenAddress,
       WMAS.address,
       activeId,
@@ -98,7 +103,7 @@ import {
     const amountWmasPerBatch = (70n * wmasAmount.raw) / 215n
     const amountTokenPerBatch = (70n * tokenAmount.raw) / 485n
   
-    const wmasAmount1 = new TokenAmount(WMAS, 0)
+    const wmasAmount1 = new TokenAmount(WMAS, 0n)
     const tokenAmount1 = new TokenAmount(token, amountTokenPerBatch)
   
     const amountWmasBatchActif = (5n * wmasAmount.raw) / 215n
@@ -108,7 +113,7 @@ import {
     const tokenAmount2 = new TokenAmount(token, amountTokenBatchActif)
   
     const wmasAmount3 = new TokenAmount(WMAS, amountWmasPerBatch)
-    const tokenAmount3 = new TokenAmount(token, 0)
+    const tokenAmount3 = new TokenAmount(token, 0n)
   
     let addLiquidityInput = await pair.addLiquidityParameters(
       lbPair.LBPair,
