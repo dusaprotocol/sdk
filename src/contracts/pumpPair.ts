@@ -41,7 +41,7 @@ export class IPumpPair extends IBaseContract {
 
   async isLocked(): Promise<boolean> {
     return this.extract(['LOCKED']).then((r) => {
-      if (!r[0] || !r[0].length) throw new Error()
+      if (!r[0]?.length) throw new Error()
       return byteToBool(r[0])
     })
   }
