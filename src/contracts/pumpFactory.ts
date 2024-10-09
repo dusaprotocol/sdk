@@ -2,7 +2,7 @@ import { ArrayTypes, bytesToArray, bytesToStr } from '@massalabs/web3-utils'
 import { IBaseContract } from './base'
 
 export class IPumpFactory extends IBaseContract {
-  async getAllPair(): Promise<string[]> {
+  async getAllPairs(): Promise<string[]> {
     return this.extract([`allPairs`]).then((r) => {
       if (!r[0] || !r[0].length) throw new Error()
       return bytesToArray(r[0], ArrayTypes.STRING)

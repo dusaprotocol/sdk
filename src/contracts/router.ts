@@ -28,7 +28,7 @@ export class IRouter extends IBaseContract {
     tokenA: string,
     tokenB: string,
     activeId: number,
-    binstep: number,
+    binStep: number,
     masToSend: bigint
   ): Promise<string> {
     return this.call({
@@ -38,7 +38,7 @@ export class IRouter extends IBaseContract {
         .addString(tokenA)
         .addString(tokenB)
         .addU32(activeId)
-        .addU32(binstep)
+        .addU32(binStep)
     })
   }
 
