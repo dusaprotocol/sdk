@@ -10,7 +10,7 @@ export class IPumpFactory extends IBaseContract {
   }
 
   async getPair(token0Address: string, token1Address: string): Promise<string> {
-    const key = `pairMapping:${token0Address}:${token1Address}`
+    const key = `pairMapping::${token0Address}:${token1Address}`
     return this.extract([key]).then((r) => {
       if (!r[0]?.length) throw new Error()
       return bytesToStr(r[0])
