@@ -36,7 +36,7 @@ export class IBaseContract {
       targetAddress: this.address,
       maxGas: gasNeeded,
       coins: coinsNeeded,
-      fee: await this.fee
+      fee: this.fee
     })
   }
 
