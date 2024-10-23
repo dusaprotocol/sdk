@@ -12,14 +12,11 @@ import { EventDecoder } from '../utils/eventDecoder'
 type BaseCallData = Omit<ICallData, 'fee' | 'maxGas' | 'targetAddress'>
 
 export class IBaseContract {
-  protected fee: Promise<bigint>
-
-  constructor(public address: string, protected client: Client) {
-    this.fee = client
-      .publicApi()
-      .getMinimalFees()
-      .catch(() => Promise.resolve(MassaUnits.mMassa))
-  }
+  constructor(
+    public address: string,
+    protected client: Client,
+    protected fee: bigint = MassaUnits.oneMassa / 100n
+  ) {}
 
   public async call(
     params: BaseCallData & {
