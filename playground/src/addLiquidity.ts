@@ -12,15 +12,15 @@ import {
   Percent,
   ILBPair
 } from '@dusalabs/sdk'
-import { WalletClient } from '@massalabs/massa-web3'
-import { awaitFinalization, createClient, logEvents } from './utils'
+import { createClient, logEvents } from './utils'
+import { Account } from '@massalabs/massa-web3'
 
 export const addLiquidity = async () => {
   console.log('\n------- addLiquidity() called -------\n')
 
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
-  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const account = await Account.fromPrivateKey(privateKey)
   if (!account.address) throw new Error('Missing address in account')
   const client = await createClient(account)
   const CHAIN_ID = ChainId.BUILDNET
@@ -54,8 +54,8 @@ export const addLiquidity = async () => {
     router,
     tokenAmountWMAS.raw
   )
-  if (approveTxId1) await awaitFinalization(client, approveTxId1)
-  if (approveTxId2) await awaitFinalization(client, approveTxId2)
+  if (approveTxId1) await approveTxId1.waitSpeculativeExecution()
+  if (approveTxId2) await approveTxId2.waitSpeculativeExecution()
 
   // set amount slippage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
@@ -87,15 +87,15 @@ export const addLiquidity = async () => {
   const params = pair.liquidityCallParameters({
     ...addLiquidityInput,
     activeIdDesired: lbPairData.activeId,
-    to: account.address,
+    to: account.address.toString(),
     deadline
   })
 
   // call methods
   const txId = await new IRouter(router, client).add(params)
-  console.log('txId', txId)
+  console.log('txId', txId.id)
 
   // await tx confirmation and log events
-  await awaitFinalization(client, txId)
-  logEvents(client, txId)
+  await txId.waitSpeculativeExecution()
+  logEvents(client, txId.id)
 }
