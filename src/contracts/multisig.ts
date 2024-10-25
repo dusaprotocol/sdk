@@ -2,29 +2,26 @@ import {
   Args,
   bytesToArray,
   ArrayTypes,
-  bytesToI32,
   byteToBool,
-  bytesToU64,
   bytesToSerializableObjectArray
 } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 import { Transaction } from '../types/periphery'
+import { bytesToI32, bytesToU64 } from '@massalabs/web3-utils'
 
 export class IMultisig extends IBaseContract {
   async getTransactions(): Promise<Transaction[]> {
     return this.read({
       targetFunction: 'getTransactions',
       parameter: new Args().serialize()
-    }).then((res) =>
-      bytesToSerializableObjectArray(res.returnValue, Transaction)
-    )
+    }).then((res) => bytesToSerializableObjectArray(res.value, Transaction))
   }
 
   async getApprovals(txId: bigint): Promise<string[]> {
     return this.read({
       targetFunction: 'getApprovals',
       parameter: new Args().addU64(txId).serialize()
-    }).then((res) => bytesToArray(res.returnValue, ArrayTypes.STRING))
+    }).then((res) => bytesToArray(res.value, ArrayTypes.STRING))
   }
 
   async getApprovalCount(txId: bigint): Promise<number> {
@@ -38,21 +35,21 @@ export class IMultisig extends IBaseContract {
 
   async owners(): Promise<string[]> {
     return this.extract(['owners']).then((res) => {
-      if (!res[0]) throw new Error()
+      if (!res[0]?.length) throw new Error()
       return new Args(res[0]).nextArray(ArrayTypes.STRING)
     })
   }
 
   async required(): Promise<number> {
     return this.extract(['required']).then((res) => {
-      if (!res[0]) throw new Error()
+      if (!res[0]?.length) throw new Error()
       return bytesToI32(res[0])
     })
   }
 
   async delay(): Promise<bigint> {
     return this.extract(['delay']).then((res) => {
-      if (!res[0]) throw new Error()
+      if (!res[0]?.length) throw new Error()
       return bytesToU64(res[0])
     })
   }
@@ -76,12 +73,7 @@ export class IMultisig extends IBaseContract {
     return res.map((r) => (r ? byteToBool(r) : false))
   }
 
-  async submit(
-    to: string,
-    method: string,
-    value: bigint,
-    data: Uint8Array
-  ): Promise<string> {
+  async submit(to: string, method: string, value: bigint, data: Uint8Array) {
     return this.call({
       targetFunction: 'submit',
       parameter: new Args()
@@ -93,7 +85,7 @@ export class IMultisig extends IBaseContract {
     })
   }
 
-  async receiveCoins(amount: bigint): Promise<string> {
+  async receiveCoins(amount: bigint) {
     return this.call({
       targetFunction: 'receiveCoins',
       parameter: new Args().serialize(),
@@ -101,21 +93,21 @@ export class IMultisig extends IBaseContract {
     })
   }
 
-  async approve(txId: bigint): Promise<string> {
+  async approve(txId: bigint) {
     return this.call({
       targetFunction: 'approve',
       parameter: new Args().addU64(txId).serialize()
     })
   }
 
-  async execute(txId: bigint): Promise<string> {
+  async execute(txId: bigint) {
     return this.call({
       targetFunction: 'execute',
       parameter: new Args().addU64(txId).serialize()
     })
   }
 
-  async revoke(txId: bigint): Promise<string> {
+  async revoke(txId: bigint) {
     return this.call({
       targetFunction: 'revoke',
       parameter: new Args().addU64(txId).serialize()

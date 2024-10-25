@@ -1,5 +1,5 @@
 import { Args, bytesToSerializableObjectArray } from '@massalabs/massa-web3'
-import { bytesToArray, ArrayTypes } from '@massalabs/web3-utils'
+import { ArrayTypes, bytesToArray } from '@massalabs/web3-utils'
 import { LBPair, LBPairInformation } from '../types'
 import { IBaseContract } from './base'
 
@@ -15,7 +15,7 @@ export class IFactory extends IBaseContract {
         .addString(token1Address)
         .serialize()
     }).then((res) =>
-      bytesToSerializableObjectArray(res.returnValue, LBPairInformation)
+      bytesToSerializableObjectArray(res.value, LBPairInformation)
     )
   }
 
@@ -29,11 +29,9 @@ export class IFactory extends IBaseContract {
       parameter: new Args()
         .addString(token0Address)
         .addString(token1Address)
-        .addU32(binStep)
+        .addU32(BigInt(binStep))
         .serialize()
-    }).then(
-      (res) => new LBPairInformation().deserialize(res.returnValue).instance
-    )
+    }).then((res) => new LBPairInformation().deserialize(res.value).instance)
   }
 
   async getAvailableLBPairBinSteps(
@@ -46,6 +44,6 @@ export class IFactory extends IBaseContract {
         .addString(token0Address)
         .addString(token1Address)
         .serialize()
-    }).then((res) => bytesToArray<number>(res.returnValue, ArrayTypes.U32))
+    }).then((res) => bytesToArray<number>(res.value, ArrayTypes.U32))
   }
 }

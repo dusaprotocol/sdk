@@ -8,11 +8,15 @@ export class IPumpPair extends IBaseContract {
     amountOutMin: bigint,
     to: string,
     deadline: bigint
-  ): Promise<string> {
+  ) {
     return this.call({
       targetFunction: 'buy',
       coins: amountIn,
-      parameter: new Args().addU256(amountOutMin).addString(to).addU64(deadline)
+      parameter: new Args()
+        .addU256(amountOutMin)
+        .addString(to)
+        .addU64(deadline)
+        .serialize()
     })
   }
 
@@ -21,7 +25,7 @@ export class IPumpPair extends IBaseContract {
     amountOutMin: bigint,
     to: string,
     deadline: bigint
-  ): Promise<string> {
+  ) {
     return this.call({
       targetFunction: 'sell',
       parameter: new Args()
@@ -29,6 +33,7 @@ export class IPumpPair extends IBaseContract {
         .addU256(amountOutMin)
         .addString(to)
         .addU64(deadline)
+        .serialize()
     })
   }
 

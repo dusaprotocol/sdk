@@ -1,83 +1,92 @@
 import {
-  Client,
-  ICallData,
-  IContractReadOperationResponse,
-  IReadData,
+  Args,
+  CallSCParams,
   MAX_GAS_CALL,
-  MassaUnits,
-  strToBytes
+  //   ReadSCParams,
+  Web3Provider
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
+import { MassaUnits } from '@massalabs/web3-utils'
 
-type BaseCallData = Omit<ICallData, 'fee' | 'maxGas' | 'targetAddress'>
+// type BaseParams = Omit<ReadSCParams, 'func' | 'target' | 'parameter'> & {
+//   targetFunction: string
+//   targetAddress: string
+//   parameter: number[] | Uint8Array
+// }
+type BaseCallData = Omit<
+  CallSCParams,
+  'fee' | 'maxGas' | 'target' | 'func' | 'parameter'
+> & {
+  targetFunction: string
+  parameter: number[] | Uint8Array
+}
+type BaseCallDataWithGas = BaseCallData & {
+  maxGas?: bigint
+}
 
 export class IBaseContract {
   constructor(
     public address: string,
-    protected client: Client,
+    protected client: Web3Provider,
     protected fee: bigint = MassaUnits.oneMassa / 100n
   ) {}
 
   public async call(
-    params: BaseCallData & {
-      maxGas?: bigint
-    },
+    params: BaseCallDataWithGas,
     estimateCoins = true,
     estimateGas = true
-  ): Promise<string> {
+  ) {
     const coinsNeeded = estimateCoins
       ? await this.estimateCoins(params)
       : params.coins
     const gasNeeded = estimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
-    return this.client.smartContracts().callSmartContract({
+    return this.client.callSC({
       ...params,
-      targetAddress: this.address,
+      parameter: new Args(Uint8Array.from(params.parameter)),
+      target: this.address,
+      func: params.targetFunction,
       maxGas: gasNeeded,
       coins: coinsNeeded,
       fee: this.fee
     })
   }
 
-  public async read(
-    params: Omit<IReadData, 'maxGas' | 'targetAddress'> & {
-      maxGas?: bigint
-    }
-  ): Promise<IContractReadOperationResponse> {
-    return this.client.smartContracts().readSmartContract({
+  public async read(params: BaseCallDataWithGas) {
+    return this.client.readSC({
       ...params,
-      targetAddress: this.address,
-      maxGas: params.maxGas || MAX_GAS_CALL
+      target: this.address,
+      func: params.targetFunction,
+      maxGas: params.maxGas || MAX_GAS_CALL,
+      parameter: new Args(Uint8Array.from(params.parameter))
     })
   }
 
-  public async extract(keys: string[]): Promise<(Uint8Array | null)[]> {
+  public async extract(
+    keys: string[],
+    final = false
+  ): Promise<(Uint8Array | null)[]> {
     return this.client
-      .publicApi()
-      .getDatastoreEntries(
-        keys.map((key) => ({ address: this.address, key: strToBytes(key) }))
-      )
-      .then((res) => res.map((r) => r.candidate_value))
+      .readStorage(this.address, keys, final)
+      .then((res) => res.map((r) => r))
   }
 
   public async simulate(params: BaseCallData) {
-    const callerAddress = this.client.wallet().getBaseAccount()?.address()
-    if (!callerAddress) throw new Error('No caller address')
+    const caller = this.client.address
+    if (!caller) throw new Error('No caller address')
 
     return this.read({
       ...params,
       maxGas: MAX_GAS_CALL,
-      callerAddress
+      caller
     })
   }
 
   public async estimateGas(params: BaseCallData) {
     return this.simulate(params)
       .then((r) =>
-        BigInt(
-          Math.floor(Math.min(r.info.gas_cost * 1.1, Number(MAX_GAS_CALL)))
-        )
+        BigInt(Math.floor(Math.min(r.info.gasCost * 1.1, Number(MAX_GAS_CALL))))
       ) // 10% extra gas for safety
       .catch(() => MAX_GAS_CALL)
   }

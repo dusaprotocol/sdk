@@ -10,9 +10,10 @@ import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
-import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Web3Provider } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
 import invariant from 'tiny-invariant'
+import { MassaUnits } from '@massalabs/web3-utils'
 
 type PartialAddParams = Omit<
   AddLiquidityParameters,
@@ -29,12 +30,12 @@ export class PairV2 {
   /**
    * Returns all available LBPairs for this pair
    *
-   * @param {Client} client
+   * @param {Web3Provider} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair[]>}
    */
   public async fetchAvailableLBPairs(
-    client: Client,
+    client: Web3Provider,
     chainId: ChainId
   ): Promise<LBPair[]> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
@@ -51,13 +52,13 @@ export class PairV2 {
    * Fetches LBPair for token0, token1, and given binStep
    *
    * @param {number} binStep
-   * @param {Client} client
+   * @param {Web3Provider} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair>}
    */
   public async fetchLBPair(
     binStep: number,
-    client: Client,
+    client: Web3Provider,
     chainId: ChainId
   ): Promise<LBPair> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
@@ -215,7 +216,7 @@ export class PairV2 {
     amountSlippage: Percent,
     priceSlippage: Percent,
     liquidityDistribution: LiquidityDistribution,
-    client: Client
+    client: Web3Provider
   ): Promise<PartialAddParams> {
     const tokenX = await new ILBPair(LBPair, client)
       .getTokens()
@@ -374,7 +375,7 @@ export class PairV2 {
           if (!isNative) args.addString(options.token0)
           args
             .addString(options.token1)
-            .addU32(options.binStep)
+            .addU32(BigInt(options.binStep))
             .addU256(options.amount0Min)
             .addU256(options.amount1Min)
             .addArray(options.ids.map(BigInt), ArrayTypes.U64)
