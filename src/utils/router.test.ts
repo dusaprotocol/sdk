@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { decodeSwapTx, isLiquidtyMethod, isSwapMethod } from './router'
 import { LIQUIDITY_ROUTER_METHODS, SWAP_ROUTER_METHODS } from '../types'
-import { CHAIN_ID as MASSA_CHAIN_ID } from '@massalabs/web3-utils'
-import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3'
+import { DefaultProviderUrls } from '@massalabs/web3-utils'
 import { ChainId } from '../constants'
 import {
   Percent,
@@ -13,6 +12,7 @@ import {
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
+import { Account, Web3Provider } from '@massalabs/massa-web3'
 
 describe('isSwapMethod', () => {
   it('should return true for valid swap method', () => {
@@ -35,10 +35,10 @@ describe('isLiquidtyMethod', () => {
 
 describe('decodeSwapTx', async () => {
   const CHAIN_ID = ChainId.MAINNET
-  const client = await ClientFactory.createDefaultClient(
+  const baseAccount = await Account.generate()
+  const client = Web3Provider.fromRPCUrl(
     DefaultProviderUrls.MAINNET,
-    MASSA_CHAIN_ID.MainNet,
-    true
+    baseAccount
   )
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]

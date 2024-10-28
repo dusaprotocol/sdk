@@ -9,21 +9,16 @@ import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
 import { ChainId } from '../constants'
-import {
-  Args,
-  ArrayTypes,
-  CHAIN_ID as MASSA_CHAIN_ID,
-  ClientFactory,
-  DefaultProviderUrls
-} from '@massalabs/massa-web3'
+import { Account, Args, ArrayTypes, Web3Provider } from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
+import { DefaultProviderUrls } from '@massalabs/web3-utils'
 
 describe('TradeV2 entity', async () => {
   const CHAIN_ID = ChainId.MAINNET
-  const client = await ClientFactory.createDefaultClient(
+  const baseAccount = await Account.generate()
+  const client = Web3Provider.fromRPCUrl(
     DefaultProviderUrls.MAINNET,
-    MASSA_CHAIN_ID.MainNet,
-    true
+    baseAccount
   )
 
   // init tokens and route bases

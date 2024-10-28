@@ -1,4 +1,4 @@
-import { bytesToU256 } from '@massalabs/massa-web3'
+import { bytesToU256 } from '@massalabs/web3-utils'
 
 const strEncodeUTF16 = (str: string): Uint8Array => {
   const buf = new ArrayBuffer(str.length * 2)
