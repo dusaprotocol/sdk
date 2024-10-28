@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { decodeSwapTx, isLiquidtyMethod, isSwapMethod } from './router'
 import { LIQUIDITY_ROUTER_METHODS, SWAP_ROUTER_METHODS } from '../types'
-import { DefaultProviderUrls } from '@massalabs/web3-utils'
 import { ChainId } from '../constants'
 import {
   Percent,
@@ -36,10 +35,7 @@ describe('isLiquidtyMethod', () => {
 describe('decodeSwapTx', async () => {
   const CHAIN_ID = ChainId.MAINNET
   const baseAccount = await Account.generate()
-  const client = Web3Provider.fromRPCUrl(
-    DefaultProviderUrls.MAINNET,
-    baseAccount
-  )
+  const client = Web3Provider.mainnet(baseAccount)
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 

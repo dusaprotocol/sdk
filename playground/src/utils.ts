@@ -1,5 +1,4 @@
 import { Account, Web3Provider } from '@massalabs/massa-web3'
-import { DefaultProviderUrls } from '@massalabs/web3-utils'
 
 export const logEvents = (client: Web3Provider, txId: string): void => {
   client
@@ -8,7 +7,6 @@ export const logEvents = (client: Web3Provider, txId: string): void => {
 }
 
 export const createClient = async (baseAccount: Account, mainnet = false) =>
-  Web3Provider.fromRPCUrl(
-    mainnet ? DefaultProviderUrls.MAINNET : DefaultProviderUrls.BUILDNET,
-    baseAccount
-  )
+  mainnet
+    ? Web3Provider.mainnet(baseAccount)
+    : Web3Provider.buildnet(baseAccount)

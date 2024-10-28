@@ -13,7 +13,7 @@ import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Web3Provider } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
 import invariant from 'tiny-invariant'
-import { MassaUnits } from '@massalabs/web3-utils'
+import { MassaUnits } from '../constants'
 
 type PartialAddParams = Omit<
   AddLiquidityParameters,

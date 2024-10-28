@@ -25,7 +25,7 @@ import {
   WMAS as _WMAS
 } from '../v1entities'
 import { IMulticall, IQuoter, Tx } from '../contracts'
-import { MassaUnits } from '@massalabs/web3-utils'
+import { MassaUnits } from '../constants'
 
 /** Class representing a trade */
 export class TradeV2 {
@@ -160,7 +160,7 @@ export class TradeV2 {
     const { methodName, args, value } = ((
       tradeType: TradeType
     ): SwapParameters => {
-      const args: Args = new Args()
+      const args = new Args()
       let value = SWAP_STORAGE_COST
       switch (tradeType) {
         case TradeType.EXACT_INPUT:

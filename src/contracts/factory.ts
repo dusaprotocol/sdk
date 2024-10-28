@@ -1,5 +1,9 @@
-import { Args, bytesToSerializableObjectArray } from '@massalabs/massa-web3'
-import { ArrayTypes, bytesToArray } from '@massalabs/web3-utils'
+import {
+  Args,
+  ArrayTypes,
+  bytesToArray,
+  bytesToSerializableObjectArray
+} from '@massalabs/massa-web3'
 import { LBPair, LBPairInformation } from '../types'
 import { IBaseContract } from './base'
 

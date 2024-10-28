@@ -1,5 +1,4 @@
-import { Args, bytesToStr } from '@massalabs/massa-web3'
-import { bytesToU256, byteToBool } from '@massalabs/web3-utils'
+import { Args, bytesToStr, byteToBool, U256 } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 
 export class IPumpPair extends IBaseContract {
@@ -54,7 +53,7 @@ export class IPumpPair extends IBaseContract {
   async getReserves(): Promise<[bigint, bigint]> {
     return this.extract(['reserve0', 'reserve1']).then((r) => {
       if (!r[0]?.length || !r[1]?.length) throw new Error()
-      return [bytesToU256(r[0]), bytesToU256(r[1])]
+      return [U256.fromBytes(r[0]), U256.fromBytes(r[1])]
     })
   }
 }

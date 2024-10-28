@@ -1,4 +1,4 @@
-import { ArrayTypes, bytesToArray, bytesToStr } from '@massalabs/web3-utils'
+import { ArrayTypes, bytesToArray, bytesToStr } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 
 export class IPumpFactory extends IBaseContract {

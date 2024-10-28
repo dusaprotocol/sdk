@@ -6,7 +6,7 @@ import {
   Web3Provider
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
-import { MassaUnits } from '@massalabs/web3-utils'
+import { MassaUnits } from '../constants/internal'
 
 // type BaseParams = Omit<ReadSCParams, 'func' | 'target' | 'parameter'> & {
 //   targetFunction: string

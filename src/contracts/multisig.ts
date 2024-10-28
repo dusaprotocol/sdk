@@ -7,7 +7,7 @@ import {
 } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 import { Transaction } from '../types/periphery'
-import { bytesToI32, bytesToU64 } from '@massalabs/web3-utils'
+import { I32, U64 } from '@massalabs/massa-web3'
 
 export class IMultisig extends IBaseContract {
   async getTransactions(): Promise<Transaction[]> {
@@ -43,14 +43,14 @@ export class IMultisig extends IBaseContract {
   async required(): Promise<number> {
     return this.extract(['required']).then((res) => {
       if (!res[0]?.length) throw new Error()
-      return bytesToI32(res[0])
+      return Number(I32.fromBytes(res[0]))
     })
   }
 
   async delay(): Promise<bigint> {
     return this.extract(['delay']).then((res) => {
       if (!res[0]?.length) throw new Error()
-      return bytesToU64(res[0])
+      return U64.fromBytes(res[0])
     })
   }
 

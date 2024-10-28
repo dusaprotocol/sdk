@@ -1,4 +1,4 @@
-import { Args, ArrayTypes } from '@massalabs/web3-utils'
+import { Args, ArrayTypes } from '@massalabs/massa-web3'
 import {
   AddLiquidityParameters,
   LIQUIDITY_ROUTER_METHODS,

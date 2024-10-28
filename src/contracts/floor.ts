@@ -1,6 +1,5 @@
-import { Args, bytesToStr, byteToBool } from '@massalabs/massa-web3'
+import { Args, bytesToStr, byteToBool, U256, U32 } from '@massalabs/massa-web3'
 import { IERC20 } from './token'
-import { bytesToU256, bytesToU32 } from '@massalabs/web3-utils'
 
 export class IFloorToken extends IERC20 {
   // FLOOR CALLS
@@ -71,7 +70,7 @@ export class IFloorToken extends IERC20 {
     return this.read({
       targetFunction: 'floorPrice',
       parameter: new Args().serialize()
-    }).then((res) => bytesToU256(res.value))
+    }).then((res) => U256.fromBytes(res.value))
   }
 
   async rebalancePaused(): Promise<boolean> {
@@ -92,7 +91,7 @@ export class IFloorToken extends IERC20 {
     return this.read({
       targetFunction: 'calculateNewFloorId',
       parameter: new Args().serialize()
-    }).then((res) => bytesToU32(res.value))
+    }).then((res) => Number(U32.fromBytes(res.value)))
   }
 
   async all(): Promise<{
@@ -116,12 +115,12 @@ export class IFloorToken extends IERC20 {
       if (_res.some((r) => !r)) throw new Error()
       const res = _res as Uint8Array[]
       return {
-        floorId: bytesToU32(res[0]),
-        roofId: bytesToU32(res[1]),
+        floorId: Number(U32.fromBytes(res[0])),
+        roofId: Number(U32.fromBytes(res[1])),
         pair: bytesToStr(res[2]),
         tokenY: bytesToStr(res[3]),
-        binStep: bytesToU32(res[4]),
-        floorPerBin: bytesToU256(res[5]),
+        binStep: Number(U32.fromBytes(res[4])),
+        floorPerBin: U256.fromBytes(res[5]),
         rebalancePaused: byteToBool(res[6])
       }
     })
@@ -139,7 +138,7 @@ export class IFloorToken extends IERC20 {
   async taxRate(): Promise<bigint> {
     return this.extract(['TAX_RATE']).then((res) => {
       if (!res[0]?.length) throw new Error()
-      return bytesToU256(res[0])
+      return U256.fromBytes(res[0])
     })
   }
 

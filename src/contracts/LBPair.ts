@@ -1,11 +1,11 @@
 import {
   Args,
   ArrayTypes,
-  byteToBool,
   bytesToArray,
   bytesToStr,
-  bytesToU256
-} from '@massalabs/web3-utils'
+  byteToBool,
+  U256
+} from '@massalabs/massa-web3'
 import { BinReserves, FeeParameters, LBPairReservesAndId } from '../types'
 import { IBaseContract } from './base'
 
@@ -31,7 +31,7 @@ export class ILBPair extends IBaseContract {
     return this.read({
       targetFunction: 'balanceOf',
       parameter: new Args().addString(account).addU64(BigInt(id)).serialize()
-    }).then((res) => bytesToU256(res.value))
+    }).then((res) => U256.fromBytes(res.value))
   }
 
   async balanceOfBatch(accounts: string[], ids: number[]): Promise<bigint[]> {
