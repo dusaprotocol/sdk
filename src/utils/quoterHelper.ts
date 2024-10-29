@@ -1,4 +1,4 @@
-import { Web3Provider } from '@massalabs/massa-web3'
+import { Provider } from '@massalabs/massa-web3'
 import { PairV2, RouteV2, TradeV2 } from '../v2entities'
 import { Token, TokenAmount, USDC, WMAS, WETH } from '../v1entities'
 import { ChainId } from '../constants'
@@ -12,7 +12,7 @@ export class QuoterHelper {
     amount: TokenAmount,
     isExactIn: boolean,
     maxHops: number,
-    baseClient: Web3Provider,
+    baseClient: Provider,
     CHAIN_ID: ChainId
   ) {
     const BASES: Token[] = [WMAS, USDC, WETH].map((token) => token[CHAIN_ID])

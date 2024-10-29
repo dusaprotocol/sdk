@@ -14,7 +14,7 @@ import {
   Quote,
   RouterPathParameters
 } from '../types'
-import { Args, ArrayTypes, Web3Provider } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Provider } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -301,7 +301,7 @@ export class TradeV2 {
    * @param {Token} tokenOut
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Web3Provider} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -311,7 +311,7 @@ export class TradeV2 {
     tokenOut: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Web3Provider,
+    client: Provider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -335,7 +335,7 @@ export class TradeV2 {
    * @param {Token} tokenIn
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Web3Provider} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -345,7 +345,7 @@ export class TradeV2 {
     tokenIn: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Web3Provider,
+    client: Provider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -367,7 +367,7 @@ export class TradeV2 {
     otherToken: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Web3Provider,
+    client: Provider,
     chainId: ChainId
   ): Promise<(TradeV2 | undefined)[]> {
     const tokenIn = isExactIn ? tokenAmount.token : otherToken

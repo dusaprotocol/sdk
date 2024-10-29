@@ -10,7 +10,7 @@ import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
-import { Args, ArrayTypes, Web3Provider } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Provider } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
 import invariant from 'tiny-invariant'
 import { MassaUnits } from '../constants'
@@ -30,12 +30,12 @@ export class PairV2 {
   /**
    * Returns all available LBPairs for this pair
    *
-   * @param {Web3Provider} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair[]>}
    */
   public async fetchAvailableLBPairs(
-    client: Web3Provider,
+    client: Provider,
     chainId: ChainId
   ): Promise<LBPair[]> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
@@ -52,13 +52,13 @@ export class PairV2 {
    * Fetches LBPair for token0, token1, and given binStep
    *
    * @param {number} binStep
-   * @param {Web3Provider} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {Promise<LBPair>}
    */
   public async fetchLBPair(
     binStep: number,
-    client: Web3Provider,
+    client: Provider,
     chainId: ChainId
   ): Promise<LBPair> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
@@ -216,7 +216,7 @@ export class PairV2 {
     amountSlippage: Percent,
     priceSlippage: Percent,
     liquidityDistribution: LiquidityDistribution,
-    client: Web3Provider
+    client: Provider
   ): Promise<PartialAddParams> {
     const tokenX = await new ILBPair(LBPair, client)
       .getTokens()

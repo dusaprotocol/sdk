@@ -3,7 +3,7 @@ import {
   CallSCParams,
   MAX_GAS_CALL,
   //   ReadSCParams,
-  Web3Provider
+  Provider
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
 import { MassaUnits } from '../constants/internal'
@@ -27,7 +27,7 @@ type BaseCallDataWithGas = BaseCallData & {
 export class IBaseContract {
   constructor(
     public address: string,
-    protected client: Web3Provider,
+    protected client: Provider,
     protected fee: bigint = MassaUnits.oneMassa / 100n
   ) {}
 
@@ -43,10 +43,9 @@ export class IBaseContract {
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
     return this.client.callSC({
-      ...params,
-      parameter: new Args(Uint8Array.from(params.parameter)),
       target: this.address,
       func: params.targetFunction,
+      parameter: new Args(Uint8Array.from(params.parameter)),
       maxGas: gasNeeded,
       coins: coinsNeeded,
       fee: this.fee
