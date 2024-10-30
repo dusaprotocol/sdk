@@ -19,7 +19,7 @@ export const removeLiquidity = async () => {
   const account = await Account.fromPrivateKey(privateKey)
   const address = account.address.toString()
   if (!address) throw new Error('Missing address in account')
-  const client = await createClient(account)
+  const client = createClient(account)
   const CHAIN_ID = ChainId.BUILDNET
 
   // initialize tokens

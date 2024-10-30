@@ -6,7 +6,7 @@ export const logEvents = (client: Web3Provider, txId: string): void => {
     .then((r) => r.forEach((e) => console.log(e.data)))
 }
 
-export const createClient = async (baseAccount: Account, mainnet = false) =>
+export const createClient = (baseAccount: Account, mainnet = false) =>
   mainnet
     ? Web3Provider.mainnet(baseAccount)
     : Web3Provider.buildnet(baseAccount)

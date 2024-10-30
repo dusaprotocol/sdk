@@ -22,7 +22,7 @@ export const addLiquidity = async () => {
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await Account.fromPrivateKey(privateKey)
   if (!account.address) throw new Error('Missing address in account')
-  const client = await createClient(account)
+  const client = createClient(account)
   const CHAIN_ID = ChainId.BUILDNET
 
   // initialize tokens
