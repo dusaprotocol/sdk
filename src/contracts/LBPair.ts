@@ -97,8 +97,8 @@ export class ILBPair extends IBaseContract {
 
   async getBinIds(): Promise<number[]> {
     return this.client.getStorageKeys(this.address, 'bin::').then((res) => {
-      const keys = res.map((key) => String.fromCharCode(...key))
-      return keys.map((key) => Number(key.split('bin::')[1]))
+      const keys = res.map((r: Uint8Array) => String.fromCharCode(...r))
+      return keys.map((key: string) => Number(key.split('bin::')[1]))
     })
   }
 

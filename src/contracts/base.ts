@@ -1,18 +1,12 @@
 import {
-  Args,
   CallSCParams,
   MAX_GAS_CALL,
-  //   ReadSCParams,
-  Provider
+  Provider,
+  SmartContract
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
 import { MassaUnits } from '../constants/internal'
 
-// type BaseParams = Omit<ReadSCParams, 'func' | 'target' | 'parameter'> & {
-//   targetFunction: string
-//   targetAddress: string
-//   parameter: number[] | Uint8Array
-// }
 type BaseCallData = Omit<
   CallSCParams,
   'fee' | 'maxGas' | 'target' | 'func' | 'parameter'
@@ -42,24 +36,19 @@ export class IBaseContract {
     const gasNeeded = estimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
-    return this.client.callSC({
-      target: this.address,
-      func: params.targetFunction,
-      parameter: new Args(Uint8Array.from(params.parameter)),
-      maxGas: gasNeeded,
-      coins: coinsNeeded,
-      fee: this.fee
-    })
+    return new SmartContract(this.client, this.address).call(
+      params.targetFunction,
+      Uint8Array.from(params.parameter),
+      { coins: coinsNeeded, maxGas: gasNeeded, fee: this.fee }
+    )
   }
 
   public async read(params: BaseCallDataWithGas) {
-    return this.client.readSC({
-      ...params,
-      target: this.address,
-      func: params.targetFunction,
-      maxGas: params.maxGas || MAX_GAS_CALL,
-      parameter: new Args(Uint8Array.from(params.parameter))
-    })
+    return new SmartContract(this.client, this.address).read(
+      params.targetFunction,
+      Uint8Array.from(params.parameter),
+      { maxGas: params.maxGas || MAX_GAS_CALL }
+    )
   }
 
   public async extract(
