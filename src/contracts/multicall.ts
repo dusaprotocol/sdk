@@ -4,7 +4,7 @@ import { IBaseContract } from './base'
 export class Tx implements ISerializable<Tx> {
   constructor(
     public method: string = '',
-    public args: Uint8Array,
+    public args: Uint8Array = new Uint8Array(),
     public to: string = ''
   ) {}
 

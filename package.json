@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "eslint --ext .ts --ext .tsx src/",
     "lint:fix": "eslint --ext .ts --ext .tsx src/ --fix",
-    "build": "tsdx build --transpileOnly",
+    "build": "tsdx build",
     "start": "tsdx watch",
     "test:unit": "vitest --config ./vitest.config.ts",
     "test:e2e": "cd playground && pnpm i && npm start",

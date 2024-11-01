@@ -45,7 +45,7 @@ export class IERC20 extends IBaseContract {
   }
 
   async approve(spender: string, amount: bigint = 2n ** 256n - 1n) {
-    const owner = this.client.address
+    const owner: string = (this.client as any).address
     if (!owner) throw new Error('No base account')
 
     const currentAllowance = await this.allowance(owner, spender)

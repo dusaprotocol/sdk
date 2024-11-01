@@ -1,7 +1,9 @@
 import {
   CallSCParams,
   MAX_GAS_CALL,
+  Operation,
   Provider,
+  ReadSCData,
   SmartContract
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
@@ -29,7 +31,7 @@ export class IBaseContract {
     params: BaseCallDataWithGas,
     estimateCoins = true,
     estimateGas = true
-  ) {
+  ): Promise<Operation> {
     const coinsNeeded = estimateCoins
       ? await this.estimateCoins(params)
       : params.coins
@@ -43,7 +45,7 @@ export class IBaseContract {
     )
   }
 
-  public async read(params: BaseCallDataWithGas) {
+  public async read(params: BaseCallDataWithGas): Promise<ReadSCData> {
     return new SmartContract(this.client, this.address).read(
       params.targetFunction,
       Uint8Array.from(params.parameter),
@@ -51,17 +53,12 @@ export class IBaseContract {
     )
   }
 
-  public async extract(
-    keys: string[],
-    final = false
-  ): Promise<(Uint8Array | null)[]> {
-    return this.client
-      .readStorage(this.address, keys, final)
-      .then((res) => res.map((r) => r))
+  public async extract(keys: string[], final = false): Promise<Uint8Array[]> {
+    return (this.client as any).readStorage(this.address, keys, final)
   }
 
   public async simulate(params: BaseCallData) {
-    const caller = this.client.address
+    const caller: string = (this.client as any).address
     if (!caller) throw new Error('No caller address')
 
     return this.read({
