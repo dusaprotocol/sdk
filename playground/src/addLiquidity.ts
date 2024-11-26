@@ -92,10 +92,10 @@ export const addLiquidity = async () => {
   })
 
   // call methods
-  const txId = await new IRouter(router, client).add(params)
-  console.log('txId', txId.id)
+  const tx = await new IRouter(router, client).add(params)
+  console.log('txId', tx.id)
 
   // await tx confirmation and log events
-  await txId.waitSpeculativeExecution()
-  logEvents(client, txId.id)
+  await tx.waitSpeculativeExecution()
+  logEvents(client, tx.id)
 }

@@ -47,8 +47,8 @@ export const removeLiquidity = async () => {
 
   const approved = await pairContract.isApprovedForAll(address, router)
   if (!approved) {
-    const txIdApprove = await pairContract.setApprovalForAll(router, true)
-    console.log('txIdApprove', txIdApprove.id)
+    const txApprove = await pairContract.setApprovalForAll(router, true)
+    console.log('txIdApprove', txApprove.id)
   }
 
   const userPositionIds = await pairContract.getUserBinIds(address)
@@ -88,10 +88,10 @@ export const removeLiquidity = async () => {
   })
 
   // call methods
-  const txId = await new IRouter(router, client).remove(params)
-  console.log('txId', txId.id)
+  const tx = await new IRouter(router, client).remove(params)
+  console.log('txId', tx.id)
 
   // await tx confirmation and log events
-  await txId.waitSpeculativeExecution()
-  logEvents(client, txId.id)
+  await tx.waitSpeculativeExecution()
+  logEvents(client, tx.id)
 }

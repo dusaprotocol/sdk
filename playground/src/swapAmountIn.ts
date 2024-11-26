@@ -58,19 +58,19 @@ export const swapAmountIn = async (executeSwap = false) => {
     client,
     CHAIN_ID
   )
-
+  console.log('bestTrade', bestTrade.toLog())
   if (!bestTrade || !executeSwap) return
 
   // increase allowance
-  const txIdAllowance = await new IERC20(inputToken.address, client).approve(
+  const txAllowance = await new IERC20(inputToken.address, client).approve(
     router,
     bestTrade.inputAmount.raw
   )
 
-  if (txIdAllowance) {
-    console.log('txIdAllowance', txIdAllowance)
-    await txIdAllowance.waitSpeculativeExecution()
-    logEvents(client, txIdAllowance.id)
+  if (txAllowance) {
+    console.log('txIdAllowance', txAllowance)
+    await txAllowance.waitSpeculativeExecution()
+    logEvents(client, txAllowance.id)
   }
 
   // execute trade
@@ -79,10 +79,10 @@ export const swapAmountIn = async (executeSwap = false) => {
     recipient: account.address.toString(),
     allowedSlippage: new Percent(1n, 100n)
   })
-  const txId = await new IRouter(router, client).swap(params)
-  console.log('txId', txId.id)
+  const tx = await new IRouter(router, client).swap(params)
+  console.log('txId', tx.id)
 
   // await tx confirmation and log events
-  await txId.waitSpeculativeExecution()
-  logEvents(client, txId.id)
+  await tx.waitSpeculativeExecution()
+  logEvents(client, tx.id)
 }
