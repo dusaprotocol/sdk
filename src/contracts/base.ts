@@ -8,6 +8,7 @@ import {
   strToBytes
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
+import { parseUnits } from '../lib/ethers'
 
 type BaseCallData = Omit<ICallData, 'fee' | 'maxGas' | 'targetAddress'>
 
@@ -89,7 +90,13 @@ export class IBaseContract {
         try {
           const errMsg = EventDecoder.decodeError(err.message)
           const coinErrorKeyword = 'Storage__NotEnoughCoinsSent:'
-          const [needed] = errMsg.split(coinErrorKeyword)[1].split(',')
+          if (!errMsg.includes(coinErrorKeyword)) {
+            if (!errMsg.includes(insufficientBalanceKeyword)) return 0n
+
+            const dec = decodeInsufficientBalance(errMsg)
+            if (dec.address !== this.address) return 0n
+          }
+          const needed = errMsg.split(coinErrorKeyword)[1].split(',')[0]
           return BigInt(needed)
         } catch {
           return 0n
@@ -99,3 +106,20 @@ export class IBaseContract {
 }
 
 export const coins = MassaUnits.oneMassa / 100n // storage cost
+
+const insufficientBalanceKeyword = 'failed to transfer'
+export const decodeInsufficientBalance = (errMsg: string) => {
+  const address = errMsg.split('from spending address ')[1].split(' ')[0]
+
+  const balance = errMsg
+    .split('due to insufficient balance ')[1]
+    .split(' ')[0]
+    .split('"}')[0]
+  const needed = errMsg
+    .split(insufficientBalanceKeyword + ' ')[1]
+    .split(' coins')[0]
+    .split(' ')[0]
+  const diff = Number(needed) - Number(balance)
+
+  return { diff: parseUnits(diff.toString(), 9), address }
+}

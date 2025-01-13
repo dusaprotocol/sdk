@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { EventDecoder } from './eventDecoder'
+import { decodeInsufficientBalance } from '../contracts'
 
 const DEPOSIT_EVENT =
   'DEPOSITED_TO_BIN:AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX;?!8391258;?!�\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;?!얇࿨\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'
@@ -54,6 +55,11 @@ describe('decode', () => {
     const decodedMsg1 = EventDecoder.decodeError(ERROR_EVENT1)
     expect(decodedMsg1).toBe(
       'failed to transfer 21 coins from spending address AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi due to insufficient balance 15.1897'
+    )
+    const dec = decodeInsufficientBalance(ERROR_EVENT1)
+    expect(dec.diff).toStrictEqual(5810300000n)
+    expect(dec.address).toBe(
+      'AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi'
     )
 
     const decodedMsg2 = EventDecoder.decodeError(ERROR_EVENT2)
