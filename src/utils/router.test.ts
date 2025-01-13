@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest'
-import { decodeSwapTx, isLiquidtyMethod, isSwapMethod } from './router'
-import { LIQUIDITY_ROUTER_METHODS, SWAP_ROUTER_METHODS } from '../types'
+import {
+  decodeLiquidityTx,
+  decodeSwapTx,
+  isLiquidtyMethod,
+  isSwapMethod
+} from './router'
+import {
+  AddLiquidityParameters,
+  BaseLiquidityParameters,
+  LIQUIDITY_ROUTER_METHODS,
+  RemoveLiquidityParameters,
+  SWAP_ROUTER_METHODS
+} from '../types'
 import { ChainId } from '../constants'
 import {
   Percent,
@@ -12,6 +23,7 @@ import {
 import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
 import { Account, Web3Provider } from '@massalabs/massa-web3'
+import { PairV2 } from '../v2entities'
 
 describe('isSwapMethod', () => {
   it('should return true for valid swap method', () => {
@@ -84,5 +96,55 @@ describe('decodeSwapTx', async () => {
     const decoded = await decode(USDC, WMAS, typedValueInParsed)
 
     expect(decoded.amountIn).toStrictEqual(BigInt(typedValueInParsed))
+  })
+})
+describe('decodeLiquidityTx', async () => {
+  const CHAIN_ID = ChainId.MAINNET
+  const WMAS = _WMAS[CHAIN_ID]
+  const USDC = _USDC[CHAIN_ID]
+  const pair = new PairV2(WMAS, USDC)
+
+  const baseOptions: BaseLiquidityParameters = {
+    token0: WMAS.address,
+    token1: USDC.address,
+    amount0Min: 0n,
+    amount1Min: 0n,
+    binStep: 25,
+    deadline: 0,
+    to: ''
+  }
+
+  it('works for deposit', async () => {
+    const options: AddLiquidityParameters = {
+      ...baseOptions,
+      activeIdDesired: 2 ** 17,
+      amount0: 1111111n,
+      amount1: 2222222n,
+      distributionX: [],
+      distributionY: [],
+      deltaIds: [],
+      idSlippage: 0
+    }
+    const params = pair.liquidityCallParameters(options)
+    const decoded = decodeLiquidityTx(
+      params.methodName,
+      Uint8Array.from(params.args.serialize()),
+      CHAIN_ID
+    )
+    expect(decoded.binStep).toStrictEqual(options.binStep)
+  })
+  it('works for withdrawal', async () => {
+    const options: RemoveLiquidityParameters = {
+      ...baseOptions,
+      ids: [1, 2, 3],
+      amounts: [1n, 2n, 3n]
+    }
+    const params = pair.liquidityCallParameters(options)
+    const decoded = decodeLiquidityTx(
+      params.methodName,
+      Uint8Array.from(params.args.serialize()),
+      CHAIN_ID
+    )
+    expect(decoded.binStep).toStrictEqual(options.binStep)
   })
 })

@@ -125,7 +125,7 @@ export const decodeLiquidityTx = (
   const args = new Args(params)
   const token0 = args.nextString()
   const token1 = isRemoveMAS ? WMAS[chainId].address : args.nextString()
-  const binStep = Number(args.nextU32())
+  const binStep = Number(args.nextU64())
 
   if (isAdd) {
     const amount0 = args.nextU256()

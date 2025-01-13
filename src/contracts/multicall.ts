@@ -23,10 +23,7 @@ export class Tx implements ISerializable<Tx> {
     this.args = args.nextUint8Array()
     this.to = args.nextString()
 
-    return {
-      instance: this,
-      offset: args.getOffset()
-    }
+    return { instance: this, offset: args.getOffset() }
   }
 }
 

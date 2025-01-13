@@ -37,10 +37,7 @@ export class Quote implements ISerializable<Quote> {
     this.virtualAmountsWithoutSlippage = args.nextArray(ArrayTypes.U256)
     this.fees = args.nextArray(ArrayTypes.U256)
 
-    return {
-      instance: this,
-      offset: args.getOffset()
-    }
+    return { instance: this, offset: args.getOffset() }
   }
 }
 

@@ -30,10 +30,7 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
     this.createdByOwner = args.nextBool()
     this.isBlacklisted = args.nextBool()
 
-    return {
-      instance: this,
-      offset: args.getOffset()
-    }
+    return { instance: this, offset: args.getOffset() }
   }
 }
 
@@ -83,33 +80,29 @@ export interface LiquidityDistributionParams {
   distributionY: bigint[]
 }
 
-export interface AddLiquidityParameters {
+export type BaseLiquidityParameters = {
   token0: string
   token1: string
   binStep: number
-  amount0: bigint
-  amount1: bigint
   amount0Min: bigint
   amount1Min: bigint
+  to: string
+  deadline: number
+}
+
+export type AddLiquidityParameters = BaseLiquidityParameters & {
+  amount0: bigint
+  amount1: bigint
   activeIdDesired: number
   idSlippage: number
   deltaIds: number[]
   distributionX: bigint[]
   distributionY: bigint[]
-  to: string
-  deadline: number
 }
 
-export interface RemoveLiquidityParameters {
-  token0: string
-  token1: string
-  binStep: number
-  amount0Min: bigint
-  amount1Min: bigint
+export type RemoveLiquidityParameters = BaseLiquidityParameters & {
   ids: number[]
   amounts: bigint[]
-  to: string
-  deadline: number
 }
 
 export const LIQUIDITY_ROUTER_METHODS = [

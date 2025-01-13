@@ -39,10 +39,7 @@ export class LimitOrder implements ISerializable<LimitOrder> {
     this.deadline = args.nextU64()
     this.id = Number(args.nextU32())
 
-    return {
-      instance: this,
-      offset: args.getOffset()
-    }
+    return { instance: this, offset: args.getOffset() }
   }
 }
 
@@ -104,9 +101,6 @@ export class Transaction implements ISerializable<Transaction> {
     this.timestamp = args.nextU64()
     this.executed = args.nextBool()
 
-    return {
-      instance: this,
-      offset: args.getOffset()
-    }
+    return { instance: this, offset: args.getOffset() }
   }
 }

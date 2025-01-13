@@ -375,7 +375,7 @@ export class PairV2 {
           if (!isNative) args.addString(options.token0)
           args
             .addString(options.token1)
-            .addU32(BigInt(options.binStep))
+            .addU64(BigInt(options.binStep))
             .addU256(options.amount0Min)
             .addU256(options.amount1Min)
             .addArray(options.ids.map(BigInt), ArrayTypes.U64)
