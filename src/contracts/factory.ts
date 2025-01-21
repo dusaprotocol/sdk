@@ -48,6 +48,8 @@ export class IFactory extends IBaseContract {
         .addString(token0Address)
         .addString(token1Address)
         .serialize()
-    }).then((res) => bytesToArray<number>(res.value, ArrayTypes.U32))
+    }).then((res) =>
+      bytesToArray<bigint>(res.value, ArrayTypes.U32).map(Number)
+    )
   }
 }

@@ -24,6 +24,7 @@ import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
 import { Account, Web3Provider } from '@massalabs/massa-web3'
 import { PairV2 } from '../v2entities'
+import invariant from 'tiny-invariant'
 
 describe('isSwapMethod', () => {
   it('should return true for valid swap method', () => {
@@ -122,7 +123,7 @@ describe('decodeLiquidityTx', async () => {
       amount1: 2222222n,
       distributionX: [],
       distributionY: [],
-      deltaIds: [],
+      deltaIds: [1],
       idSlippage: 0
     }
     const params = pair.liquidityCallParameters(options)
@@ -132,6 +133,8 @@ describe('decodeLiquidityTx', async () => {
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)
+    invariant('distributionX' in decoded)
+    expect(decoded.deltaIds).toStrictEqual(options.deltaIds)
   })
   it('works for withdrawal', async () => {
     const options: RemoveLiquidityParameters = {

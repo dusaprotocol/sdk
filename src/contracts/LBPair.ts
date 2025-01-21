@@ -110,7 +110,8 @@ export class ILBPair extends IBaseContract {
       parameter: new Args().addString(user).serialize()
     }).then((res) =>
       new Args(res.value)
-        .nextArray<number>(ArrayTypes.U32)
+        .nextArray<bigint>(ArrayTypes.U32)
+        .map(Number)
         .sort((a, b) => a - b)
     )
   }

@@ -134,7 +134,7 @@ export const decodeLiquidityTx = (
     const amount1Min = args.nextU256()
     const activeIdDesired = Number(args.nextU64())
     const idSlippage = Number(args.nextU64())
-    const deltaIds = args.nextArray<number>(ArrayTypes.I64)
+    const deltaIds = args.nextArray<bigint>(ArrayTypes.I64).map(Number)
     // const distribution0 = args.nextArray<bigint>(ArrayTypes.U256);
     // const distribution1 = args.nextArray<bigint>(ArrayTypes.U256);
     const to = args.nextString()
@@ -159,7 +159,7 @@ export const decodeLiquidityTx = (
   } else {
     const amount0Min = args.nextU256()
     const amount1Min = args.nextU256()
-    const ids = args.nextArray<number>(ArrayTypes.U64)
+    const ids = args.nextArray<bigint>(ArrayTypes.U64).map(Number)
     const amounts = args.nextArray<bigint>(ArrayTypes.U256)
     const to = args.nextString()
     const deadline = Number(args.nextU64())
