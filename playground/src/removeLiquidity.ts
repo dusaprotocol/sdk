@@ -8,18 +8,18 @@ import {
   ILBPair,
   Percent
 } from '@dusalabs/sdk'
-import { WalletClient } from '@massalabs/massa-web3'
-import { awaitFinalization, createClient, logEvents } from './utils'
+import { createClient, logEvents } from './utils'
+import { Account } from '@massalabs/massa-web3'
 
 export const removeLiquidity = async () => {
   console.log('\n------- removeLiquidity() called -------\n')
 
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
-  const account = await WalletClient.getAccountFromSecretKey(privateKey)
-  const address = account.address
+  const account = await Account.fromPrivateKey(privateKey)
+  const address = account.address.toString()
   if (!address) throw new Error('Missing address in account')
-  const client = await createClient(account)
+  const client = createClient(account)
   const CHAIN_ID = ChainId.BUILDNET
 
   // initialize tokens
@@ -47,8 +47,8 @@ export const removeLiquidity = async () => {
 
   const approved = await pairContract.isApprovedForAll(address, router)
   if (!approved) {
-    const txIdApprove = await pairContract.setApprovalForAll(router, true)
-    console.log('txIdApprove', txIdApprove)
+    const txApprove = await pairContract.setApprovalForAll(router, true)
+    console.log('txIdApprove', txApprove.id)
   }
 
   const userPositionIds = await pairContract.getUserBinIds(address)
@@ -88,10 +88,10 @@ export const removeLiquidity = async () => {
   })
 
   // call methods
-  const txId = await new IRouter(router, client).remove(params)
-  console.log('txId', txId)
+  const tx = await new IRouter(router, client).remove(params)
+  console.log('txId', tx.id)
 
   // await tx confirmation and log events
-  await awaitFinalization(client, txId)
-  logEvents(client, txId)
+  await tx.waitSpeculativeExecution()
+  logEvents(client, tx.id)
 }

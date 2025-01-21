@@ -1,15 +1,10 @@
-import {
-  Args,
-  IContractReadOperationResponse,
-  IDeserializedResult,
-  ISerializable
-} from '@massalabs/massa-web3'
+import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 
 export class Tx implements ISerializable<Tx> {
   constructor(
     public method: string = '',
-    public args: Uint8Array,
+    public args: Uint8Array = new Uint8Array(),
     public to: string = ''
   ) {}
 
@@ -33,9 +28,7 @@ export class Tx implements ISerializable<Tx> {
 }
 
 export class IMulticall extends IBaseContract {
-  async aggregateMulticall(
-    data: Tx[]
-  ): Promise<IContractReadOperationResponse> {
+  async aggregateMulticall(data: Tx[]) {
     return this.read({
       targetFunction: 'multicall',
       parameter: new Args().addSerializableObjectArray(data).serialize()

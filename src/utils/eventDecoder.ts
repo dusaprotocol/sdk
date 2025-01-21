@@ -1,4 +1,4 @@
-import { bytesToU256 } from '@massalabs/massa-web3'
+import { U256 } from '@massalabs/massa-web3'
 
 const strEncodeUTF16 = (str: string): Uint8Array => {
   const buf = new ArrayBuffer(str.length * 2)
@@ -228,7 +228,7 @@ export class EventDecoder {
   // MISC
 
   static decodeU256 = (bytes: string): bigint =>
-    bytesToU256(strEncodeUTF16(bytes))
+    U256.fromBytes(strEncodeUTF16(bytes))
 
   static decodeError = (bytes: string): string => {
     const errorSplit = bytes.split('error: ')

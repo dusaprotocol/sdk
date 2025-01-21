@@ -15,8 +15,8 @@ import {
   parseUnits,
   QuoterHelper
 } from '@dusalabs/sdk'
-import { WalletClient } from '@massalabs/massa-web3'
-import { awaitFinalization, createClient, logEvents } from './utils'
+import { Account } from '@massalabs/massa-web3'
+import { createClient, logEvents } from './utils'
 
 export const swapAmountIn = async (executeSwap = false) => {
   console.log('\n------- swapAmountIn() called -------\n')
@@ -24,14 +24,15 @@ export const swapAmountIn = async (executeSwap = false) => {
   // Init constants
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
-  const account = await WalletClient.getAccountFromSecretKey(privateKey)
+  const account = await Account.fromPrivateKey(privateKey)
   if (!account.address) throw new Error('Missing address in account')
-  const client = await createClient(account)
+  const client = createClient(account)
 
   const CHAIN_ID = ChainId.BUILDNET
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
   const WETH = _WETH[CHAIN_ID]
+  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // Init: user inputs
   const inputToken = WMAS
@@ -57,33 +58,31 @@ export const swapAmountIn = async (executeSwap = false) => {
     client,
     CHAIN_ID
   )
-
+  console.log('bestTrade', bestTrade.toLog())
   if (!bestTrade || !executeSwap) return
 
   // increase allowance
-  const txIdAllowance = await new IERC20(inputToken.address, client).approve(
-    LB_ROUTER_ADDRESS[CHAIN_ID],
+  const txAllowance = await new IERC20(inputToken.address, client).approve(
+    router,
     bestTrade.inputAmount.raw
   )
 
-  if (txIdAllowance) {
-    console.log('txIdAllowance', txIdAllowance)
-    await awaitFinalization(client, txIdAllowance)
-    logEvents(client, txIdAllowance)
+  if (txAllowance) {
+    console.log('txIdAllowance', txAllowance)
+    await txAllowance.waitSpeculativeExecution()
+    logEvents(client, txAllowance.id)
   }
 
   // execute trade
   const params = bestTrade.swapCallParameters({
     ttl: 1000 * 60 * 10, // 10 minutes
-    recipient: account.address,
+    recipient: account.address.toString(),
     allowedSlippage: new Percent(1n, 100n)
   })
-  const txId = await new IRouter(LB_ROUTER_ADDRESS[CHAIN_ID], client).swap(
-    params
-  )
-  console.log('txId', txId)
+  const tx = await new IRouter(router, client).swap(params)
+  console.log('txId', tx.id)
 
   // await tx confirmation and log events
-  await awaitFinalization(client, txId)
-  logEvents(client, txId)
+  await tx.waitSpeculativeExecution()
+  logEvents(client, tx.id)
 }

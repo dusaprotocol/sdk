@@ -7,12 +7,14 @@ import {
   WMAS as _WMAS
 } from '@dusalabs/sdk'
 import { createClient } from './utils'
+import { Account } from '@massalabs/massa-web3'
 
 export const getLBPairsAndActiveIds = async () => {
   console.log('\n------- getLBPairsAndActiveIds() called -------\n')
 
   // init consts
-  const client = await createClient()
+  const keyPair = await Account.generate()
+  const client = createClient(keyPair)
 
   const CHAIN_ID = ChainId.BUILDNET
   const USDC = _USDC[CHAIN_ID]

@@ -12,15 +12,15 @@ type GetSwapOutParams = GetSwapParams & { amountIn: bigint }
 export class IRouter extends IBaseContract {
   // EXECUTE
 
-  async swap(params: SwapParameters): Promise<string> {
+  async swap(params: SwapParameters) {
     return this.execute(params)
   }
 
-  async add(params: LiquidityParameters): Promise<string> {
+  async add(params: LiquidityParameters) {
     return this.execute(params)
   }
 
-  async remove(params: LiquidityParameters): Promise<string> {
+  async remove(params: LiquidityParameters) {
     return this.execute(params)
   }
 
@@ -30,15 +30,16 @@ export class IRouter extends IBaseContract {
     activeId: number,
     binStep: number,
     masToSend: bigint
-  ): Promise<string> {
+  ) {
     return this.call({
       targetFunction: 'createLBPair',
       coins: masToSend,
       parameter: new Args()
         .addString(tokenA)
         .addString(tokenB)
-        .addU32(activeId)
-        .addU32(binStep)
+        .addU32(BigInt(activeId))
+        .addU32(BigInt(binStep))
+        .serialize()
     })
   }
 
@@ -46,7 +47,7 @@ export class IRouter extends IBaseContract {
     return this.call({
       targetFunction: params.methodName,
       coins: params.value,
-      parameter: params.args
+      parameter: params.args.serialize()
     })
   }
 
@@ -61,8 +62,9 @@ export class IRouter extends IBaseContract {
         .addString(params.pairAddress)
         .addU256(params.amountOut)
         .addBool(params.swapForY)
+        .serialize()
     }).then((result) => {
-      const args = new Args(result.returnValue)
+      const args = new Args(result.value)
       return { amountIn: args.nextU256(), feesIn: args.nextU256() }
     })
   }
@@ -76,8 +78,9 @@ export class IRouter extends IBaseContract {
         .addString(params.pairAddress)
         .addU256(params.amountIn)
         .addBool(params.swapForY)
+        .serialize()
     }).then((result) => {
-      const args = new Args(result.returnValue)
+      const args = new Args(result.value)
       return { amountOut: args.nextU256(), feesIn: args.nextU256() }
     })
   }

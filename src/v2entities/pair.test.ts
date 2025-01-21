@@ -3,20 +3,13 @@ import { ChainId } from '../constants'
 import { PairV2 } from './pair'
 import { Token, USDC as _USDC, WETH as _WETH } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
-import {
-  CHAIN_ID as MASSA_CHAIN_ID,
-  ClientFactory,
-  DefaultProviderUrls
-} from '@massalabs/massa-web3'
 import { describe, it, expect } from 'vitest'
+import { Account, Web3Provider } from '@massalabs/massa-web3'
 
 describe('PairV2 entity', async () => {
   const CHAIN_ID = ChainId.MAINNET
-  const client = await ClientFactory.createDefaultClient(
-    DefaultProviderUrls.MAINNET,
-    MASSA_CHAIN_ID.MainNet,
-    true
-  )
+  const baseAccount = await Account.generate()
+  const client = Web3Provider.mainnet(baseAccount)
 
   // init tokens
   const USDC = _USDC[CHAIN_ID]

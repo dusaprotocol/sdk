@@ -12,8 +12,6 @@ import {
   RemoveLiquidityParameters,
   SWAP_ROUTER_METHODS
 } from '../types'
-import { CHAIN_ID as MASSA_CHAIN_ID } from '@massalabs/web3-utils'
-import { ClientFactory, DefaultProviderUrls } from '@massalabs/massa-web3'
 import { ChainId } from '../constants'
 import {
   Percent,
@@ -24,7 +22,9 @@ import {
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
+import { Account, Web3Provider } from '@massalabs/massa-web3'
 import { PairV2 } from '../v2entities'
+import invariant from 'tiny-invariant'
 
 describe('isSwapMethod', () => {
   it('should return true for valid swap method', () => {
@@ -47,11 +47,8 @@ describe('isLiquidtyMethod', () => {
 
 describe('decodeSwapTx', async () => {
   const CHAIN_ID = ChainId.MAINNET
-  const client = await ClientFactory.createDefaultClient(
-    DefaultProviderUrls.MAINNET,
-    MASSA_CHAIN_ID.MainNet,
-    true
-  )
+  const baseAccount = await Account.generate()
+  const client = Web3Provider.mainnet(baseAccount)
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
@@ -93,7 +90,6 @@ describe('decodeSwapTx', async () => {
   it('method requiring storage fee', async () => {
     const typedValueInParsed = parseUnits('5', WMAS.decimals).toString()
     const decoded = await decode(WMAS, USDC, typedValueInParsed)
-
     expect(decoded.amountIn).toStrictEqual(BigInt(typedValueInParsed))
   })
   it('method not requiring storage fee', async () => {
@@ -127,7 +123,7 @@ describe('decodeLiquidityTx', async () => {
       amount1: 2222222n,
       distributionX: [],
       distributionY: [],
-      deltaIds: [],
+      deltaIds: [1],
       idSlippage: 0
     }
     const params = pair.liquidityCallParameters(options)
@@ -137,6 +133,8 @@ describe('decodeLiquidityTx', async () => {
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)
+    invariant('distributionX' in decoded)
+    expect(decoded.deltaIds).toStrictEqual(options.deltaIds)
   })
   it('works for withdrawal', async () => {
     const options: RemoveLiquidityParameters = {
