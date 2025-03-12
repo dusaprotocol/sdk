@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { EventDecoder } from './eventDecoder'
 import { decodeInsufficientBalance } from '../contracts'
 
-const DEPOSIT_EVENT =
-  'DEPOSITED_TO_BIN:AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX;?!8391258;?!�\r\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;?!얇࿨\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'
-const SWAP_EVENT =
-  'SWAP:AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar;?!8391258;?!true;?!䄥\x0F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!௟\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00;?!0;?!ě\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+const DEPOSIT_EVENT_BASE64 =
+  'REVQT1NJVEVEX1RPX0JJTjpBVTFSdGQ0QkZSTjhzeWlHaWdDd3J1Sk10TWhIV2VidkJxbllGeVBEYzNTVmN0bkpxdllYOz8hODM5MTI1ODs/Ie+/vQ0AAAAAAAAAAAAAAAAAADs/IeyWh+C/qAEAAAAAAAAAAAAAAAAA'
+const SWAP_EVENT_BASE64 =
+  'U1dBUDpBVTFjQmlyVG5vMUZyTVZwVU1UOTZLaVE5N3dCcXFNMXo5dUpMcjNYWktRd0pqRkxQRWFyOz8hODM5MTI1ODs/IXRydWU7PyHkhKUPAAAAAAAAAAAAAAAAAAA7PyHumLvgr58AAAAAAAAAAAAAAAAAADs/ITA7PyHEmwAAAAAAAAAAAAAAAAAAAA=='
 const EVENT = 'SWAP:aaa;?!bbb;?!c:c;?!ddd'
 const ERROR_EVENT1 =
   '{"massa_execution_error":"Runtime error: runtime error when executing operation O1fmxudzfQWK6sFxnoqVJ7LBa4xS28wh7ZLYRgbp3pU2xLtahRt: VM Error in CallSC context: VM execution error: RuntimeError: Runtime error: error transferring 21 coins from AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi to AS1vnaHDB5ixK56S1LPh2nGgsaHXjoeaWuPnh3ggiK6BqTBeGM2B: Runtime error: failed to transfer 21 coins from spending address AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi due to insufficient balance 15.1897"}'
@@ -14,6 +14,7 @@ const ERROR_EVENT2 =
 
 describe('decode', () => {
   it('deposit', () => {
+    const DEPOSIT_EVENT = Buffer.from(DEPOSIT_EVENT_BASE64, 'base64').toString()
     const { to, id, amountX, amountY } =
       EventDecoder.decodeLiquidity(DEPOSIT_EVENT)
     expect(to).toBe('AU1Rtd4BFRN8syiGigCwruJMtMhHWebvBqnYFyPDc3SVctnJqvYX')
@@ -22,6 +23,7 @@ describe('decode', () => {
     expect(amountY).toBe(4561880455n)
   })
   it('swap', () => {
+    const SWAP_EVENT = Buffer.from(SWAP_EVENT_BASE64, 'base64').toString()
     const {
       to,
       activeId,
