@@ -51,6 +51,7 @@ export interface DCA {
   tokenPath: Token[]
   startTime: number
   endTime: number
+  threshold: number
 }
 
 export interface StartDCAParameters {
@@ -58,6 +59,7 @@ export interface StartDCAParameters {
   interval: number
   nbOfDCA: number
   tokenPath: string[]
+  threshold: number
   startIn: number
 }
 
