@@ -16,20 +16,18 @@ export class IBaseContract {
   constructor(
     public address: string,
     protected client: Client,
-    protected fee: bigint = MassaUnits.oneMassa / 100n
+    public shouldEstimateCoins = true,
+    public shouldEstimateGas = true,
+    public fee: bigint = MassaUnits.oneMassa / 100n
   ) {}
 
   public async call(
-    params: BaseCallData & {
-      maxGas?: bigint
-    },
-    estimateCoins = true,
-    estimateGas = true
+    params: BaseCallData & { maxGas?: bigint }
   ): Promise<string> {
-    const coinsNeeded = estimateCoins
+    const coinsNeeded = this.shouldEstimateCoins
       ? await this.estimateCoins(params)
       : params.coins
-    const gasNeeded = estimateGas
+    const gasNeeded = this.shouldEstimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
     return this.client.smartContracts().callSmartContract({

@@ -171,10 +171,7 @@ export class EventDecoder {
   static decodeDCA = (bytes: string): DCAEvent => {
     const [user, id] = EventDecoder.extractParams(bytes)
 
-    return {
-      user,
-      id: parseInt(id)
-    }
+    return { user, id: parseInt(id) }
   }
 
   static decodeDCAExecution = (bytes: string): DCAExecutionEvent => {
@@ -209,9 +206,7 @@ export class EventDecoder {
   static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
     const [id] = EventDecoder.extractParams(bytes)
 
-    return {
-      id: parseInt(id)
-    }
+    return { id: parseInt(id) }
   }
 
   static decodeLimitOrderExecution = (
