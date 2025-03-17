@@ -31,6 +31,6 @@ export class IQuoter extends IBaseContract {
         .addU256(BigInt(amount))
         .addBool(isExactIn)
         .serialize()
-    }).then((result) => new Quote().deserialize(result.returnValue).instance)
+    }).then((result) => new Quote().deserialize(result.value).instance)
   }
 }

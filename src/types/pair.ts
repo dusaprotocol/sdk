@@ -12,7 +12,7 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
 
   serialize(): Uint8Array {
     const args = new Args()
-      .addU32(this.binStep)
+      .addU32(BigInt(this.binStep))
       .addString(this.LBPair)
       .addBool(this.createdByOwner)
       .addBool(this.isBlacklisted)
@@ -25,7 +25,7 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
   ): IDeserializedResult<LBPairInformation> {
     const args = new Args(data, offset)
 
-    this.binStep = args.nextU32()
+    this.binStep = Number(args.nextU32())
     this.LBPair = args.nextString()
     this.createdByOwner = args.nextBool()
     this.isBlacklisted = args.nextBool()

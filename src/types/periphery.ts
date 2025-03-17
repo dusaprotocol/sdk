@@ -17,12 +17,12 @@ export class LimitOrder implements ISerializable<LimitOrder> {
     const args = new Args()
       .addString(this.pair)
       .addBool(this.swapForY)
-      .addU32(this.binId)
+      .addU32(BigInt(this.binId))
       .addU256(this.amountIn)
       .addU256(this.amountOutMin)
       .addString(this.to)
       .addU64(this.deadline)
-      .addU32(this.id)
+      .addU32(BigInt(this.id))
 
     return Uint8Array.from(args.serialize())
   }
@@ -32,12 +32,12 @@ export class LimitOrder implements ISerializable<LimitOrder> {
 
     this.pair = args.nextString()
     this.swapForY = args.nextBool()
-    this.binId = args.nextU32()
+    this.binId = Number(args.nextU32())
     this.amountIn = args.nextU256()
     this.amountOutMin = args.nextU256()
     this.to = args.nextString()
     this.deadline = args.nextU64()
-    this.id = args.nextU32()
+    this.id = Number(args.nextU32())
 
     return { instance: this, offset: args.getOffset() }
   }
@@ -51,6 +51,7 @@ export interface DCA {
   tokenPath: Token[]
   startTime: number
   endTime: number
+  threshold: number
 }
 
 export interface StartDCAParameters {
@@ -58,6 +59,7 @@ export interface StartDCAParameters {
   interval: number
   nbOfDCA: number
   tokenPath: string[]
+  threshold: number
   startIn: number
 }
 

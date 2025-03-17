@@ -14,7 +14,7 @@ import {
   Quote,
   RouterPathParameters
 } from '../types'
-import { Args, ArrayTypes, Client, MassaUnits } from '@massalabs/massa-web3'
+import { Args, ArrayTypes, Provider } from '@massalabs/massa-web3'
 import {
   CurrencyAmount,
   Fraction,
@@ -25,6 +25,7 @@ import {
   WMAS as _WMAS
 } from '../v1entities'
 import { IMulticall, IQuoter, Tx } from '../contracts'
+import { MassaUnits } from '../constants'
 
 /** Class representing a trade */
 export class TradeV2 {
@@ -159,7 +160,7 @@ export class TradeV2 {
     const { methodName, args, value } = ((
       tradeType: TradeType
     ): SwapParameters => {
-      const args: Args = new Args()
+      const args = new Args()
       let value = SWAP_STORAGE_COST
       switch (tradeType) {
         case TradeType.EXACT_INPUT:
@@ -300,7 +301,7 @@ export class TradeV2 {
    * @param {Token} tokenOut
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Client} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -310,7 +311,7 @@ export class TradeV2 {
     tokenOut: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Client,
+    client: Provider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -334,7 +335,7 @@ export class TradeV2 {
    * @param {Token} tokenIn
    * @param {boolean} isNativeIn
    * @param {boolean} isNativeOut
-   * @param {Client} client
+   * @param {Provider} client
    * @param {ChainId} chainId
    * @returns {TradeV2[]}
    */
@@ -344,7 +345,7 @@ export class TradeV2 {
     tokenIn: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Client,
+    client: Provider,
     chainId: ChainId
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -366,7 +367,7 @@ export class TradeV2 {
     otherToken: Token,
     isNativeIn: boolean,
     isNativeOut: boolean,
-    client: Client,
+    client: Provider,
     chainId: ChainId
   ): Promise<(TradeV2 | undefined)[]> {
     const tokenIn = isExactIn ? tokenAmount.token : otherToken
@@ -398,7 +399,7 @@ export class TradeV2 {
     )
       .aggregateMulticall(txs)
       .then((res) => {
-        const bs = new Args(res.returnValue)
+        const bs = new Args(res.value)
         return routes.map(
           () => new Quote().deserialize(bs.nextUint8Array(), 0).instance
         )
