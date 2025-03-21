@@ -368,7 +368,8 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean,
     client: Provider,
-    chainId: ChainId
+    chainId: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[chainId]
   ): Promise<(TradeV2 | undefined)[]> {
     const tokenIn = isExactIn ? tokenAmount.token : otherToken
     const tokenOut = isExactIn ? otherToken : tokenAmount.token
@@ -389,7 +390,7 @@ export class TradeV2 {
             .addU256(tokenAmount.raw)
             .serialize()
         ),
-        LB_QUOTER_ADDRESS[chainId]
+        quoterAddress
       )
     })
 
@@ -406,7 +407,7 @@ export class TradeV2 {
       })
       .catch((err) => {
         console.log('Error fetching quotes:', err.message)
-        const quoter = new IQuoter(LB_QUOTER_ADDRESS[chainId], client)
+        const quoter = new IQuoter(quoterAddress, client)
         return Promise.all(
           routes.map(async (route) => {
             try {
