@@ -168,9 +168,10 @@ export class TradeV2 {
             const methodName = useFeeOnTransfer
               ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
               : 'swapExactMASForTokens'
+            args.addU256(amountOut).addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (this.quote.isLegacy.length)
+              args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
             args
-              .addU256(amountOut)
-              .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))

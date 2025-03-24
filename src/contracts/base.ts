@@ -30,7 +30,7 @@ export class IBaseContract {
     public fee: bigint = MassaUnits.oneMassa / 100n
   ) {}
 
-  public async call(params: BaseCallDataWithGas): Promise<string> {
+  public async call(params: BaseCallDataWithGas): Promise<Operation> {
     const coinsNeeded = this.shouldEstimateCoins
       ? await this.estimateCoins(params)
       : params.coins

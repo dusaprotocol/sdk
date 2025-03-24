@@ -11,6 +11,7 @@ export class Quote implements ISerializable<Quote> {
     public route: string[] = [],
     public pairs: string[] = [],
     public binSteps: bigint[] = [],
+    public isLegacy: boolean[] = [],
     public amounts: bigint[] = [],
     public virtualAmountsWithoutSlippage: bigint[] = [],
     public fees: bigint[] = []
@@ -90,6 +91,7 @@ export interface SwapSettings {
   amountIn: bigint
   amountOut: bigint
   binSteps: bigint[]
+  isLegacy: boolean[]
   path: string[]
   to: string
   deadline: number

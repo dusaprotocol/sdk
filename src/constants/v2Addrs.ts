@@ -10,9 +10,19 @@ export const LB_QUOTER_ADDRESS: AddressMap = {
   [ChainId.MAINNET]: 'AS128hBKoHbgXdiBXp8ji2KuT8krDFSjLnakw38GN4xcL3XyR9yFF'
 }
 
+export const V2_LB_QUOTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: ''
+}
+
 export const LB_ROUTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS15VtUroncrrPHEsRBsdzRjyomJ42emZWdSDEbCj4gU8YctrAU7',
   [ChainId.MAINNET]: 'AS12UMSUxgpRBB6ArZDJ19arHoxNkkpdfofQGekAiAJqsuE6PEFJy'
+}
+
+export const V2_LB_ROUTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: AddressMap = {
