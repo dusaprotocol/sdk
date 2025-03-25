@@ -6,12 +6,12 @@ type AddressMap = { [chainId in ChainId]: string }
  * DEX core SDK
  */
 export const LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1q45sfLjzGd2LrRQYLfhimXnxre8SqDeyvRE7Y4aQuH6MheHb7',
-  [ChainId.MAINNET]: 'AS128hBKoHbgXdiBXp8ji2KuT8krDFSjLnakw38GN4xcL3XyR9yFF'
+  [ChainId.BUILDNET]: 'AS1Wse7vxWvB1iP1DwNQTQQctwU1fQ1jrq5JgdSPZH132UYrYrXF',
+  [ChainId.MAINNET]: 'AS12VBT5xeL3XdXhLwnpyMVB8re5RcMuW4Z8ragCKEKnDDCEkYjXL'
 }
 
 export const V2_LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: '',
+  [ChainId.BUILDNET]: 'AS1fV48U3PZvbc8KRSiCcsCW2x2Vn2SK9visjVrG3KKcdexbqevH',
   [ChainId.MAINNET]: ''
 }
 
@@ -21,7 +21,12 @@ export const LB_ROUTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_ROUTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: '',
+  [ChainId.BUILDNET]: 'AS15VtUroncrrPHEsRBsdzRjyomJ42emZWdSDEbCj4gU8YctrAU7',
+  [ChainId.MAINNET]: ''
+}
+
+export const V0_ROUTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: 'AS1bCBYc1sbWBgDs68Cfv89xtLSyH93Yd3RjBJzqq5QYEH4iaDRJ',
   [ChainId.MAINNET]: ''
 }
 

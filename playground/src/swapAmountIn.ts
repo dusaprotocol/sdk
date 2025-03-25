@@ -2,7 +2,7 @@ import {
   ChainId,
   IERC20,
   IRouter,
-  LB_ROUTER_ADDRESS,
+  V2_LB_ROUTER_ADDRESS,
   PairV2,
   Percent,
   RouteV2,
@@ -13,7 +13,8 @@ import {
   WETH as _WETH,
   WMAS as _WMAS,
   parseUnits,
-  QuoterHelper
+  QuoterHelper,
+  V2_LB_QUOTER_ADDRESS
 } from '@dusalabs/sdk'
 import { Account } from '@massalabs/massa-web3'
 import { createClient, logEvents } from './utils'
@@ -32,19 +33,19 @@ export const swapAmountIn = async (executeSwap = false) => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
   const WETH = _WETH[CHAIN_ID]
-  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // Init: user inputs
-  const inputToken = WMAS
-  const outputToken = WETH
+  const inputToken = USDC
+  const outputToken = WMAS
   const typedValueIn = '20' // user string input
   const typedValueInParsed = parseUnits(
     typedValueIn,
     inputToken.decimals
   ).toString() // returns 20000000
   const amountIn = new TokenAmount(inputToken, typedValueInParsed) // wrap into TokenAmount
-  const isNativeIn = true
-  const isNativeOut = false
+  const isNativeIn = inputToken === WMAS
+  const isNativeOut = outputToken === WMAS
   const maxHops = 3
 
   const bestTrade = await QuoterHelper.findBestPath(
@@ -56,7 +57,8 @@ export const swapAmountIn = async (executeSwap = false) => {
     true,
     maxHops,
     client,
-    CHAIN_ID
+    CHAIN_ID,
+    V2_LB_QUOTER_ADDRESS[CHAIN_ID]
   )
   console.log('bestTrade', bestTrade.toLog())
   if (!bestTrade || !executeSwap) return

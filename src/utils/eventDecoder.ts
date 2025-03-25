@@ -22,9 +22,28 @@ export type SwapEvent = {
   feesTotal: bigint
 }
 
+export type SwapEventV2 = {
+  to: string
+  startId: number
+  activeId: number
+  swapForY: boolean
+  amountInToBin: bigint
+  amountOutOfBin: bigint
+  feesTotal: bigint[]
+  volatilityAccumulated: number
+}
+
 export type LiquidityEvent = {
   to: string
   id: number
+  amountX: bigint
+  amountY: bigint
+}
+
+export type LiquidityEventV2 = {
+  to: string
+  startId: number
+  endId: number
   amountX: bigint
   amountY: bigint
 }
@@ -95,12 +114,50 @@ export class EventDecoder {
     }
   }
 
+  static decodeSwapV2 = (bytes: string): SwapEventV2 => {
+    const [
+      to,
+      startId,
+      activeId,
+      swapForY,
+      amountInToBin,
+      amountOutOfBin,
+      ...feesTotal
+      // volatilityAccumulated
+    ] = EventDecoder.extractParams(bytes)
+    const volatilityAccumulated = parseInt(feesTotal.pop() as string)
+
+    return {
+      to,
+      startId: parseInt(startId),
+      activeId: parseInt(activeId),
+      swapForY: swapForY === 'true',
+      amountInToBin: EventDecoder.decodeU256(amountInToBin),
+      amountOutOfBin: EventDecoder.decodeU256(amountOutOfBin),
+      volatilityAccumulated,
+      feesTotal: feesTotal.map((f) => EventDecoder.decodeU256(f))
+    }
+  }
+
   static decodeLiquidity = (bytes: string): LiquidityEvent => {
     const [to, id, amountX, amountY] = EventDecoder.extractParams(bytes)
 
     return {
       to,
       id: parseInt(id),
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
+    }
+  }
+
+  static decodeLiquidityV2 = (bytes: string): LiquidityEventV2 => {
+    const [to, startId, endId, amountX, amountY] =
+      EventDecoder.extractParams(bytes)
+
+    return {
+      to,
+      startId: parseInt(startId),
+      endId: parseInt(endId),
       amountX: EventDecoder.decodeU256(amountX),
       amountY: EventDecoder.decodeU256(amountY)
     }

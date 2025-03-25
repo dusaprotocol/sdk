@@ -2,7 +2,8 @@ import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
 import {
   ChainId,
-  LB_QUOTER_ADDRESS,
+  // LB_QUOTER_ADDRESS,
+  V2_LB_QUOTER_ADDRESS as LB_QUOTER_ADDRESS,
   MULTICALL_ADDRESS,
   TradeType
 } from '../constants'
@@ -304,6 +305,7 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
+   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
    * @returns {TradeV2[]}
    */
   public static async getTradesExactIn(
@@ -313,7 +315,8 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean,
     client: Provider,
-    chainId: ChainId
+    chainId: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[chainId]
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       true,
@@ -323,7 +326,8 @@ export class TradeV2 {
       isNativeIn,
       isNativeOut,
       client,
-      chainId
+      chainId,
+      quoterAddress
     )
   }
 
@@ -338,6 +342,7 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
+   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
    * @returns {TradeV2[]}
    */
   public static async getTradesExactOut(
@@ -347,7 +352,8 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean,
     client: Provider,
-    chainId: ChainId
+    chainId: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[chainId]
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       false,
@@ -357,7 +363,8 @@ export class TradeV2 {
       isNativeIn,
       isNativeOut,
       client,
-      chainId
+      chainId,
+      quoterAddress
     )
   }
 
@@ -402,9 +409,12 @@ export class TradeV2 {
       .aggregateMulticall(txs)
       .then((res) => {
         const bs = new Args(res.value)
-        return routes.map(
-          () => new Quote().deserialize(bs.nextUint8Array(), 0).instance
-        )
+        return routes.map(() => {
+          const r = bs.nextUint8Array()
+          if (!r.length) throw new Error('No result')
+
+          return new Quote().deserialize(r).instance
+        })
       })
       .catch((err) => {
         console.log('Error fetching quotes:', err.message)
