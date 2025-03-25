@@ -58,6 +58,7 @@ export interface StartDCAParameters {
   interval: number
   nbOfDCA: number
   tokenPath: string[]
+  threshold: number
   startIn: number
 }
 
