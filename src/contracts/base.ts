@@ -27,10 +27,11 @@ export class IBaseContract {
     protected client: Provider,
     public shouldEstimateCoins = true,
     public shouldEstimateGas = true,
+    public finalStorage = false,
     public fee: bigint = MassaUnits.oneMassa / 100n
   ) {}
 
-  public async call(params: BaseCallDataWithGas): Promise<string> {
+  public async call(params: BaseCallDataWithGas): Promise<Operation> {
     const coinsNeeded = this.shouldEstimateCoins
       ? await this.estimateCoins(params)
       : params.coins
@@ -48,22 +49,25 @@ export class IBaseContract {
     return new SmartContract(this.client, this.address).read(
       params.targetFunction,
       Uint8Array.from(params.parameter),
-      { maxGas: params.maxGas || MAX_GAS_CALL }
+      { maxGas: params.maxGas || MAX_GAS_CALL, caller: params.caller }
     )
   }
 
-  public async extract(keys: string[], final = false): Promise<Uint8Array[]> {
-    return (this.client as any).readStorage(this.address, keys, final)
+  public async extract(keys: string[]): Promise<Uint8Array[]> {
+    return (this.client as any).readStorage(
+      this.address,
+      keys,
+      this.finalStorage
+    )
   }
 
-  public async simulate(params: BaseCallData) {
-    const caller: string = (this.client as any).address
+  public async simulate(params: BaseCallData, caller?: string) {
     if (!caller) throw new Error('No caller address')
 
     return this.read({
       ...params,
       maxGas: MAX_GAS_CALL,
-      caller
+      caller: caller || (this.client as any).address
     })
   }
 

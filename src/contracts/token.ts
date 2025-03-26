@@ -59,6 +59,20 @@ export class IERC20 extends IBaseContract {
     })
   }
 
+  async increaseAllowance(spender: string, amount: bigint) {
+    return this.call({
+      targetFunction: 'increaseAllowance',
+      parameter: new Args().addString(spender).addU256(amount).serialize()
+    })
+  }
+
+  async decreaseAllowance(spender: string, amount: bigint) {
+    return this.call({
+      targetFunction: 'decreaseAllowance',
+      parameter: new Args().addString(spender).addU256(amount).serialize()
+    })
+  }
+
   async transfer(to: string, amount: bigint) {
     return this.call({
       targetFunction: 'transfer',
