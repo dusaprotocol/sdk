@@ -11,12 +11,12 @@ export const LB_QUOTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1fV48U3PZvbc8KRSiCcsCW2x2Vn2SK9visjVrG3KKcdexbqevH',
+  [ChainId.BUILDNET]: 'AS123qwxh1sNdFSJ3u3rajvM6QnkRVcMrdTdQhgT1PvsmpiHtAPnb',
   [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS15VtUroncrrPHEsRBsdzRjyomJ42emZWdSDEbCj4gU8YctrAU7',
+  [ChainId.BUILDNET]: 'AS1XqtvX3rz2RWbnqLfaYVKEjM3VS5pny9yKDdXcmJ5C1vrcLEFd',
   [ChainId.MAINNET]: 'AS12UMSUxgpRBB6ArZDJ19arHoxNkkpdfofQGekAiAJqsuE6PEFJy'
 }
 

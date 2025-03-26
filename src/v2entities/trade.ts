@@ -163,6 +163,7 @@ export class TradeV2 {
     ): SwapParameters => {
       const args = new Args()
       let value = SWAP_STORAGE_COST
+      const isV2 = !!this.quote.isLegacy.length
       switch (tradeType) {
         case TradeType.EXACT_INPUT:
           if (nativeIn) {
@@ -170,8 +171,7 @@ export class TradeV2 {
               ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
               : 'swapExactMASForTokens'
             args.addU256(amountOut).addArray(path.pairBinSteps, ArrayTypes.U64)
-            if (this.quote.isLegacy.length)
-              args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
             args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
@@ -187,6 +187,8 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -199,6 +201,8 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -212,6 +216,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addArray(path.tokenPath, ArrayTypes.STRING)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addString(to)
               .addU64(BigInt(deadline))
               .addU64(SWAP_STORAGE_COST)
@@ -223,6 +229,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -233,6 +241,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -535,7 +545,8 @@ export class TradeV2 {
         fees: this.quote.fees.map((el) => el.toString()).join(', '),
         virtualAmountsWithoutSlippage: this.quote.virtualAmountsWithoutSlippage
           .map((el) => el.toString())
-          .join(', ')
+          .join(', '),
+        isLegacy: this.quote.isLegacy.map((el) => el.toString()).join(', ')
       }
     }
   }

@@ -14,7 +14,9 @@ import {
   WMAS as _WMAS,
   parseUnits,
   QuoterHelper,
-  V2_LB_QUOTER_ADDRESS
+  V2_LB_QUOTER_ADDRESS,
+  LB_ROUTER_ADDRESS,
+  LB_QUOTER_ADDRESS
 } from '@dusalabs/sdk'
 import { Account } from '@massalabs/massa-web3'
 import { createClient, logEvents } from './utils'
@@ -33,7 +35,13 @@ export const swapAmountIn = async (executeSwap = false) => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
   const WETH = _WETH[CHAIN_ID]
-  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
+  const useV2 = false
+  const router = useV2
+    ? V2_LB_ROUTER_ADDRESS[CHAIN_ID]
+    : LB_ROUTER_ADDRESS[CHAIN_ID]
+  const quoter = useV2
+    ? V2_LB_QUOTER_ADDRESS[CHAIN_ID]
+    : LB_QUOTER_ADDRESS[CHAIN_ID]
 
   // Init: user inputs
   const inputToken = USDC
@@ -58,7 +66,7 @@ export const swapAmountIn = async (executeSwap = false) => {
     maxHops,
     client,
     CHAIN_ID,
-    V2_LB_QUOTER_ADDRESS[CHAIN_ID]
+    quoter
   )
   console.log('bestTrade', bestTrade.toLog())
   if (!bestTrade || !executeSwap) return
