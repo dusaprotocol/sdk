@@ -11,7 +11,7 @@ export const LB_QUOTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS123qwxh1sNdFSJ3u3rajvM6QnkRVcMrdTdQhgT1PvsmpiHtAPnb',
+  [ChainId.BUILDNET]: 'AS124xPGqJq5LKhtLANEhwHXG98zfu8GBqRhpyChBVufD6kuijyTY',
   [ChainId.MAINNET]: ''
 }
 
@@ -21,7 +21,7 @@ export const LB_ROUTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_ROUTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS15VtUroncrrPHEsRBsdzRjyomJ42emZWdSDEbCj4gU8YctrAU7',
+  [ChainId.BUILDNET]: 'AS1mTjHTXjKCmrVScdw6gcpMfyo8VFVJxxeanPimbSLvFW2qrVKb',
   [ChainId.MAINNET]: ''
 }
 
@@ -36,7 +36,7 @@ export const LB_FACTORY_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_FACTORY_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1eabgwfn9zjWJum8HweHjLXPmdeTJ27DmFYJZmJCd1bM4KcZ6j',
+  [ChainId.BUILDNET]: 'AS12Z4M5PpwnajdQZDmxyuduJ5vonNuCe96jVEaiaNXx4n1CEPA66',
   [ChainId.MAINNET]: ''
 }
 

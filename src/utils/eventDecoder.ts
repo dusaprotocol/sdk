@@ -26,9 +26,10 @@ export type SwapEventV2 = {
   to: string
   startId: number
   activeId: number
+  ids: number[]
   swapForY: boolean
-  amountInToBin: bigint
-  amountOutOfBin: bigint
+  amountsIn: bigint[]
+  amountOut: bigint
   feesTotal: bigint[]
   volatilityAccumulated: number
 }
@@ -120,22 +121,31 @@ export class EventDecoder {
       startId,
       activeId,
       swapForY,
-      amountInToBin,
-      amountOutOfBin,
-      ...feesTotal
+      ...arrays
+      // amountOut
       // volatilityAccumulated
     ] = EventDecoder.extractParams(bytes)
-    const volatilityAccumulated = parseInt(feesTotal.pop() as string)
+    const volatilityAccumulated = parseInt(arrays.pop() as string)
+    const amountOut = EventDecoder.decodeU256(arrays.pop() as string)
+    const length = arrays.length / 3
+    const ids = arrays.slice(0, length).map((x) => parseInt(x))
+    const amountsIn = arrays
+      .slice(length, length * 2)
+      .map((x) => EventDecoder.decodeU256(x))
+    const feesTotal = arrays
+      .slice(length * 2, length * 3)
+      .map((x) => EventDecoder.decodeU256(x))
 
     return {
       to,
       startId: parseInt(startId),
       activeId: parseInt(activeId),
       swapForY: swapForY === 'true',
-      amountInToBin: EventDecoder.decodeU256(amountInToBin),
-      amountOutOfBin: EventDecoder.decodeU256(amountOutOfBin),
       volatilityAccumulated,
-      feesTotal: feesTotal.map((f) => EventDecoder.decodeU256(f))
+      feesTotal,
+      ids,
+      amountsIn,
+      amountOut
     }
   }
 
