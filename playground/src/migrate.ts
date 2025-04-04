@@ -10,10 +10,12 @@ import {
   MULTICALL_ADDRESS,
   Tx,
   TokenAmount,
-  ILBPair
+  ILBPair,
+  IBaseContract
 } from '@dusalabs/sdk'
 import { createClient, logEvents } from './utils'
 import { Account, Args, ArrayTypes, U256 } from '@massalabs/massa-web3'
+import { console } from 'inspector'
 
 export const migrate = async () => {
   console.log('\n------- migrate() called -------\n')
@@ -26,42 +28,40 @@ export const migrate = async () => {
   const client = createClient(account)
 
   const CHAIN_ID = ChainId.BUILDNET
-  const multicallAddress =
-    'AS12mTGosStxfzoMgGrzWQqYnrkfbmF9vxeSvd21cFTGJjTbJfhz1' // MULTICALL_ADDRESS[CHAIN_ID]
-  const multicall = new IMulticall(multicallAddress, client)
+  const migrateAddress = 'AS12crMWQQDHgyDmLxDEajZxyEtifrBJFz31f6kmJpY3g6CS4zVdq'
 
-  const newPool = 'AS1mus5ekpxHa5KeQtwXWBZPXrFmQhtxToSkcM4ikvaK3ZWpT41p'
-  const oldPool = 'AS14AxjeYA1K51wwyLexL67atzS75eTCAjUm3GDYTpMeZsarEhp3'
+  const newPool = 'AS1b9qU1nP9hKM8nyR93ptbGEhMyPWop7jHY1zYkZsm2jfowefK9'
+  const oldPool = 'AS112Wdy9pM4fvLNLHQXyf7uam9waMPdG5ekr4vxCyQHPkrMMPPY'
   const ids = await new ILBPair(oldPool, client).getUserBinIds(
     account.address.toString()
   )
-  const migrateAddress = 'AS1HPqLQQYhu1kkDxPbdt6BBbEUR9xGGwwh2oi4dDtEFrD1vhW2Y'
-  const approveCost = 13_800_000n
-  const approve = new Tx(
-    'setApprovalForAll',
-    new Args().addBool(true).addString(migrateAddress).serialize(),
-    oldPool,
-    approveCost
-  )
-  const migrateCost = 1_000_000_000n
-  const migrate = new Tx(
-    'migrate',
-    new Args()
-      .addString(newPool)
-      .addString(oldPool)
-      .addArray(ids.map(BigInt), ArrayTypes.U64)
-      .serialize(),
+
+  // 1. approve migrate contract to spend LBPair tokens
+  const approveTx = await new ILBPair(oldPool, client).setApprovalForAll(
     migrateAddress,
-    migrateCost
+    true
   )
-  multicall.shouldEstimateCoins = false
-  const tx = await multicall.executeMulticall(
-    [approve, migrate],
-    approveCost + migrateCost
-  )
-  console.log(tx.id)
+  console.log('approveTx', approveTx.id)
 
   // await tx confirmation and log events
-  await tx.waitSpeculativeExecution()
-  logEvents(client, tx.id)
+  await approveTx.waitSpeculativeExecution()
+  logEvents(client, approveTx.id)
+
+  // 2. call migrate function on migrate contract
+  const migrateArgs = new Args()
+    .addString(newPool)
+    .addString(oldPool)
+    .addArray(ids.map(BigInt), ArrayTypes.U64)
+    .serialize()
+  const migrateContract = new IBaseContract(migrateAddress, client)
+  migrateContract.shouldEstimateCoins = false
+  const migrateTx = await migrateContract.call({
+    targetFunction: 'migrate',
+    parameter: migrateArgs
+  })
+  console.log('migrateTx', migrateTx.id)
+
+  // await tx confirmation and log events
+  await migrateTx.waitSpeculativeExecution()
+  logEvents(client, migrateTx.id)
 }
