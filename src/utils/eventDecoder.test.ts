@@ -6,7 +6,11 @@ const DEPOSIT_EVENT_BASE64 =
   'REVQT1NJVEVEX1RPX0JJTjpBVTFSdGQ0QkZSTjhzeWlHaWdDd3J1Sk10TWhIV2VidkJxbllGeVBEYzNTVmN0bkpxdllYOz8hODM5MTI1ODs/Ie+/vQ0AAAAAAAAAAAAAAAAAADs/IeyWh+C/qAEAAAAAAAAAAAAAAAAA'
 const SWAP_EVENT_BASE64 =
   'U1dBUDpBVTFjQmlyVG5vMUZyTVZwVU1UOTZLaVE5N3dCcXFNMXo5dUpMcjNYWktRd0pqRkxQRWFyOz8hODM5MTI1ODs/IXRydWU7PyHkhKUPAAAAAAAAAAAAAAAAAAA7PyHumLvgr58AAAAAAAAAAAAAAAAAADs/ITA7PyHEmwAAAAAAAAAAAAAAAAAAAA=='
-const EVENT = 'SWAP:aaa;?!bbb;?!c:c;?!ddd'
+// const WITHDRAW_V2_EVENT_BASE64 =
+//   'REVQT1NJVEVEOkFVMWNCaXJUbm8xRnJNVnBVTVQ5NktpUTk3d0JxcU0xejl1SkxyM1haS1F3SmpGTFBFYXI7PyE4Mzg0MzM3Oz8hODM4NDM1NTs/IeGAgO2SpcOoOz8h7oSA17U='
+// const SWAP_V2_EVENT_BASE64 =
+//   'VjFfU1dBUDpBVTFjQmlyVG5vMUZyTVZwVU1UOTZLaVE5N3dCcXFNMXo5dUpMcjNYWktRd0pqRkxQRWFyOz8hODM4MTMwMzs/ITgzODEzMDA7PyF0cnVlOz8h5r+B6JuyIzs/Ieyrh+yUtCg7PyHlmLrhiqfPgTs/Ie6nreGNs9CsOz8h77S84Y230Lw7PyHtkLLokZrGozs/ITMwMDAw'
+const EVENT = 'XXX:aaa;?!bbb;?!c:c;?!ddd'
 const ERROR_EVENT1 =
   '{"massa_execution_error":"Runtime error: runtime error when executing operation O1fmxudzfQWK6sFxnoqVJ7LBa4xS28wh7ZLYRgbp3pU2xLtahRt: VM Error in CallSC context: VM execution error: RuntimeError: Runtime error: error transferring 21 coins from AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi to AS1vnaHDB5ixK56S1LPh2nGgsaHXjoeaWuPnh3ggiK6BqTBeGM2B: Runtime error: failed to transfer 21 coins from spending address AS127sVzud6Ep2GKH2WL7yLe7wSgCDjTnG8BfoZdQyvwnhNfTqasi due to insufficient balance 15.1897"}'
 const ERROR_EVENT2 =
@@ -41,6 +45,38 @@ describe('decode', () => {
     expect(volatilityAccumulated).toBe(0)
     expect(feesTotal).toBe(283n)
   })
+  // it('withdraw v2', () => {
+  //   const WITHDRAWN_EVENT = Buffer.from(
+  //     WITHDRAW_V2_EVENT_BASE64,
+  //     'base64'
+  //   ).toString()
+  //   const { to, startId, endId, amountX, amountY } =
+  //     EventDecoder.decodeLiquidityV2(WITHDRAWN_EVENT)
+  //   expect(to).toBe('AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar')
+  //   expect(startId).toBe(8391258)
+  //   expect(endId).toBe(8391255)
+  //   expect(amountX).toBe(917501n)
+  //   expect(amountY).toBe(4561880455n)
+  // })
+  // it('swap v2', () => {
+  //   const SWAP_EVENT = Buffer.from(SWAP_V2_EVENT_BASE64, 'base64').toString()
+  //   const {
+  //     to,
+  //     activeId,
+  //     swapForY,
+  //     amountInToBin,
+  //     amountOutOfBin,
+  //     volatilityAccumulated,
+  //     feesTotal
+  //   } = EventDecoder.decodeSwapV2(SWAP_EVENT)
+  //   expect(to).toBe('AU1cBirTno1FrMVpUMT96KiQ97wBqqM1z9uJLr3XZKQwJjFLPEar')
+  //   expect(activeId).toBe(8391258)
+  //   expect(swapForY).toBe(true)
+  //   expect(amountInToBin).toBe(999717n)
+  //   expect(amountOutOfBin).toBe(199222843n)
+  //   expect(volatilityAccumulated).toBe(0)
+  //   expect(feesTotal).toBe(283n)
+  // })
   it('u256 with ":" delimiter inside', () => {
     const params = EventDecoder.extractParams(EVENT)
     expect(params.length).toBe(4)

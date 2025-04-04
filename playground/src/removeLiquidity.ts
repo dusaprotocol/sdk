@@ -1,7 +1,7 @@
 import {
   ChainId,
   IRouter,
-  LB_ROUTER_ADDRESS,
+  V2_LB_ROUTER_ADDRESS,
   PairV2,
   WMAS as _WMAS,
   USDC as _USDC,
@@ -26,7 +26,7 @@ export const removeLiquidity = async () => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
-  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // set amount slippage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
