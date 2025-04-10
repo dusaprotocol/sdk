@@ -6,12 +6,12 @@ type AddressMap = { [chainId in ChainId]: string }
  * DEX core SDK
  */
 export const LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1q45sfLjzGd2LrRQYLfhimXnxre8SqDeyvRE7Y4aQuH6MheHb7',
+  [ChainId.BUILDNET]: 'AS1Wse7vxWvB1iP1DwNQTQQctwU1fQ1jrq5JgdSPZH132UYrYrXF',
   [ChainId.MAINNET]: 'AS128hBKoHbgXdiBXp8ji2KuT8krDFSjLnakw38GN4xcL3XyR9yFF'
 }
 
 export const LB_ROUTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS15VtUroncrrPHEsRBsdzRjyomJ42emZWdSDEbCj4gU8YctrAU7',
+  [ChainId.BUILDNET]: 'AS1XqtvX3rz2RWbnqLfaYVKEjM3VS5pny9yKDdXcmJ5C1vrcLEFd',
   [ChainId.MAINNET]: 'AS12UMSUxgpRBB6ArZDJ19arHoxNkkpdfofQGekAiAJqsuE6PEFJy'
 }
 
