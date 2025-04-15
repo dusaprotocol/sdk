@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: ^5.0.0
-    version: 5.0.0
+    specifier: 5.1.2-dev.20250408074543
+    version: 5.1.2-dev.20250408074543
   big.js:
     specifier: ~6.2.1
     version: 6.2.1
@@ -1780,8 +1780,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@massalabs/massa-web3@5.0.0:
-    resolution: {integrity: sha512-O7aU61WYSJrv6+uQLJZzicv9f3XoKHMUzfibVDprU0LzaZejaHBRnpbiERJs6m3k4UHWBLYGpoW++lhRRspPkw==}
+  /@massalabs/massa-web3@5.1.2-dev.20250408074543:
+    resolution: {integrity: sha512-V6nhanQ+DwQ0nVe4+7bwWNEppEq1vMDHfqdjdkqJlbRQuizt5GX9Gb60UmAXB+szkgtNxd0YnDCsEgbm0EhKag==}
     dependencies:
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.5.0
@@ -6056,6 +6056,7 @@ packages:
 
   /lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
     dev: false
 
   /lodash.memoize@4.1.2:
