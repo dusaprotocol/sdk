@@ -85,9 +85,14 @@ export type LimitOrderEvent = {
   id: number
 }
 
-export type LimitOrderExecutionEvent = {
+export type LimitOrderClaimEvent = {
   id: number
-  amountOut: bigint
+  amountX: bigint
+  amountY: bigint
+}
+
+export type LimitOrderExecutionEvent = {
+  ids: number[]
 }
 
 export class EventDecoder {
@@ -267,7 +272,7 @@ export class EventDecoder {
   }
 
   /**
-   * Decode add/remove limit order events
+   * Decode add/edit/remove limit order events
    * @param bytes
    */
   static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
@@ -276,15 +281,23 @@ export class EventDecoder {
     return { id: parseInt(id) }
   }
 
-  static decodeLimitOrderExecution = (
-    bytes: string
-  ): LimitOrderExecutionEvent => {
-    const [id, amountOut] = EventDecoder.extractParams(bytes)
+  static decodeLimitOrderClaim = (bytes: string): LimitOrderClaimEvent => {
+    const [id, amountX, amountY] = EventDecoder.extractParams(bytes)
 
     return {
       id: parseInt(id),
-      amountOut: EventDecoder.decodeU256(amountOut)
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
     }
+  }
+
+  static decodeLimitOrderExecution = (
+    bytes: string
+  ): LimitOrderExecutionEvent => {
+    const arrays = EventDecoder.extractParams(bytes)
+    const ids = arrays.map((x) => parseInt(x))
+
+    return { ids: ids }
   }
 
   // MISC
