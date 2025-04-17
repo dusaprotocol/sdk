@@ -123,8 +123,6 @@ export class EventDecoder {
   static decodeSwapV2 = (bytes: string): SwapEventV2 => {
     const [
       to,
-      startId,
-      activeId,
       swapForY,
       ...arrays
       // amountOut
@@ -140,11 +138,13 @@ export class EventDecoder {
     const feesTotal = arrays
       .slice(length * 2, length * 3)
       .map((x) => EventDecoder.decodeU256(x))
+    const startId = ids[0]
+    const activeId = ids[ids.length - 1]
 
     return {
       to,
-      startId: parseInt(startId),
-      activeId: parseInt(activeId),
+      startId,
+      activeId,
       swapForY: swapForY === 'true',
       volatilityAccumulated,
       feesTotal,
