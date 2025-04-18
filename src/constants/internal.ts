@@ -24,3 +24,5 @@ export const MassaUnits = {
   mMassa: BigInt(10 ** 6),
   uMassa: BigInt(10 ** 3)
 }
+
+export const MINIMUM_LIQUIDITY = 1000n
