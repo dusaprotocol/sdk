@@ -87,8 +87,7 @@ export type LimitOrderEvent = {
 
 export type LimitOrderClaimEvent = {
   id: number
-  amountX: bigint
-  amountY: bigint
+  amount: bigint
 }
 
 export type LimitOrderExecutionEvent = {
@@ -282,12 +281,11 @@ export class EventDecoder {
   }
 
   static decodeLimitOrderClaim = (bytes: string): LimitOrderClaimEvent => {
-    const [id, amountX, amountY] = EventDecoder.extractParams(bytes)
+    const [id, amount] = EventDecoder.extractParams(bytes)
 
     return {
       id: parseInt(id),
-      amountX: EventDecoder.decodeU256(amountX),
-      amountY: EventDecoder.decodeU256(amountY)
+      amount: EventDecoder.decodeU256(amount),
     }
   }
 
