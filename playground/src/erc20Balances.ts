@@ -6,6 +6,7 @@ import {
   WETH as _WETH,
   WETH_B as _WETH_B,
   DAI as _DAI,
+  WBTC as _WBTC,
   IMulticall,
   MULTICALL_ADDRESS,
   Tx,
@@ -29,7 +30,8 @@ export const erc20Balances = async () => {
   const WETH = _WETH[CHAIN_ID]
   const WETH_B = _WETH_B[CHAIN_ID]
   const DAI = _DAI[CHAIN_ID]
-  const tokens = [USDC, WMAS, USDT, WETH, WETH_B, DAI]
+  const WBTC = _WBTC[CHAIN_ID]
+  const tokens = [USDC, WMAS, USDT, WETH, WETH_B, DAI, WBTC]
 
   // fetch LBPairs
   const multicall = new IMulticall(MULTICALL_ADDRESS[CHAIN_ID], client)

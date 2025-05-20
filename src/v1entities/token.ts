@@ -176,3 +176,22 @@ export const USDT: { [chainId in ChainId]: Token } = {
     usdtName
   )
 }
+
+const wbtcName = 'Wrapped Bitcoin'
+const wbtcDecimals = 18
+export const WBTC: { [chainId in ChainId]: Token } = {
+  [ChainId.BUILDNET]: new Token(
+    ChainId.BUILDNET,
+    'AS1ZXy3nvqXAMm2w6viAg7frte6cZfJM8hoMvWf4KoKDzvLzYKqE',
+    wbtcDecimals,
+    'WBTC.e',
+    wbtcName
+  ),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS12fr54YtBY575Dfhtt7yftpT8KXgXb1ia5Pn1LofoLFLf9WcjGL',
+    wbtcDecimals,
+    'WBTC.s',
+    wbtcName
+  )
+}
