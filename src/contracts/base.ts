@@ -4,6 +4,7 @@ import {
   Operation,
   Provider,
   ReadSCData,
+  ReadSCParams,
   SmartContract
 } from '@massalabs/massa-web3'
 import { EventDecoder } from '../utils/eventDecoder'
@@ -18,6 +19,17 @@ type BaseCallData = Omit<
   parameter: number[] | Uint8Array
 }
 type BaseCallDataWithGas = BaseCallData & {
+  maxGas?: bigint
+}
+
+type BaseReadData = Omit<
+  ReadSCParams,
+  'fee' | 'maxGas' | 'target' | 'func' | 'parameter'
+> & {
+  targetFunction: string
+  parameter: number[] | Uint8Array
+}
+type BaseReadDataWithGas = BaseReadData & {
   maxGas?: bigint
 }
 
@@ -45,7 +57,7 @@ export class IBaseContract {
     )
   }
 
-  public async read(params: BaseCallDataWithGas): Promise<ReadSCData> {
+  public async read(params: BaseReadDataWithGas): Promise<ReadSCData> {
     return new SmartContract(this.client, this.address).read(
       params.targetFunction,
       Uint8Array.from(params.parameter),
@@ -61,7 +73,7 @@ export class IBaseContract {
     )
   }
 
-  public async simulate(params: BaseCallData, caller?: string) {
+  public async simulate(params: BaseReadDataWithGas, caller?: string) {
     if (!caller) throw new Error('No caller address')
 
     return this.read({
@@ -71,7 +83,7 @@ export class IBaseContract {
     })
   }
 
-  public async estimateGas(params: BaseCallData) {
+  public async estimateGas(params: BaseReadDataWithGas) {
     return this.simulate(params)
       .then((r) => {
         if (r.info.gasCost === 0) return MAX_GAS_CALL
@@ -83,7 +95,7 @@ export class IBaseContract {
       .catch(() => MAX_GAS_CALL)
   }
 
-  public async estimateCoins(params: BaseCallData) {
+  public async estimateCoins(params: BaseReadDataWithGas) {
     return this.simulate({ ...params, coins: 0n })
       .then((r) => {
         if (r.info.error) throw new Error(r.info.error)
