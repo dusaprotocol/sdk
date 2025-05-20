@@ -1,7 +1,7 @@
 import { Provider } from '@massalabs/massa-web3'
 import { PairV2, RouteV2, TradeV2 } from '../v2entities'
 import { Token, TokenAmount, USDC, WMAS, WETH } from '../v1entities'
-import { ChainId } from '../constants'
+import { ChainId, LB_QUOTER_ADDRESS } from '../constants'
 
 export class QuoterHelper {
   static async findBestPath(
@@ -13,7 +13,8 @@ export class QuoterHelper {
     isExactIn: boolean,
     maxHops: number,
     baseClient: Provider,
-    CHAIN_ID: ChainId
+    CHAIN_ID: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[CHAIN_ID]
   ) {
     const BASES: Token[] = [WMAS, USDC, WETH].map((token) => token[CHAIN_ID])
 
@@ -44,7 +45,8 @@ export class QuoterHelper {
       isNativeIn,
       isNativeOut,
       baseClient,
-      CHAIN_ID
+      CHAIN_ID,
+      quoterAddress
     )
 
     const filteredTrades = trades.filter(
