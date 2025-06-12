@@ -1,7 +1,7 @@
 {
   "name": "@dusalabs/sdk",
   "license": "MIT",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
