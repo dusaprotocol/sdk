@@ -1,7 +1,7 @@
-import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
+import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
 import { Token } from '../v1entities'
 
-export class LimitOrder implements ISerializable<LimitOrder> {
+export class LimitOrder implements Serializable<LimitOrder> {
   constructor(
     public pair: string = '',
     public swapForY: boolean = false,
@@ -27,7 +27,7 @@ export class LimitOrder implements ISerializable<LimitOrder> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<LimitOrder> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<LimitOrder> {
     const args = new Args(data, offset)
 
     this.pair = args.nextString()
@@ -72,7 +72,7 @@ export interface StartDCAParameters {
 //   executed: boolean
 // }
 
-export class Transaction implements ISerializable<Transaction> {
+export class Transaction implements Serializable<Transaction> {
   constructor(
     public to: string = '',
     public method: string = '',
@@ -93,7 +93,7 @@ export class Transaction implements ISerializable<Transaction> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<Transaction> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<Transaction> {
     const args = new Args(data, offset)
 
     this.to = args.nextString()
