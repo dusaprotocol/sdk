@@ -35,8 +35,8 @@ export const V0_FACTORY_ADDRESS: AddressMap = {
  */
 
 export const DCA_MANAGER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1VuksUQ5hPRZXV4jfHBvPzcB2aRg9F4wHyvXEMCga7ijo8f3Rs',
-  [ChainId.MAINNET]: ''
+  [ChainId.BUILDNET]: 'AS12Sm9oqH2C26fx7v8ZYCwyKs9LmrmRGX2WRJT3aK7KnYtrMhq8n',
+  [ChainId.MAINNET]: 'AS1ksXe8Ha3i4hVNLb457WEirYMnExq6EAfBvaAPfYe5UfGUrGz8'
 }
 
 export const LIMIT_ORDER_MANAGER_ADDRESS: AddressMap = {
