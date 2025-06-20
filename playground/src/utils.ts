@@ -1,4 +1,4 @@
-import { Account, JsonRpcProvider, Web3Provider } from '@massalabs/massa-web3'
+import { Account, Web3Provider } from '@massalabs/massa-web3'
 
 export const logEvents = (client: Web3Provider, txId: string): void => {
   client
@@ -8,5 +8,5 @@ export const logEvents = (client: Web3Provider, txId: string): void => {
 
 export const createClient = (baseAccount: Account, mainnet = false) =>
   mainnet
-    ? JsonRpcProvider.mainnet(baseAccount)
-    : JsonRpcProvider.buildnet(baseAccount)
+    ? Web3Provider.mainnet(baseAccount)
+    : Web3Provider.buildnet(baseAccount)

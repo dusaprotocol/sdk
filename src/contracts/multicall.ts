@@ -1,7 +1,7 @@
-import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
+import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 
-export class Tx implements Serializable<Tx> {
+export class Tx implements ISerializable<Tx> {
   constructor(
     public method: string = '',
     public args: Uint8Array = new Uint8Array(),
@@ -16,7 +16,7 @@ export class Tx implements Serializable<Tx> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset: number): DeserializedResult<Tx> {
+  deserialize(data: Uint8Array, offset: number): IDeserializedResult<Tx> {
     const args = new Args(data, offset)
 
     this.method = args.nextString()

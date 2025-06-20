@@ -1,12 +1,12 @@
 import {
   Args,
   ArrayTypes,
-  DeserializedResult,
-  Serializable
+  IDeserializedResult,
+  ISerializable
 } from '@massalabs/massa-web3'
 import { Percent, TokenAmount } from '../v1entities/fractions'
 
-export class Quote implements Serializable<Quote> {
+export class Quote implements ISerializable<Quote> {
   constructor(
     public route: string[] = [],
     public pairs: string[] = [],
@@ -27,7 +27,7 @@ export class Quote implements Serializable<Quote> {
     return Uint8Array.from(args.serialize())
   }
 
-  deserialize(data: Uint8Array, offset = 0): DeserializedResult<Quote> {
+  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<Quote> {
     const args = new Args(data, offset)
 
     this.route = args.nextArray(ArrayTypes.STRING)

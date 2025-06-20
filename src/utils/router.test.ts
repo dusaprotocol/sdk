@@ -22,7 +22,7 @@ import {
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
-import { Account, JsonRpcProvider } from '@massalabs/massa-web3'
+import { Account, Web3Provider } from '@massalabs/massa-web3'
 import { PairV2 } from '../v2entities'
 import invariant from 'tiny-invariant'
 
@@ -48,7 +48,7 @@ describe('isLiquidtyMethod', () => {
 describe('decodeSwapTx', async () => {
   const CHAIN_ID = ChainId.MAINNET
   const baseAccount = await Account.generate()
-  const client = JsonRpcProvider.mainnet(baseAccount)
+  const client = Web3Provider.mainnet(baseAccount)
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 

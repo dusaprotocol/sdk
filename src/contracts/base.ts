@@ -66,21 +66,25 @@ export class IBaseContract {
   }
 
   public async extract(keys: string[]): Promise<Uint8Array[]> {
-    return this.client
-      .readStorage(this.address, keys, this.finalStorage)
-      .then((res) => res.map((r) => r ?? new Uint8Array()))
+    return (this.client as any).readStorage(
+      this.address,
+      keys,
+      this.finalStorage
+    )
   }
 
-  public async simulate(params: BaseReadDataWithGas, caller: string) {
+  public async simulate(params: BaseReadDataWithGas, caller?: string) {
+    if (!caller) throw new Error('No caller address')
+
     return this.read({
       ...params,
       maxGas: MAX_GAS_CALL,
-      caller
+      caller: caller || (this.client as any).address
     })
   }
 
   public async estimateGas(params: BaseReadDataWithGas) {
-    return this.simulate(params, '')
+    return this.simulate(params)
       .then((r) => {
         if (r.info.gasCost === 0) return MAX_GAS_CALL
         // 10% extra gas for safety
@@ -92,7 +96,7 @@ export class IBaseContract {
   }
 
   public async estimateCoins(params: BaseReadDataWithGas) {
-    return this.simulate({ ...params, coins: 0n }, '')
+    return this.simulate({ ...params, coins: 0n })
       .then((r) => {
         if (r.info.error) throw new Error(r.info.error)
         return 0n
