@@ -68,7 +68,7 @@ export class IBaseContract {
   public async extract(keys: string[]): Promise<Uint8Array[]> {
     return this.client
       .readStorage(this.address, keys, this.finalStorage)
-      .then((res) => res.map((r) => r ?? new Uint8Array()))
+      .then((res) => res.map((r) => new Uint8Array(r || [])))
   }
 
   public async simulate(params: BaseReadDataWithGas, caller: string) {
