@@ -24,7 +24,7 @@ export class Quote implements Serializable<Quote> {
       .addArray(this.amounts, ArrayTypes.U256)
       .addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
       .addArray(this.fees, ArrayTypes.U256)
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(data: Uint8Array, offset = 0): DeserializedResult<Quote> {

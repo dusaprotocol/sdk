@@ -16,7 +16,7 @@ export class LBPairInformation implements Serializable<LBPairInformation> {
       .addString(this.LBPair)
       .addBool(this.createdByOwner)
       .addBool(this.isBlacklisted)
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(

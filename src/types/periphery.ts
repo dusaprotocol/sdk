@@ -23,8 +23,7 @@ export class LimitOrder implements Serializable<LimitOrder> {
       .addString(this.to)
       .addU64(this.deadline)
       .addU32(BigInt(this.id))
-
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(data: Uint8Array, offset = 0): DeserializedResult<LimitOrder> {
@@ -90,7 +89,7 @@ export class Transaction implements Serializable<Transaction> {
       .addUint8Array(this.data)
       .addU64(this.timestamp)
       .addBool(this.executed)
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(data: Uint8Array, offset = 0): DeserializedResult<Transaction> {

@@ -13,7 +13,7 @@ export class Tx implements Serializable<Tx> {
       .addString(this.method)
       .addUint8Array(this.args)
       .addString(this.to)
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(data: Uint8Array, offset: number): DeserializedResult<Tx> {

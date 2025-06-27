@@ -81,7 +81,7 @@ describe('decodeSwapTx', async () => {
 
     const decoded = decodeSwapTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       params.value
     )
     return decoded
@@ -129,7 +129,7 @@ describe('decodeLiquidityTx', async () => {
     const params = pair.liquidityCallParameters(options)
     const decoded = decodeLiquidityTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)
@@ -145,7 +145,7 @@ describe('decodeLiquidityTx', async () => {
     const params = pair.liquidityCallParameters(options)
     const decoded = decodeLiquidityTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)
