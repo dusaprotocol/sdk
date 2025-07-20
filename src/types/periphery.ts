@@ -2,41 +2,42 @@ import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
 import { Token } from '../v1entities'
 
 export class LimitOrder implements Serializable<LimitOrder> {
+  /**
+   * @param orderType {u8} - 0 = BID, 1 = ASK
+   * @param binId {u64} - Id of the bin to use for the swap
+   * @param amountIn {u256} - Amount of tokens to swap
+   * @param owner {Address} - Address to receive the tokens
+   * @param amountLPToken {u256} - Number of LBToken received in return
+   * @param executed {bool} - If the order was executed
+   */
   constructor(
-    public pair: string = '',
-    public swapForY: boolean = false,
-    public binId: number = 0,
+    public orderType: bigint = 0n,
+    public binId: bigint = 0n,
     public amountIn: bigint = 0n,
-    public amountOutMin: bigint = 0n,
-    public to: string = '',
-    public deadline: bigint = 0n,
-    public id: number = 0
+    public owner: string = '',
+    public amountLPToken: bigint = 0n,
+    public executed: boolean = false
   ) {}
 
   serialize(): Uint8Array {
-    const args = new Args()
-      .addString(this.pair)
-      .addBool(this.swapForY)
-      .addU32(BigInt(this.binId))
+    return new Args()
+      .addU8(this.orderType)
+      .addU64(this.binId)
       .addU256(this.amountIn)
-      .addU256(this.amountOutMin)
-      .addString(this.to)
-      .addU64(this.deadline)
-      .addU32(BigInt(this.id))
-    return args.serialize()
+      .addString(this.owner)
+      .addU256(this.amountLPToken)
+      .addBool(this.executed)
+      .serialize()
   }
 
   deserialize(data: Uint8Array, offset = 0): DeserializedResult<LimitOrder> {
     const args = new Args(data, offset)
-
-    this.pair = args.nextString()
-    this.swapForY = args.nextBool()
-    this.binId = Number(args.nextU32())
+    this.orderType = args.nextU8()
+    this.binId = args.nextU64()
     this.amountIn = args.nextU256()
-    this.amountOutMin = args.nextU256()
-    this.to = args.nextString()
-    this.deadline = args.nextU64()
-    this.id = Number(args.nextU32())
+    this.owner = args.nextString()
+    this.amountLPToken = args.nextU256()
+    this.executed = args.nextBool()
 
     return { instance: this, offset: args.getOffset() }
   }
