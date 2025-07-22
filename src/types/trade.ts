@@ -11,6 +11,7 @@ export class Quote implements Serializable<Quote> {
     public route: string[] = [],
     public pairs: string[] = [],
     public binSteps: bigint[] = [],
+    public isLegacy: boolean[] = [],
     public amounts: bigint[] = [],
     public virtualAmountsWithoutSlippage: bigint[] = [],
     public fees: bigint[] = []
@@ -21,6 +22,8 @@ export class Quote implements Serializable<Quote> {
       .addArray(this.route, ArrayTypes.STRING)
       .addArray(this.pairs, ArrayTypes.STRING)
       .addArray(this.binSteps, ArrayTypes.U64)
+    if (this.isLegacy.length) args.addArray(this.isLegacy, ArrayTypes.BOOL)
+    args
       .addArray(this.amounts, ArrayTypes.U256)
       .addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
       .addArray(this.fees, ArrayTypes.U256)
@@ -36,6 +39,11 @@ export class Quote implements Serializable<Quote> {
     this.amounts = args.nextArray(ArrayTypes.U256)
     this.virtualAmountsWithoutSlippage = args.nextArray(ArrayTypes.U256)
     this.fees = args.nextArray(ArrayTypes.U256)
+    try {
+      this.isLegacy = args.nextArray(ArrayTypes.BOOL)
+    } catch (e) {
+      this.isLegacy = []
+    }
 
     return { instance: this, offset: args.getOffset() }
   }
@@ -90,6 +98,7 @@ export interface SwapSettings {
   amountIn: bigint
   amountOut: bigint
   binSteps: bigint[]
+  isLegacy: boolean[]
   path: string[]
   to: string
   deadline: number

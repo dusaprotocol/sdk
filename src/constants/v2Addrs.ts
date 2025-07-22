@@ -7,12 +7,27 @@ type AddressMap = { [chainId in ChainId]: string }
  */
 export const LB_QUOTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1Wse7vxWvB1iP1DwNQTQQctwU1fQ1jrq5JgdSPZH132UYrYrXF',
-  [ChainId.MAINNET]: 'AS128hBKoHbgXdiBXp8ji2KuT8krDFSjLnakw38GN4xcL3XyR9yFF'
+  [ChainId.MAINNET]: 'AS12VBT5xeL3XdXhLwnpyMVB8re5RcMuW4Z8ragCKEKnDDCEkYjXL'
+}
+
+export const V2_LB_QUOTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: 'AS124xPGqJq5LKhtLANEhwHXG98zfu8GBqRhpyChBVufD6kuijyTY',
+  [ChainId.MAINNET]: ''
 }
 
 export const LB_ROUTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1XqtvX3rz2RWbnqLfaYVKEjM3VS5pny9yKDdXcmJ5C1vrcLEFd',
   [ChainId.MAINNET]: 'AS12UMSUxgpRBB6ArZDJ19arHoxNkkpdfofQGekAiAJqsuE6PEFJy'
+}
+
+export const V2_LB_ROUTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: 'AS1mTjHTXjKCmrVScdw6gcpMfyo8VFVJxxeanPimbSLvFW2qrVKb',
+  [ChainId.MAINNET]: ''
+}
+
+export const V0_ROUTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: 'AS1bCBYc1sbWBgDs68Cfv89xtLSyH93Yd3RjBJzqq5QYEH4iaDRJ',
+  [ChainId.MAINNET]: ''
 }
 
 export const LB_FACTORY_ADDRESS: AddressMap = {
@@ -21,7 +36,7 @@ export const LB_FACTORY_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_FACTORY_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1eabgwfn9zjWJum8HweHjLXPmdeTJ27DmFYJZmJCd1bM4KcZ6j',
+  [ChainId.BUILDNET]: 'AS12Z4M5PpwnajdQZDmxyuduJ5vonNuCe96jVEaiaNXx4n1CEPA66',
   [ChainId.MAINNET]: ''
 }
 

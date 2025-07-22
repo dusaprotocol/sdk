@@ -5,7 +5,8 @@ export class Tx implements Serializable<Tx> {
   constructor(
     public method: string = '',
     public args: Uint8Array = new Uint8Array(),
-    public to: string = ''
+    public to: string = '',
+    public coins: bigint = 0n
   ) {}
 
   serialize(): Uint8Array {
@@ -13,7 +14,8 @@ export class Tx implements Serializable<Tx> {
       .addString(this.method)
       .addUint8Array(this.args)
       .addString(this.to)
-    return args.serialize()
+      .addU64(this.coins)
+    return Uint8Array.from(args.serialize())
   }
 
   deserialize(data: Uint8Array, offset: number): DeserializedResult<Tx> {
@@ -22,6 +24,7 @@ export class Tx implements Serializable<Tx> {
     this.method = args.nextString()
     this.args = args.nextUint8Array()
     this.to = args.nextString()
+    this.coins = args.nextU64()
 
     return { instance: this, offset: args.getOffset() }
   }
@@ -32,6 +35,14 @@ export class IMulticall extends IBaseContract {
     return this.read({
       targetFunction: 'multicall',
       parameter: new Args().addSerializableObjectArray(data).serialize()
+    })
+  }
+
+  async executeMulticall(data: Tx[], coins: bigint) {
+    return this.call({
+      targetFunction: 'multicall',
+      parameter: new Args().addSerializableObjectArray(data).serialize(),
+      coins
     })
   }
 }

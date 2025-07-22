@@ -1,12 +1,13 @@
 import {
   ChainId,
   IRouter,
-  LB_ROUTER_ADDRESS,
+  V2_LB_ROUTER_ADDRESS,
   PairV2,
   WMAS as _WMAS,
   USDC as _USDC,
   ILBPair,
-  Percent
+  Percent,
+  LB_ROUTER_ADDRESS
 } from '@dusalabs/sdk'
 import { createClient, logEvents } from './utils'
 import { Account } from '@massalabs/massa-web3'
@@ -35,12 +36,15 @@ export const removeLiquidity = async () => {
   const currenTimeInMs = new Date().getTime()
   const deadline = currenTimeInMs + 3_600_000
 
+  // const binSteps = await
+
   const pair = new PairV2(USDC, WMAS)
   const binStep = 20
   const pairAddress = await pair
     .fetchLBPair(binStep, client, CHAIN_ID)
     .then((r) => r.LBPair)
   const pairContract = new ILBPair(pairAddress, client)
+  console.log('pairAddress', pairAddress)
   const lbPairData = await pairContract.getReservesAndId()
   const tokens = await pairContract.getTokens()
   const activeBinId = lbPairData.activeId
@@ -51,19 +55,33 @@ export const removeLiquidity = async () => {
     console.log('txIdApprove', txApprove.id)
   }
 
-  const userPositionIds = await pairContract.getUserBinIds(address)
+  const _userPositionIds = await pairContract.getUserBinIds(address)
+  const userPositionIds = _userPositionIds.slice(0, 5) // limit to 5 positions for testing
+
   const addressArray = Array.from(
     { length: userPositionIds.length },
     () => address
   )
   const bins = await pairContract.getBins(userPositionIds)
-
-  const allBins = await pairContract.balanceOfBatch(
-    addressArray,
-    userPositionIds
+  const allBins = await Promise.all(
+    userPositionIds.map((id) => pairContract.balanceOf(address, id))
   )
+  console.log('allBins', allBins)
+  // const allBins = await  pairContract.balanceOfBatch(
+  //   addressArray,
+  //   userPositionIds
+  // )
+  console.log(allBins)
   const nonZeroAmounts = allBins.filter((amount) => amount !== 0n)
   const totalSupplies = await pairContract.getSupplies(userPositionIds)
+
+  console.log(
+    userPositionIds.length,
+    activeBinId,
+    bins.length,
+    totalSupplies.length,
+    nonZeroAmounts.length
+  )
 
   const removeLiquidityInput = pair.calculateAmountsToRemove(
     userPositionIds,

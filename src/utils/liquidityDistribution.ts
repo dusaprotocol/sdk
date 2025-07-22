@@ -1,6 +1,6 @@
 import { CurrencyAmount } from '../v1entities'
 import { Big } from 'big.js'
-import { spotUniform, curve, bidAsk } from '../constants'
+import { spotUniform, curve, bidAsk, wide } from '../constants'
 import {
   LiquidityDistribution,
   LiquidityDistributionParams
@@ -24,6 +24,8 @@ export const getLiquidityConfig = (
       return curve
     case LiquidityDistribution.BID_ASK:
       return bidAsk
+    case LiquidityDistribution.WIDE:
+      return wide
   }
 }
 

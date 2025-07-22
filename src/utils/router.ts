@@ -76,12 +76,16 @@ const extractAmountInOut = (
 export const decodeSwapTx = (
   method: SwapRouterMethod,
   params: Uint8Array,
-  coins: bigint
+  coins: bigint,
+  isRouterV2 = false
 ): SwapSettings => {
   const args = new Args(params)
   const { amountIn, amountOut } = extractAmountInOut(method, args, coins)
 
   const binSteps = args.nextArray<bigint>(ArrayTypes.U64)
+  const isLegacy = isRouterV2
+    ? args.nextArray<boolean>(ArrayTypes.BOOL)
+    : Array(binSteps.length).fill(false)
   const path = args.nextArray<string>(ArrayTypes.STRING)
   const to = args.nextString()
   const deadline = Number(args.nextU64())
@@ -101,6 +105,7 @@ export const decodeSwapTx = (
     amountIn: amountInWithoutFee,
     amountOut,
     binSteps,
+    isLegacy,
     path,
     to,
     deadline
