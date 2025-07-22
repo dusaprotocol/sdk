@@ -11,7 +11,7 @@ export const LB_QUOTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS124xPGqJq5LKhtLANEhwHXG98zfu8GBqRhpyChBVufD6kuijyTY',
+  [ChainId.BUILDNET]: 'AS12H8RLqbqvET8nPHTx9oWUZaNwgb5jG1re6cBZ3qp8ZWCQ3qqzb',
   [ChainId.MAINNET]: ''
 }
 
