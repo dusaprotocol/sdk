@@ -2,7 +2,7 @@ import {
   ChainId,
   IERC20,
   IRouter,
-  LB_ROUTER_ADDRESS,
+  V2_LB_ROUTER_ADDRESS,
   LiquidityDistribution,
   PairV2,
   TokenAmount,
@@ -29,7 +29,7 @@ export const addLiquidity = async () => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
-  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // set the amounts for each of tokens
   const typedValueUSDC = '20'

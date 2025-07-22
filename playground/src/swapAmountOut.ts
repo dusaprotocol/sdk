@@ -2,7 +2,7 @@ import {
   ChainId,
   IERC20,
   IRouter,
-  LB_ROUTER_ADDRESS,
+  V2_LB_ROUTER_ADDRESS,
   PairV2,
   Percent,
   QuoterHelper,
@@ -11,6 +11,7 @@ import {
   TradeV2,
   USDC as _USDC,
   DAI as _DAI,
+  WMAS as _WMAS,
   parseUnits
 } from '@dusalabs/sdk'
 import { Account } from '@massalabs/massa-web3'
@@ -29,7 +30,8 @@ export const swapAmountOut = async (executeSwap = false) => {
   const CHAIN_ID = ChainId.BUILDNET
   const DAI = _DAI[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
-  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const WMAS = _WMAS[CHAIN_ID]
+  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // Init: user inputs
   const inputToken = DAI
@@ -40,8 +42,8 @@ export const swapAmountOut = async (executeSwap = false) => {
     outputToken.decimals
   ).toString() // returns 1000000
   const amountOut = new TokenAmount(outputToken, typedValueOutParsed) // wrap into TokenAmount
-  const isNativeIn = false
-  const isNativeOut = false
+  const isNativeIn = inputToken === WMAS
+  const isNativeOut = outputToken === WMAS
   const maxHops = 2
 
   const bestTrade = await QuoterHelper.findBestPath(

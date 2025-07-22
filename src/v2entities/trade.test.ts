@@ -8,7 +8,7 @@ import { PairV2 } from './pair'
 import { RouteV2 } from './route'
 import { TradeV2 } from './trade'
 import { parseUnits } from '../lib/ethers'
-import { ChainId } from '../constants'
+import { ChainId, LB_QUOTER_ADDRESS } from '../constants'
 import {
   Account,
   Args,
@@ -73,7 +73,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       expect(trades.length).toBeGreaterThan(0)
@@ -88,7 +89,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       expect(trades.length).toBeGreaterThan(0)
@@ -135,7 +137,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const isExactIn = true
@@ -164,7 +167,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const isExactIn = false
@@ -196,7 +200,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const tradesExactOut = await TradeV2.getTradesExactOut(
@@ -206,7 +211,8 @@ describe('TradeV2 entity', async () => {
         false,
         false,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const isExactIn = true
@@ -239,7 +245,8 @@ describe('TradeV2 entity', async () => {
         false,
         isNativeOut,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const bestTrade = TradeV2.chooseBestTrade(trades, true)
@@ -263,7 +270,8 @@ describe('TradeV2 entity', async () => {
         false,
         isNativeOut,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const bestTrade = TradeV2.chooseBestTrade(trades, true)
@@ -287,7 +295,8 @@ describe('TradeV2 entity', async () => {
         false,
         isNativeOut,
         client,
-        CHAIN_ID
+        CHAIN_ID,
+        LB_QUOTER_ADDRESS[CHAIN_ID]
       )
 
       const bestTrade = TradeV2.chooseBestTrade(trades, true)

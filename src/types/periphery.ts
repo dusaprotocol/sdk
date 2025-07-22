@@ -1,5 +1,4 @@
 import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
-import { Token } from '../v1entities'
 
 export class LimitOrder implements Serializable<LimitOrder> {
   /**
@@ -48,10 +47,13 @@ export interface DCA {
   amountEachDCA: bigint
   interval: number
   nbOfDCA: number
-  tokenPath: Token[]
+  tokenPath: string[]
+  threshold: number
+  moreGas: boolean
   startTime: number
   endTime: number
-  threshold: number
+  executedCount: number
+  deferredCallId: string
 }
 
 export interface StartDCAParameters {

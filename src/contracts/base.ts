@@ -58,11 +58,15 @@ export class IBaseContract {
   }
 
   public async read(params: BaseReadDataWithGas): Promise<ReadSCData> {
-    return new SmartContract(this.client, this.address).read(
-      params.targetFunction,
-      Uint8Array.from(params.parameter),
-      { maxGas: params.maxGas || MAX_GAS_CALL, caller: params.caller }
-    )
+    return new SmartContract(this.client, this.address)
+      .read(params.targetFunction, Uint8Array.from(params.parameter), {
+        maxGas: params.maxGas || MAX_GAS_CALL,
+        caller: params.caller
+      })
+      .then((res) => {
+        if (res.info.error) throw new Error(res.info.error)
+        return res
+      })
   }
 
   public async extract(keys: string[]): Promise<Uint8Array[]> {

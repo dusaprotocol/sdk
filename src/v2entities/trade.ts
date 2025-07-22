@@ -2,7 +2,8 @@ import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
 import {
   ChainId,
-  LB_QUOTER_ADDRESS,
+  // LB_QUOTER_ADDRESS,
+  V2_LB_QUOTER_ADDRESS as LB_QUOTER_ADDRESS,
   MULTICALL_ADDRESS,
   TradeType
 } from '../constants'
@@ -162,15 +163,16 @@ export class TradeV2 {
     ): SwapParameters => {
       const args = new Args()
       let value = SWAP_STORAGE_COST
+      const isV2 = !!this.quote.isLegacy.length
       switch (tradeType) {
         case TradeType.EXACT_INPUT:
           if (nativeIn) {
             const methodName = useFeeOnTransfer
               ? 'swapExactMASForTokensSupportingFeeOnTransferTokens'
               : 'swapExactMASForTokens'
+            args.addU256(amountOut).addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
             args
-              .addU256(amountOut)
-              .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -185,6 +187,8 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -197,6 +201,8 @@ export class TradeV2 {
               .addU256(amountIn)
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -210,6 +216,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
               .addArray(path.tokenPath, ArrayTypes.STRING)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addString(to)
               .addU64(BigInt(deadline))
               .addU64(SWAP_STORAGE_COST)
@@ -221,6 +229,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -231,6 +241,8 @@ export class TradeV2 {
               .addU256(amountOut)
               .addU256(amountIn)
               .addArray(path.pairBinSteps, ArrayTypes.U64)
+            if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
+            args
               .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
@@ -303,6 +315,7 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
+   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
    * @returns {TradeV2[]}
    */
   public static async getTradesExactIn(
@@ -312,7 +325,8 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean,
     client: Provider,
-    chainId: ChainId
+    chainId: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[chainId]
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       true,
@@ -322,7 +336,8 @@ export class TradeV2 {
       isNativeIn,
       isNativeOut,
       client,
-      chainId
+      chainId,
+      quoterAddress
     )
   }
 
@@ -337,6 +352,7 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
+   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
    * @returns {TradeV2[]}
    */
   public static async getTradesExactOut(
@@ -346,7 +362,8 @@ export class TradeV2 {
     isNativeIn: boolean,
     isNativeOut: boolean,
     client: Provider,
-    chainId: ChainId
+    chainId: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[chainId]
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       false,
@@ -356,7 +373,8 @@ export class TradeV2 {
       isNativeIn,
       isNativeOut,
       client,
-      chainId
+      chainId,
+      quoterAddress
     )
   }
 
@@ -399,9 +417,12 @@ export class TradeV2 {
       .aggregateMulticall(txs)
       .then((res) => {
         const bs = new Args(res.value)
-        return routes.map(
-          () => new Quote().deserialize(bs.nextUint8Array(), 0).instance
-        )
+        return routes.map(() => {
+          const r = bs.nextUint8Array()
+          if (!r.length) throw new Error('No result')
+
+          return new Quote().deserialize(r).instance
+        })
       })
       .catch((err) => {
         console.log('Error fetching quotes:', err.message)
@@ -522,7 +543,8 @@ export class TradeV2 {
         fees: this.quote.fees.map((el) => el.toString()).join(', '),
         virtualAmountsWithoutSlippage: this.quote.virtualAmountsWithoutSlippage
           .map((el) => el.toString())
-          .join(', ')
+          .join(', '),
+        isLegacy: this.quote.isLegacy.map((el) => el.toString()).join(', ')
       }
     }
   }

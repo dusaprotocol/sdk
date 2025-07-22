@@ -22,9 +22,29 @@ export type SwapEvent = {
   feesTotal: bigint
 }
 
+export type SwapEventV2 = {
+  to: string
+  startId: number
+  activeId: number
+  ids: number[]
+  swapForY: boolean
+  amountsIn: bigint[]
+  amountOut: bigint
+  feesTotal: bigint[]
+  volatilityAccumulated: number
+}
+
 export type LiquidityEvent = {
   to: string
   id: number
+  amountX: bigint
+  amountY: bigint
+}
+
+export type LiquidityEventV2 = {
+  to: string
+  startId: number
+  endId: number
   amountX: bigint
   amountY: bigint
 }
@@ -65,9 +85,13 @@ export type LimitOrderEvent = {
   id: number
 }
 
-export type LimitOrderExecutionEvent = {
+export type LimitOrderClaimEvent = {
   id: number
-  amountOut: bigint
+  amount: bigint
+}
+
+export type LimitOrderExecutionEvent = {
+  ids: number[]
 }
 
 export class EventDecoder {
@@ -95,12 +119,59 @@ export class EventDecoder {
     }
   }
 
+  static decodeSwapV2 = (bytes: string): SwapEventV2 => {
+    const [
+      to,
+      swapForY,
+      ...arrays
+      // amountOut
+      // volatilityAccumulated
+    ] = EventDecoder.extractParams(bytes)
+    const volatilityAccumulated = parseInt(arrays.pop() as string)
+    const amountOut = EventDecoder.decodeU256(arrays.pop() as string)
+    const length = arrays.length / 3
+    const ids = arrays.slice(0, length).map((x) => parseInt(x))
+    const amountsIn = arrays
+      .slice(length, length * 2)
+      .map((x) => EventDecoder.decodeU256(x))
+    const feesTotal = arrays
+      .slice(length * 2, length * 3)
+      .map((x) => EventDecoder.decodeU256(x))
+    const startId = ids[0]
+    const activeId = ids[ids.length - 1]
+
+    return {
+      to,
+      startId,
+      activeId,
+      swapForY: swapForY === 'true',
+      volatilityAccumulated,
+      feesTotal,
+      ids,
+      amountsIn,
+      amountOut
+    }
+  }
+
   static decodeLiquidity = (bytes: string): LiquidityEvent => {
     const [to, id, amountX, amountY] = EventDecoder.extractParams(bytes)
 
     return {
       to,
       id: parseInt(id),
+      amountX: EventDecoder.decodeU256(amountX),
+      amountY: EventDecoder.decodeU256(amountY)
+    }
+  }
+
+  static decodeLiquidityV2 = (bytes: string): LiquidityEventV2 => {
+    const [to, startId, endId, amountX, amountY] =
+      EventDecoder.extractParams(bytes)
+
+    return {
+      to,
+      startId: parseInt(startId),
+      endId: parseInt(endId),
       amountX: EventDecoder.decodeU256(amountX),
       amountY: EventDecoder.decodeU256(amountY)
     }
@@ -200,7 +271,7 @@ export class EventDecoder {
   }
 
   /**
-   * Decode add/remove limit order events
+   * Decode add/edit/remove limit order events
    * @param bytes
    */
   static decodeLimitOrder = (bytes: string): LimitOrderEvent => {
@@ -209,15 +280,22 @@ export class EventDecoder {
     return { id: parseInt(id) }
   }
 
-  static decodeLimitOrderExecution = (
-    bytes: string
-  ): LimitOrderExecutionEvent => {
-    const [id, amountOut] = EventDecoder.extractParams(bytes)
+  static decodeLimitOrderClaim = (bytes: string): LimitOrderClaimEvent => {
+    const [id, amount] = EventDecoder.extractParams(bytes)
 
     return {
       id: parseInt(id),
-      amountOut: EventDecoder.decodeU256(amountOut)
+      amount: EventDecoder.decodeU256(amount),
     }
+  }
+
+  static decodeLimitOrderExecution = (
+    bytes: string
+  ): LimitOrderExecutionEvent => {
+    const arrays = EventDecoder.extractParams(bytes)
+    const ids = arrays.map((x) => parseInt(x))
+
+    return { ids: ids }
   }
 
   // MISC
