@@ -1,8 +1,8 @@
-import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
+import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
 
-export type LBPair = IDeserializedResult<LBPairInformation>['instance']
+export type LBPair = DeserializedResult<LBPairInformation>['instance']
 
-export class LBPairInformation implements ISerializable<LBPairInformation> {
+export class LBPairInformation implements Serializable<LBPairInformation> {
   constructor(
     public binStep: number = 0,
     public LBPair: string = '',
@@ -16,13 +16,13 @@ export class LBPairInformation implements ISerializable<LBPairInformation> {
       .addString(this.LBPair)
       .addBool(this.createdByOwner)
       .addBool(this.isBlacklisted)
-    return Uint8Array.from(args.serialize())
+    return args.serialize()
   }
 
   deserialize(
     data: Uint8Array,
     offset = 0
-  ): IDeserializedResult<LBPairInformation> {
+  ): DeserializedResult<LBPairInformation> {
     const args = new Args(data, offset)
 
     this.binStep = Number(args.nextU32())

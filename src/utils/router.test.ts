@@ -22,7 +22,7 @@ import {
 } from '../v1entities'
 import { parseUnits } from '../lib/ethers'
 import { QuoterHelper } from './quoterHelper'
-import { Account, Web3Provider } from '@massalabs/massa-web3'
+import { Account, JsonRpcProvider } from '@massalabs/massa-web3'
 import { PairV2 } from '../v2entities'
 import invariant from 'tiny-invariant'
 
@@ -48,7 +48,7 @@ describe('isLiquidtyMethod', () => {
 describe('decodeSwapTx', async () => {
   const CHAIN_ID = ChainId.MAINNET
   const baseAccount = await Account.generate()
-  const client = Web3Provider.mainnet(baseAccount)
+  const client = JsonRpcProvider.mainnet(baseAccount)
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
 
@@ -81,7 +81,7 @@ describe('decodeSwapTx', async () => {
 
     const decoded = decodeSwapTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       params.value
     )
     return decoded
@@ -129,7 +129,7 @@ describe('decodeLiquidityTx', async () => {
     const params = pair.liquidityCallParameters(options)
     const decoded = decodeLiquidityTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)
@@ -145,7 +145,7 @@ describe('decodeLiquidityTx', async () => {
     const params = pair.liquidityCallParameters(options)
     const decoded = decodeLiquidityTx(
       params.methodName,
-      Uint8Array.from(params.args.serialize()),
+      params.args.serialize(),
       CHAIN_ID
     )
     expect(decoded.binStep).toStrictEqual(options.binStep)

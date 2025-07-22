@@ -4,12 +4,12 @@ import { PairV2 } from './pair'
 import { Token, USDC as _USDC, WETH as _WETH } from '../v1entities'
 import { WMAS as _WMAS } from '../v1entities'
 import { describe, it, expect } from 'vitest'
-import { Account, Web3Provider } from '@massalabs/massa-web3'
+import { Account, JsonRpcProvider } from '@massalabs/massa-web3'
 
 describe('PairV2 entity', async () => {
   const CHAIN_ID = ChainId.MAINNET
   const baseAccount = await Account.generate()
-  const client = Web3Provider.mainnet(baseAccount)
+  const client = JsonRpcProvider.mainnet(baseAccount)
 
   // init tokens
   const USDC = _USDC[CHAIN_ID]

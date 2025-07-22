@@ -402,12 +402,10 @@ export class TradeV2 {
       const routeStrArr = route.pathToStrArr()
       return new Tx(
         isExactIn ? 'findBestPathFromAmountIn' : 'findBestPathFromAmountOut',
-        new Uint8Array(
-          new Args()
-            .addArray(routeStrArr, ArrayTypes.STRING)
-            .addU256(tokenAmount.raw)
-            .serialize()
-        ),
+        new Args()
+          .addArray(routeStrArr, ArrayTypes.STRING)
+          .addU256(tokenAmount.raw)
+          .serialize(),
         quoterAddress
       )
     })
