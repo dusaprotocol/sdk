@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: 5.2.1-dev.20250611112554
-    version: 5.2.1-dev.20250611112554
+    specifier: 5.2.1-dev.20250710100235
+    version: 5.2.1-dev.20250710100235
   big.js:
     specifier: ~6.2.1
     version: 6.2.1
@@ -1780,8 +1780,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@massalabs/massa-web3@5.2.1-dev.20250611112554:
-    resolution: {integrity: sha512-m6pwIWu//eRyh6v/Sj65DXFy6/Hm5N4AdTNk4BkrmrNB6UwfCo9OtunLl2kJ8Vum2sfyf1XtJ7ZNclD4UpfRwg==}
+  /@massalabs/massa-web3@5.2.1-dev.20250710100235:
+    resolution: {integrity: sha512-SO86TMHMkEl+v1cJGRrU5bIyk08ImeN/9sIHrB6pyYybmZdtCaBGkpAfKbjvh6IItimJaarnNTH6tqQvmKiu7g==}
     dependencies:
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.5.0

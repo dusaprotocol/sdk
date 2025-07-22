@@ -1,6 +1,6 @@
 import { Args, ArrayTypes, bytesToStr } from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
-import { LimitOrder } from 'types/periphery'
+import { LimitOrder } from '../types/periphery'
 
 export class ILimitOrder extends IBaseContract {
   async addLimitOrder(
@@ -52,16 +52,7 @@ export class ILimitOrder extends IBaseContract {
     const res = await this.extract([`Orders::${id}`])
     if (!res[0] || !res[0].length)
       throw new Error(`Order with id ${id} not found`)
-    const args = new Args(res[0])
-    return {
-      orderId: id,
-      orderType: Number(args.nextU8()),
-      binId: Number(args.nextU64()),
-      amountIn: args.nextU256(),
-      owner: args.nextString(),
-      amountLPToken: args.nextU256(),
-      executed: args.nextBool()
-    }
+    return new LimitOrder().deserialize(res[0]).instance
   }
 
   async getUserOrderIds(user: string): Promise<number[]> {
