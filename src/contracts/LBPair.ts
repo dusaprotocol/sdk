@@ -39,7 +39,7 @@ export class ILBPair extends IBaseContract {
       targetFunction: 'balanceOfBatch',
       parameter: new Args()
         .addArray(accounts, ArrayTypes.STRING)
-        .addArray(ids.map(BigInt), ArrayTypes.U32)
+        .addArray(ids.map(BigInt), ArrayTypes.U64)
         .serialize()
     }).then((res) => bytesToArray(res.value, ArrayTypes.U256))
   }
