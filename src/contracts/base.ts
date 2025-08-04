@@ -84,19 +84,17 @@ export class IBaseContract {
   }
 
   public async estimateGas(params: BaseReadDataWithGas) {
-    return this.simulate(params, '')
+    return this.simulate(params, (this.client as any).address)
       .then((r) => {
         if (r.info.gasCost === 0) return MAX_GAS_CALL
-        // 10% extra gas for safety
-        return BigInt(
-          Math.floor(Math.min(r.info.gasCost * 1.1, Number(MAX_GAS_CALL)))
-        )
-      }) // 10% extra gas for safety
+        const gasCost = r.info.gasCost * 1.1 // 10% extra gas for safety
+        return BigInt(Math.floor(Math.min(gasCost, Number(MAX_GAS_CALL))))
+      })
       .catch(() => MAX_GAS_CALL)
   }
 
   public async estimateCoins(params: BaseReadDataWithGas) {
-    return this.simulate({ ...params, coins: 0n }, '')
+    return this.simulate({ ...params, coins: 0n }, (this.client as any).address)
       .then((r) => {
         if (r.info.error) throw new Error(r.info.error)
         return 0n
