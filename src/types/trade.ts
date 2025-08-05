@@ -11,10 +11,10 @@ export class Quote implements Serializable<Quote> {
     public route: string[] = [],
     public pairs: string[] = [],
     public binSteps: bigint[] = [],
-    public isLegacy: boolean[] = [],
     public amounts: bigint[] = [],
     public virtualAmountsWithoutSlippage: bigint[] = [],
-    public fees: bigint[] = []
+    public fees: bigint[] = [],
+    public isLegacy: boolean[] = []
   ) {}
 
   serialize(): Uint8Array {
@@ -25,8 +25,7 @@ export class Quote implements Serializable<Quote> {
       .addArray(this.amounts, ArrayTypes.U256)
       .addArray(this.virtualAmountsWithoutSlippage, ArrayTypes.U256)
       .addArray(this.fees, ArrayTypes.U256)
-      .addArray(this.isLegacy, ArrayTypes.BOOL)
-
+    if (this.isLegacy.length) args.addArray(this.isLegacy, ArrayTypes.BOOL)
     return args.serialize()
   }
 
