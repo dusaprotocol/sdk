@@ -14,8 +14,12 @@ export class QuoterHelper {
     maxHops: number,
     baseClient: Provider,
     CHAIN_ID: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[CHAIN_ID]
+    quoterAddress = LB_QUOTER_ADDRESS[CHAIN_ID],
+    checkLegacy: boolean = true
   ) {
+    if (!quoterAddress) {
+      throw new Error(`Quoter address not available for chain ${CHAIN_ID}`)
+    }
     const BASES: Token[] = [WMAS, USDC, WETH].map((token) => token[CHAIN_ID])
 
     // get all [Token, Token] combinations
@@ -46,12 +50,43 @@ export class QuoterHelper {
       isNativeOut,
       baseClient,
       CHAIN_ID,
-      quoterAddress
+      quoterAddress,
+      checkLegacy
     )
 
     const filteredTrades = trades.filter(
       (trade): trade is TradeV2 => trade !== undefined
     )
     return TradeV2.chooseBestTrade(filteredTrades, isExactIn)
+  }
+
+  /**
+   * Same as findBestPath but explicitly excludes legacy pairs for better performance
+   */
+  static async findBestPathV2Only(
+    inputToken: Token,
+    isNativeIn: boolean,
+    outputToken: Token,
+    isNativeOut: boolean,
+    amount: TokenAmount,
+    isExactIn: boolean,
+    maxHops: number,
+    baseClient: Provider,
+    CHAIN_ID: ChainId,
+    quoterAddress = LB_QUOTER_ADDRESS[CHAIN_ID]
+  ) {
+    return this.findBestPath(
+      inputToken,
+      isNativeIn,
+      outputToken,
+      isNativeOut,
+      amount,
+      isExactIn,
+      maxHops,
+      baseClient,
+      CHAIN_ID,
+      quoterAddress,
+      false // checkLegacy = false for V2 only
+    )
   }
 }

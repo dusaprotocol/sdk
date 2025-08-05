@@ -2,7 +2,6 @@ import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
 import {
   ChainId,
-  // LB_QUOTER_ADDRESS,
   V2_LB_QUOTER_ADDRESS as LB_QUOTER_ADDRESS,
   MULTICALL_ADDRESS,
   TradeType
@@ -163,7 +162,9 @@ export class TradeV2 {
     ): SwapParameters => {
       const args = new Args()
       let value = SWAP_STORAGE_COST
-      const isV2 = !!this.quote.isLegacy.length
+      // V2 pairs have the isLegacy array populated (even if empty)
+      // V1 pairs don't have this field at all (handled in Quote deserialization)
+      const isV2 = this.quote.isLegacy.length > 0
       switch (tradeType) {
         case TradeType.EXACT_INPUT:
           if (nativeIn) {
@@ -326,7 +327,8 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId]
+    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    checkLegacy: boolean = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       true,
@@ -337,7 +339,8 @@ export class TradeV2 {
       isNativeOut,
       client,
       chainId,
-      quoterAddress
+      quoterAddress,
+      checkLegacy
     )
   }
 
@@ -363,7 +366,8 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId]
+    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    checkLegacy: boolean = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       false,
@@ -374,7 +378,8 @@ export class TradeV2 {
       isNativeOut,
       client,
       chainId,
-      quoterAddress
+      quoterAddress,
+      checkLegacy
     )
   }
 
@@ -387,8 +392,13 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId]
+    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    checkLegacy: boolean = true // checkLegacy = true to include legacy pairs
   ): Promise<(TradeV2 | undefined)[]> {
+    if (!quoterAddress) {
+      throw new Error(`Quoter address not available for chain ${chainId}`)
+    }
+
     const tokenIn = isExactIn ? tokenAmount.token : otherToken
     const tokenOut = isExactIn ? otherToken : tokenAmount.token
 
@@ -405,6 +415,7 @@ export class TradeV2 {
         new Args()
           .addArray(routeStrArr, ArrayTypes.STRING)
           .addU256(tokenAmount.raw)
+          .addBool(checkLegacy)
           .serialize(),
         quoterAddress
       )
@@ -430,13 +441,18 @@ export class TradeV2 {
         return Promise.all(
           routes.map(async (route) => {
             try {
-              const methodName = isExactIn
-                ? 'findBestPathFromAmountIn'
-                : 'findBestPathFromAmountOut'
-              const quote: Quote = await quoter[methodName](
-                route.pathToStrArr(),
-                tokenAmount.raw.toString()
-              )
+              const routeStrArr = route.pathToStrArr()
+              const quote: Quote = isExactIn
+                ? await quoter.findBestPathFromAmountIn(
+                    routeStrArr,
+                    tokenAmount.raw.toString(),
+                    true
+                  )
+                : await quoter.findBestPathFromAmountOut(
+                    routeStrArr,
+                    tokenAmount.raw.toString(),
+                    true
+                  )
               return quote
             } catch (e) {
               console.log('Error fetching quote:', e)

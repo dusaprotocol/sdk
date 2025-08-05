@@ -5,22 +5,25 @@ import { IBaseContract } from './base'
 export class IQuoter extends IBaseContract {
   async findBestPathFromAmountIn(
     route: string[],
-    amountIn: string
+    amountIn: string,
+    checkLegacy: boolean = true
   ): Promise<Quote> {
-    return this.findBestPath(route, amountIn, true)
+    return this.findBestPath(route, amountIn, true, checkLegacy)
   }
 
   async findBestPathFromAmountOut(
     route: string[],
-    amountOut: string
+    amountOut: string,
+    checkLegacy: boolean = true
   ): Promise<Quote> {
-    return this.findBestPath(route, amountOut, false)
+    return this.findBestPath(route, amountOut, false, checkLegacy)
   }
 
   private async findBestPath(
     route: string[],
     amount: string,
-    isExactIn: boolean
+    isExactIn: boolean,
+    checkLegacy: boolean
   ): Promise<Quote> {
     return this.read({
       targetFunction: isExactIn
@@ -29,10 +32,10 @@ export class IQuoter extends IBaseContract {
       parameter: new Args()
         .addArray(route, ArrayTypes.STRING)
         .addU256(BigInt(amount))
-        .addBool(isExactIn)
+        .addBool(checkLegacy)
         .serialize()
     }).then((result) => {
-      if (result.info.error || !result.value.length)
+      if (result.info.error || !result.value?.length)
         throw new Error(result.info.error || 'No result')
 
       return new Quote().deserialize(result.value).instance
