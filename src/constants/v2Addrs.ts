@@ -17,7 +17,7 @@ export const V2_LB_QUOTER_ADDRESS: AddressMap = {
 
 export const V2_LB_QUOTER_ADDRESS_FOR_DCA: AddressMap = {
   [ChainId.BUILDNET]: '',
-  [ChainId.MAINNET]: 'AS1hzZUbjCeFj2LWPdfhmGrU3wTT62i5iTNY2caRATVRjQDbqbEH'
+  [ChainId.MAINNET]: 'AS12KEC9XiafTU2yNCKaeXeRBMJ412qoP2zcSZwzU5g9UZBerxCCY'
 }
 
 export const LB_ROUTER_ADDRESS: AddressMap = {
@@ -61,7 +61,7 @@ export const DCA_MANAGER_ADDRESS: AddressMap = {
 
 export const DCA_MANAGER_ADDRESS_V2: AddressMap = {
   [ChainId.BUILDNET]: '',
-  [ChainId.MAINNET]: 'AS1KoegDzwkFiWgv6rKKZHckiwbgSEiXh7hfXsGPb4neJTGKoWCv'
+  [ChainId.MAINNET]: 'AS12kJwpTpNdXsAhpHY9FPJ5S75c97c5aKDqmUr2vHRJP95adxJYy'
 }
 
 export const LIMIT_ORDER_MANAGER_ADDRESS: AddressMap = {
