@@ -11,8 +11,13 @@ export const LB_QUOTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_QUOTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1UqXdCJmUdERnk87GqiXRLqF5cXfm7q3x49ng63xpZKLAiEgRN',
-  [ChainId.MAINNET]: ''
+  [ChainId.BUILDNET]: 'AS1uQyFAw1Yu6qLKfgKrLTkLsUKts22XbjLd5btEQhfRMCMmJwWx',
+  [ChainId.MAINNET]: 'AS1hzZUbjCeFj2LWPdfhmGrU3wTT62i5iTNY2caRATVRjQDbqbEH'
+}
+
+export const V2_LB_QUOTER_ADDRESS_FOR_DCA: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: 'AS12KEC9XiafTU2yNCKaeXeRBMJ412qoP2zcSZwzU5g9UZBerxCCY'
 }
 
 export const LB_ROUTER_ADDRESS: AddressMap = {
@@ -21,13 +26,13 @@ export const LB_ROUTER_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_ROUTER_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS1Ui3SMj1U8CkPq2ENiDf2WbDYbSGcJTHPW1vVR8eo5N13aPY2f',
-  [ChainId.MAINNET]: ''
+  [ChainId.BUILDNET]: 'AS1xed5qTFcsWR2Ce7VLaAEHde8bJiTrX8JHM35qkHjmnqH1GFU8',
+  [ChainId.MAINNET]: 'AS13crGQybBJx6ys6UADcn2cHQ6VcrK37rRygKHNyVNQriFQt5EG'
 }
 
 export const V0_ROUTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1bCBYc1sbWBgDs68Cfv89xtLSyH93Yd3RjBJzqq5QYEH4iaDRJ',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS12tZtPoUf6oLxAy7avkoGByFuUzJyCWBnFZqexD4XR3MZvHKQxr'
 }
 
 export const LB_FACTORY_ADDRESS: AddressMap = {
@@ -36,13 +41,13 @@ export const LB_FACTORY_ADDRESS: AddressMap = {
 }
 
 export const V2_LB_FACTORY_ADDRESS: AddressMap = {
-  [ChainId.BUILDNET]: 'AS13uiAxVBNWEBgnQ1yT5wB3raCPKu5KQJrUGgp9UNfjxXWHfwAq',
-  [ChainId.MAINNET]: ''
+  [ChainId.BUILDNET]: 'AS12w3vcEYn8VBX1utw1fSmFNbYv9vMvy5n8tqCJjoGz3vaQYEhfp',
+  [ChainId.MAINNET]: 'AS127Lxdux4HCUkZL89SrRYR5kq2u8t64Jt3aYj786t6fBF1cZGcu'
 }
 
 export const V0_FACTORY_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1f9vUWC2mm4QFVsLpM1XeaWdtUKofGacDJZjJDGrgNogwWpFbh',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS13uUUc5SrarY1UqBMvBq9RutdNLCA4TLu486ookK9waKDoxbzn'
 }
 
 /**
@@ -52,6 +57,11 @@ export const V0_FACTORY_ADDRESS: AddressMap = {
 export const DCA_MANAGER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS12Sm9oqH2C26fx7v8ZYCwyKs9LmrmRGX2WRJT3aK7KnYtrMhq8n',
   [ChainId.MAINNET]: 'AS1KoegDzwkFiWgv6rKKZHckiwbgSEiXh7hfXsGPb4neJTGKoWCv'
+}
+
+export const DCA_MANAGER_ADDRESS_V2: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: 'AS12kJwpTpNdXsAhpHY9FPJ5S75c97c5aKDqmUr2vHRJP95adxJYy'
 }
 
 export const LIMIT_ORDER_MANAGER_ADDRESS: AddressMap = {

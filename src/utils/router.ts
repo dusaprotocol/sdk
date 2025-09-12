@@ -140,8 +140,8 @@ export const decodeLiquidityTx = (
     const activeIdDesired = Number(args.nextU64())
     const idSlippage = Number(args.nextU64())
     const deltaIds = args.nextArray<bigint>(ArrayTypes.I64).map(Number)
-    // const distribution0 = args.nextArray<bigint>(ArrayTypes.U256);
-    // const distribution1 = args.nextArray<bigint>(ArrayTypes.U256);
+    const distribution0 = args.nextArray<bigint>(ArrayTypes.U256)
+    const distribution1 = args.nextArray<bigint>(ArrayTypes.U256)
     const to = args.nextString()
     const deadline = Number(args.nextU64())
 
@@ -156,8 +156,8 @@ export const decodeLiquidityTx = (
       activeIdDesired,
       idSlippage,
       deltaIds,
-      distributionX: [], //distribution0,
-      distributionY: [], //distribution1,
+      distributionX: distribution0, //distribution0,
+      distributionY: distribution1, //distribution1,
       to,
       deadline
     }
