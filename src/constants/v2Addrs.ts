@@ -27,7 +27,7 @@ export const LB_ROUTER_ADDRESS: AddressMap = {
 
 export const V2_LB_ROUTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1xed5qTFcsWR2Ce7VLaAEHde8bJiTrX8JHM35qkHjmnqH1GFU8',
-  [ChainId.MAINNET]: 'AS13crGQybBJx6ys6UADcn2cHQ6VcrK37rRygKHNyVNQriFQt5EG'
+  [ChainId.MAINNET]: 'AS1fodax6ZWcmJQ2FDrV5MUsc111WQuWDhFtF1CjbEsvH8CjCz4y'
 }
 
 export const V0_ROUTER_ADDRESS: AddressMap = {
