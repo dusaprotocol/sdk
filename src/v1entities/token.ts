@@ -195,3 +195,23 @@ export const WBTC: { [chainId in ChainId]: Token } = {
     wbtcName
   )
 }
+
+const dusaName = 'DUSA Coin'
+const dusaSymbol = 'DUSA'
+const dusaDecimals = 18
+export const DUSA: { [chainId in ChainId]: Token } = {
+  [ChainId.BUILDNET]: new Token(
+    ChainId.BUILDNET,
+    '',
+    dusaDecimals,
+    dusaSymbol,
+    dusaName
+  ),
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    'AS12HT1JQUne9nkHevS9Q7HcsoAaYLXWPNgoWPuruV7Gw6Mb92ACL',
+    dusaDecimals,
+    dusaSymbol,
+    dusaName
+  )
+}
