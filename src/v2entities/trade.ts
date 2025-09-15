@@ -213,12 +213,10 @@ export class TradeV2 {
           invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
           if (nativeIn) {
             const methodName = 'swapMASForExactTokens'
-            args
-              .addU256(amountOut)
-              .addArray(path.pairBinSteps, ArrayTypes.U64)
-              .addArray(path.tokenPath, ArrayTypes.STRING)
+            args.addU256(amountOut).addArray(path.pairBinSteps, ArrayTypes.U64)
             if (isV2) args.addArray(this.quote.isLegacy, ArrayTypes.BOOL)
             args
+              .addArray(path.tokenPath, ArrayTypes.STRING)
               .addString(to)
               .addU64(BigInt(deadline))
               .addU64(SWAP_STORAGE_COST)
