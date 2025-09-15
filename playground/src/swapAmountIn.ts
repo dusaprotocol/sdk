@@ -35,7 +35,7 @@ export const swapAmountIn = async (executeSwap = false) => {
   const WMAS = _WMAS[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
   const WETH = _WETH[CHAIN_ID]
-  const useV2 = false
+  const useV2 = true
   const router = useV2
     ? V2_LB_ROUTER_ADDRESS[CHAIN_ID]
     : LB_ROUTER_ADDRESS[CHAIN_ID]
@@ -73,6 +73,7 @@ export const swapAmountIn = async (executeSwap = false) => {
 
   // increase allowance
   const txAllowance = await new IERC20(inputToken.address, client).approve(
+    account.address.toString(),
     router,
     bestTrade.inputAmount.raw
   )

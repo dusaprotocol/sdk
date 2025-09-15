@@ -12,7 +12,11 @@ import {
   USDC as _USDC,
   DAI as _DAI,
   WMAS as _WMAS,
-  parseUnits
+  parseUnits,
+  LB_ROUTER_ADDRESS,
+  V2_LB_QUOTER_ADDRESS,
+  LB_QUOTER_ADDRESS,
+  WETH as _WETH
 } from '@dusalabs/sdk'
 import { Account } from '@massalabs/massa-web3'
 import { createClient, logEvents } from './utils'
@@ -31,10 +35,17 @@ export const swapAmountOut = async (executeSwap = false) => {
   const DAI = _DAI[CHAIN_ID]
   const USDC = _USDC[CHAIN_ID]
   const WMAS = _WMAS[CHAIN_ID]
-  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
+  const useV2 = true
+  const router = useV2
+    ? V2_LB_ROUTER_ADDRESS[CHAIN_ID]
+    : LB_ROUTER_ADDRESS[CHAIN_ID]
+  const quoter = useV2
+    ? V2_LB_QUOTER_ADDRESS[CHAIN_ID]
+    : LB_QUOTER_ADDRESS[CHAIN_ID]
 
   // Init: user inputs
-  const inputToken = DAI
+  const inputToken = WETH
   const outputToken = USDC
   const typedValueOut = '1' // user string input
   const typedValueOutParsed = parseUnits(
@@ -55,7 +66,8 @@ export const swapAmountOut = async (executeSwap = false) => {
     false,
     maxHops,
     client,
-    CHAIN_ID
+    CHAIN_ID,
+    quoter
   )
 
   console.log('bestTrade', bestTrade.toLog())
@@ -64,6 +76,7 @@ export const swapAmountOut = async (executeSwap = false) => {
 
   // increase allowance
   const txAllowance = await new IERC20(inputToken.address, client).approve(
+    account.address.toString(),
     router,
     bestTrade.inputAmount.raw
   )
