@@ -6,7 +6,7 @@ import {
   RemoveLiquidityParameters,
   LiquidityParameters
 } from '../types'
-import { ChainId, LB_FACTORY_ADDRESS } from '../constants'
+import { ChainId, LB_FACTORY_ADDRESS, V2_LB_FACTORY_ADDRESS } from '../constants'
 import { Bin } from './bin'
 import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
@@ -62,6 +62,30 @@ export class PairV2 {
     chainId: ChainId
   ): Promise<LBPair> {
     const factory = new IFactory(LB_FACTORY_ADDRESS[chainId], client)
+
+    // no need for sorted tokens
+    const LBPair = await factory.getLBPairInformation(
+      this.tokenA.address,
+      this.tokenB.address,
+      binStep
+    )
+    return LBPair
+  }
+
+   /**
+   * Fetches V2Pair for token0, token1, and given binStep
+   *
+   * @param {number} binStep
+   * @param {Provider} client
+   * @param {ChainId} chainId
+   * @returns {Promise<LBPair>}
+   */
+  public async fetchV2Pair(
+    binStep: number,
+    client: Provider,
+    chainId: ChainId
+  ): Promise<LBPair> {
+    const factory = new IFactory(V2_LB_FACTORY_ADDRESS[chainId], client)
 
     // no need for sorted tokens
     const LBPair = await factory.getLBPairInformation(
