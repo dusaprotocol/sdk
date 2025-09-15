@@ -2,9 +2,9 @@ import invariant from 'tiny-invariant'
 import { RouteV2 } from './route'
 import {
   ChainId,
-  V2_LB_QUOTER_ADDRESS as LB_QUOTER_ADDRESS,
   MULTICALL_ADDRESS,
-  TradeType
+  TradeType,
+  V2_LB_QUOTER_ADDRESS
 } from '../constants'
 import {
   TradeOptions,
@@ -316,7 +316,8 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
-   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
+   * @param {string} [quoterAddress=V2_LB_QUOTER_ADDRESS[chainId]]
+   * @param {boolean} [checkLegacy=true] whether to check legacy pairs (V1) when quoting
    * @returns {TradeV2[]}
    */
   public static async getTradesExactIn(
@@ -327,7 +328,7 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
     checkLegacy: boolean = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -355,7 +356,8 @@ export class TradeV2 {
    * @param {boolean} isNativeOut
    * @param {Provider} client
    * @param {ChainId} chainId
-   * @param {string} [quoterAddress=LB_QUOTER_ADDRESS]
+   * @param {string} [quoterAddress=V2_LB_QUOTER_ADDRESS]
+   * @param {boolean} [checkLegacy=true] whether to check legacy pairs (V1) when quoting
    * @returns {TradeV2[]}
    */
   public static async getTradesExactOut(
@@ -366,7 +368,7 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
     checkLegacy: boolean = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
@@ -392,13 +394,9 @@ export class TradeV2 {
     isNativeOut: boolean,
     client: Provider,
     chainId: ChainId,
-    quoterAddress = LB_QUOTER_ADDRESS[chainId],
+    quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
     checkLegacy: boolean = true // checkLegacy = true to include legacy pairs
   ): Promise<(TradeV2 | undefined)[]> {
-    if (!quoterAddress) {
-      throw new Error(`Quoter address not available for chain ${chainId}`)
-    }
-
     const tokenIn = isExactIn ? tokenAmount.token : otherToken
     const tokenOut = isExactIn ? otherToken : tokenAmount.token
 
@@ -410,13 +408,15 @@ export class TradeV2 {
 
     const txs: Tx[] = routes.map((route) => {
       const routeStrArr = route.pathToStrArr()
+      const args = new Args()
+        .addArray(routeStrArr, ArrayTypes.STRING)
+        .addU256(tokenAmount.raw)
+      if (quoterAddress === V2_LB_QUOTER_ADDRESS[chainId])
+        args.addBool(checkLegacy)
+
       return new Tx(
         isExactIn ? 'findBestPathFromAmountIn' : 'findBestPathFromAmountOut',
-        new Args()
-          .addArray(routeStrArr, ArrayTypes.STRING)
-          .addU256(tokenAmount.raw)
-          .addBool(checkLegacy)
-          .serialize(),
+        args.serialize(),
         quoterAddress
       )
     })
@@ -446,12 +446,12 @@ export class TradeV2 {
                 ? await quoter.findBestPathFromAmountIn(
                     routeStrArr,
                     tokenAmount.raw.toString(),
-                    true
+                    checkLegacy
                   )
                 : await quoter.findBestPathFromAmountOut(
                     routeStrArr,
                     tokenAmount.raw.toString(),
-                    true
+                    checkLegacy
                   )
               return quote
             } catch (e) {
