@@ -1,11 +1,12 @@
 import { Args, ArrayTypes } from '@massalabs/massa-web3'
 import { Quote } from '../types'
 import { IBaseContract } from './base'
+import { BigintIsh } from '../constants'
 
 export class IQuoter extends IBaseContract {
   async findBestPathFromAmountIn(
     route: string[],
-    amountIn: string,
+    amountIn: BigintIsh,
     checkLegacy: boolean = true
   ): Promise<Quote> {
     return this.findBestPath(route, amountIn, true, checkLegacy)
@@ -13,7 +14,7 @@ export class IQuoter extends IBaseContract {
 
   async findBestPathFromAmountOut(
     route: string[],
-    amountOut: string,
+    amountOut: BigintIsh,
     checkLegacy: boolean = true
   ): Promise<Quote> {
     return this.findBestPath(route, amountOut, false, checkLegacy)
@@ -21,7 +22,7 @@ export class IQuoter extends IBaseContract {
 
   private async findBestPath(
     route: string[],
-    amount: string,
+    amount: BigintIsh,
     isExactIn: boolean,
     checkLegacy: boolean
   ): Promise<Quote> {

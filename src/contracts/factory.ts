@@ -6,12 +6,17 @@ import {
 } from '@massalabs/massa-web3'
 import { LBPair, LBPairInformation } from '../types'
 import { IBaseContract } from './base'
+import { validateAddress } from '../utils'
 
 export class IFactory extends IBaseContract {
   async getAllLBPairs(
     token0Address: string,
     token1Address: string
   ): Promise<LBPair[]> {
+    if (!validateAddress(token0Address))
+      throw new Error(`Invalid token address: ${token0Address}`)
+    if (!validateAddress(token1Address))
+      throw new Error(`Invalid token address: ${token1Address}`)
     return this.read({
       targetFunction: 'getAllLBPairs',
       parameter: new Args()
@@ -28,6 +33,10 @@ export class IFactory extends IBaseContract {
     token1Address: string,
     binStep: number
   ): Promise<LBPair> {
+    if (!validateAddress(token0Address))
+      throw new Error(`Invalid token address: ${token0Address}`)
+    if (!validateAddress(token1Address))
+      throw new Error(`Invalid token address: ${token1Address}`)
     return this.read({
       targetFunction: 'getLBPairInformation',
       parameter: new Args()
@@ -42,6 +51,10 @@ export class IFactory extends IBaseContract {
     token0Address: string,
     token1Address: string
   ): Promise<number[]> {
+    if (!validateAddress(token0Address))
+      throw new Error(`Invalid token address: ${token0Address}`)
+    if (!validateAddress(token1Address))
+      throw new Error(`Invalid token address: ${token1Address}`)
     return this.read({
       targetFunction: 'getAvailableLBPairBinSteps',
       parameter: new Args()

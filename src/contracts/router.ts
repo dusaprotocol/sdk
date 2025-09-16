@@ -1,6 +1,7 @@
 import { Args } from '@massalabs/massa-web3'
 import { LiquidityParameters, SwapParameters } from '../types'
 import { IBaseContract } from './base'
+import { validateAddress } from '../utils'
 
 interface GetSwapParams {
   pairAddress: string
@@ -31,6 +32,12 @@ export class IRouter extends IBaseContract {
     binStep: number,
     masToSend: bigint
   ) {
+    if (!validateAddress(tokenA)) {
+      throw new Error(`Invalid tokenA address: ${tokenA}`)
+    }
+    if (!validateAddress(tokenB)) {
+      throw new Error(`Invalid tokenB address: ${tokenB}`)
+    }
     return this.call({
       targetFunction: 'createLBPair',
       coins: masToSend,
@@ -56,6 +63,9 @@ export class IRouter extends IBaseContract {
   async getSwapIn(
     params: GetSwapInParams
   ): Promise<{ amountIn: bigint; feesIn: bigint }> {
+    if (!validateAddress(params.pairAddress)) {
+      throw new Error(`Invalid pair address: ${params.pairAddress}`)
+    }
     return this.read({
       targetFunction: 'getSwapIn',
       parameter: new Args()
@@ -72,6 +82,9 @@ export class IRouter extends IBaseContract {
   async getSwapOut(
     params: GetSwapOutParams
   ): Promise<{ amountOut: bigint; feesIn: bigint }> {
+    if (!validateAddress(params.pairAddress)) {
+      throw new Error(`Invalid pair address: ${params.pairAddress}`)
+    }
     return this.read({
       targetFunction: 'getSwapOut',
       parameter: new Args()

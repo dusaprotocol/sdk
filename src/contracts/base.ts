@@ -10,6 +10,7 @@ import {
 import { EventDecoder } from '../utils/eventDecoder'
 import { MassaUnits } from '../constants/internal'
 import { parseUnits } from '../lib/ethers'
+import { validateAddress } from '../utils'
 
 type BaseCallData = Omit<
   CallSCParams,
@@ -41,7 +42,11 @@ export class IBaseContract {
     public shouldEstimateGas = true,
     public finalStorage = false,
     public fee: bigint = MassaUnits.oneMassa / 100n
-  ) {}
+  ) {
+    if (!validateAddress(address)) {
+      throw new Error(`Invalid contract address: ${address}`)
+    }
+  }
 
   public async call(params: BaseCallDataWithGas): Promise<Operation> {
     const coinsNeeded = this.shouldEstimateCoins

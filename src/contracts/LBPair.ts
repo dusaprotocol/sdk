@@ -8,9 +8,12 @@ import {
 } from '@massalabs/massa-web3'
 import { BinReserves, FeeParameters, LBPairReservesAndId } from '../types'
 import { IBaseContract } from './base'
+import { validateAddress } from '../utils'
 
 export class ILBPair extends IBaseContract {
   async setApprovalForAll(operator: string, approved: boolean) {
+    if (!validateAddress(operator))
+      throw new Error(`Invalid operator address: ${operator}`)
     return this.call({
       targetFunction: 'setApprovalForAll',
       parameter: new Args().addBool(approved).addString(operator).serialize()
@@ -18,6 +21,9 @@ export class ILBPair extends IBaseContract {
   }
 
   async collectFees(account: string, ids: number[]) {
+    if (!validateAddress(account)) {
+      throw new Error(`Invalid account address: ${account}`)
+    }
     return this.call({
       targetFunction: 'collectFees',
       parameter: new Args()
@@ -28,6 +34,9 @@ export class ILBPair extends IBaseContract {
   }
 
   async balanceOf(account: string, id: number): Promise<bigint> {
+    if (!validateAddress(account)) {
+      throw new Error(`Invalid account address: ${account}`)
+    }
     return this.read({
       targetFunction: 'balanceOf',
       parameter: new Args().addString(account).addU64(BigInt(id)).serialize()
@@ -105,15 +114,19 @@ export class ILBPair extends IBaseContract {
   }
 
   async getUserBinIds(user: string): Promise<number[]> {
+    if (!validateAddress(user)) {
+      throw new Error(`Invalid user address: ${user}`)
+    }
     return this.read({
       targetFunction: 'getUserBins',
       parameter: new Args().addString(user).serialize()
-    }).then((res) =>
-      new Args(res.value)
+    }).then((res) => {
+      console.log('res', res.info)
+      return new Args(res.value)
         .nextArray<bigint>(ArrayTypes.U32)
         .map(Number)
         .sort((a, b) => a - b)
-    )
+    })
   }
 
   async pendingFees(
@@ -123,6 +136,9 @@ export class ILBPair extends IBaseContract {
     amount0: bigint
     amount1: bigint
   }> {
+    if (!validateAddress(account)) {
+      throw new Error(`Invalid account address: ${account}`)
+    }
     return this.read({
       targetFunction: 'pendingFees',
       parameter: new Args()
@@ -136,6 +152,11 @@ export class ILBPair extends IBaseContract {
   }
 
   async isApprovedForAll(owner: string, operator: string): Promise<boolean> {
+    if (!validateAddress(owner) || !validateAddress(operator)) {
+      throw new Error(
+        `Invalid owner or operator address: ${owner}, ${operator}`
+      )
+    }
     return this.read({
       targetFunction: 'isApprovedForAll',
       parameter: new Args().addString(owner).addString(operator).serialize()
