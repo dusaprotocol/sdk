@@ -121,7 +121,6 @@ export class ILBPair extends IBaseContract {
       targetFunction: 'getUserBins',
       parameter: new Args().addString(user).serialize()
     }).then((res) => {
-      console.log('res', res.info)
       return new Args(res.value)
         .nextArray<bigint>(ArrayTypes.U32)
         .map(Number)
