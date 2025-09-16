@@ -69,7 +69,7 @@ export const addLiquidity = async () => {
 
   const pair = new PairV2(USDC, WMAS)
   const binStep = 20
-  const lbPair = await pair.fetchLBPair(binStep, client, CHAIN_ID)
+  const lbPair = await pair.fetchV2Pair(binStep, client, CHAIN_ID)
   const lbPairData = await new ILBPair(lbPair.LBPair, client).getReservesAndId()
 
   // declare liquidity parameters

@@ -41,7 +41,7 @@ export const removeLiquidity = async () => {
   const pair = new PairV2(USDC, WMAS)
   const binStep = 20
   const pairAddress = await pair
-    .fetchLBPair(binStep, client, CHAIN_ID)
+    .fetchV2Pair(binStep, client, CHAIN_ID)
     .then((r) => r.LBPair)
   const pairContract = new ILBPair(pairAddress, client)
   console.log('pairAddress', pairAddress)
