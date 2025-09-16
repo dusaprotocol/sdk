@@ -30,7 +30,7 @@ export class Checkpoint implements ISerializable<Checkpoint> {
 
 export class LockedBalance implements ISerializable<LockedBalance> {
   constructor(
-    public amount: number = 0,
+    public amount: bigint = 0n,
     public end: number = 0,
     public isPermanent: boolean = false
   ) {}
@@ -48,7 +48,7 @@ export class LockedBalance implements ISerializable<LockedBalance> {
     offset = 0
   ): IDeserializedResult<LockedBalance> {
     const args = new Args(data, offset)
-    this.amount = Number(args.nextI128())
+    this.amount = args.nextI128()
     this.end = Number(args.nextU64())
     this.isPermanent = args.nextBool()
 

@@ -1,5 +1,5 @@
 import { IBaseContract } from './base'
-import { Args, ArrayTypes, U64 } from '@massalabs/massa-web3'
+import { Args, U64, ArrayTypes } from '@massalabs/massa-web3'
 
 export class IVoter extends IBaseContract {
   async lastVoted(tokenIds: number[]): Promise<number[]> {

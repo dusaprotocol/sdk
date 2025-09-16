@@ -1,6 +1,6 @@
 import { GlobalPoint, LockedBalance, UserPoint } from '../types/governance'
 import { IBaseContract } from './base'
-import { Args, bytesToStr, byteToBool, U64 } from '@massalabs/massa-web3'
+import { Args, bytesToStr, byteToBool, U64, U256 } from '@massalabs/massa-web3'
 
 export class IVotingEscrow extends IBaseContract {
   async ownerOf(tokenId: number): Promise<string> {
@@ -62,7 +62,7 @@ export class IVotingEscrow extends IBaseContract {
     return this.read({
       targetFunction: 'balanceOfNFT',
       parameter: new Args().addU64(BigInt(tokenId)).serialize()
-    }).then((r) => BigInt(U64.fromBytes(r.value)))
+    }).then((r) => U256.fromBytes(r.value))
   }
   async balanceOfNFTAt(tokenId: number, timestamp: number): Promise<bigint> {
     return this.read({
@@ -71,19 +71,19 @@ export class IVotingEscrow extends IBaseContract {
         .addU64(BigInt(tokenId))
         .addU64(BigInt(timestamp))
         .serialize()
-    }).then((r) => BigInt(U64.fromBytes(r.value)))
+    }).then((r) => U256.fromBytes(r.value))
   }
   async totalSupply(): Promise<bigint> {
     return this.read({
       targetFunction: 'totalSupply',
       parameter: new Args().serialize()
-    }).then((r) => BigInt(U64.fromBytes(r.value)))
+    }).then((r) => U256.fromBytes(r.value))
   }
   async totalSupplyAt(timestamp: number): Promise<bigint> {
     return this.read({
       targetFunction: 'totalSupplyAt',
       parameter: new Args().addU64(BigInt(timestamp)).serialize()
-    }).then((r) => BigInt(U64.fromBytes(r.value)))
+    }).then((r) => U256.fromBytes(r.value))
   }
   async delegates(tokenId: number): Promise<number> {
     return this.read({
@@ -121,7 +121,7 @@ export class IVotingEscrow extends IBaseContract {
         .serialize()
     })
   }
-  // async safeTransferFrom(from: string, to: string, tokenId: number): Promise<string> {}
+
   depositFor(tokenId: number, amount: bigint): Promise<string> {
     return this.call({
       targetFunction: 'depositFor',
