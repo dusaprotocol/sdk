@@ -92,26 +92,19 @@ export class IVotingEscrow extends IBaseContract {
     }).then((r) => Number(U64.fromBytes(r.value)))
   }
 
-  async approve(to: string, tokenId: number): Promise<string> {
+  async approve(to: string, tokenId: number) {
     return this.call({
       targetFunction: 'approve',
       parameter: new Args().addString(to).addU64(BigInt(tokenId)).serialize()
     })
   }
-  async setApprovalForAll(
-    operator: string,
-    approved: boolean
-  ): Promise<string> {
+  async setApprovalForAll(operator: string, approved: boolean) {
     return this.call({
       targetFunction: 'setApprovalForAll',
       parameter: new Args().addString(operator).addBool(approved).serialize()
     })
   }
-  async transferFrom(
-    from: string,
-    to: string,
-    tokenId: number
-  ): Promise<string> {
+  async transferFrom(from: string, to: string, tokenId: number) {
     return this.call({
       targetFunction: 'transferFrom',
       parameter: new Args()
@@ -122,25 +115,25 @@ export class IVotingEscrow extends IBaseContract {
     })
   }
 
-  depositFor(tokenId: number, amount: bigint): Promise<string> {
+  depositFor(tokenId: number, amount: bigint) {
     return this.call({
       targetFunction: 'depositFor',
       parameter: new Args().addU64(BigInt(tokenId)).addU256(amount).serialize()
     })
   }
-  createLock(amount: bigint, duration: number): Promise<string> {
+  createLock(amount: bigint, duration: number) {
     return this.call({
       targetFunction: 'createLock',
       parameter: new Args().addU256(amount).addU64(BigInt(duration)).serialize()
     })
   }
-  increaseAmount(tokenId: number, amount: bigint): Promise<string> {
+  increaseAmount(tokenId: number, amount: bigint) {
     return this.call({
       targetFunction: 'increaseAmount',
       parameter: new Args().addU64(BigInt(tokenId)).addU256(amount).serialize()
     })
   }
-  increaseUnlockTime(tokenId: number, lockDuration: number): Promise<string> {
+  increaseUnlockTime(tokenId: number, lockDuration: number) {
     return this.call({
       targetFunction: 'increaseUnlockTime',
       parameter: new Args()
@@ -149,25 +142,25 @@ export class IVotingEscrow extends IBaseContract {
         .serialize()
     })
   }
-  withdraw(tokenId: number): Promise<string> {
+  withdraw(tokenId: number) {
     return this.call({
       targetFunction: 'withdraw',
       parameter: new Args().addU64(BigInt(tokenId)).serialize()
     })
   }
-  lockPermanent(tokenId: number): Promise<string> {
+  lockPermanent(tokenId: number) {
     return this.call({
       targetFunction: 'lockPermanent',
       parameter: new Args().addU64(BigInt(tokenId)).serialize()
     })
   }
-  unlockPermanent(tokenId: number): Promise<string> {
+  unlockPermanent(tokenId: number) {
     return this.call({
       targetFunction: 'unlockPermanent',
       parameter: new Args().addU64(BigInt(tokenId)).serialize()
     })
   }
-  delegate(delegator: number, delegatee: number): Promise<string> {
+  delegate(delegator: number, delegatee: number) {
     return this.call({
       targetFunction: 'delegate',
       parameter: new Args()

@@ -1,6 +1,6 @@
-import { Args, IDeserializedResult, ISerializable } from '@massalabs/massa-web3'
+import { Args, DeserializedResult, Serializable } from '@massalabs/massa-web3'
 
-export class Checkpoint implements ISerializable<Checkpoint> {
+export class Checkpoint implements Serializable<Checkpoint> {
   constructor(
     public fromTimestamp: number = 0,
     public owner: string = '',
@@ -17,7 +17,7 @@ export class Checkpoint implements ISerializable<Checkpoint> {
       .serialize()
   }
 
-  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<Checkpoint> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<Checkpoint> {
     const args = new Args(data, offset)
     this.fromTimestamp = Number(args.nextU64())
     this.owner = args.nextString()
@@ -28,7 +28,7 @@ export class Checkpoint implements ISerializable<Checkpoint> {
   }
 }
 
-export class LockedBalance implements ISerializable<LockedBalance> {
+export class LockedBalance implements Serializable<LockedBalance> {
   constructor(
     public amount: bigint = 0n,
     public end: number = 0,
@@ -43,10 +43,7 @@ export class LockedBalance implements ISerializable<LockedBalance> {
       .serialize()
   }
 
-  deserialize(
-    data: Uint8Array,
-    offset = 0
-  ): IDeserializedResult<LockedBalance> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<LockedBalance> {
     const args = new Args(data, offset)
     this.amount = args.nextI128()
     this.end = Number(args.nextU64())
@@ -56,7 +53,7 @@ export class LockedBalance implements ISerializable<LockedBalance> {
   }
 }
 
-export class UserPoint implements ISerializable<UserPoint> {
+export class UserPoint implements Serializable<UserPoint> {
   constructor(
     public bias: bigint = 0n,
     public slope: bigint = 0n, // # -dweight / dt
@@ -75,7 +72,7 @@ export class UserPoint implements ISerializable<UserPoint> {
       .serialize()
   }
 
-  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<UserPoint> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<UserPoint> {
     const args = new Args(data, offset)
     this.bias = args.nextI128()
     this.slope = args.nextI128()
@@ -87,7 +84,7 @@ export class UserPoint implements ISerializable<UserPoint> {
   }
 }
 
-export class GlobalPoint implements ISerializable<GlobalPoint> {
+export class GlobalPoint implements Serializable<GlobalPoint> {
   constructor(
     public bias: bigint = 0n,
     public slope: bigint = 0n, // # -dweight / dt
@@ -106,7 +103,7 @@ export class GlobalPoint implements ISerializable<GlobalPoint> {
       .serialize()
   }
 
-  deserialize(data: Uint8Array, offset = 0): IDeserializedResult<GlobalPoint> {
+  deserialize(data: Uint8Array, offset = 0): DeserializedResult<GlobalPoint> {
     const args = new Args(data, offset)
     this.bias = args.nextI128()
     this.slope = args.nextI128()
