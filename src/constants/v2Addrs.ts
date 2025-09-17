@@ -60,10 +60,10 @@ export const MULTICALL_ADDRESS: AddressMap = {
 
 export const VOTING_ESCROW_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: '',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS1q76iSMJ8Dj5gVBVK26y11yuFi9eVzUmTzwf5ANgoypMVcNjXj'
 }
 
 export const VOTER_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: '',
-  [ChainId.MAINNET]: ''
+  [ChainId.MAINNET]: 'AS1rg37d1cFXrSXbEaKbGPBKRXahshk6VgvwJXjg48MbyuwM1ea6'
 }
