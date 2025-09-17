@@ -78,3 +78,17 @@ export const MULTICALL_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1yphCWi7gychZWYPpqrKDiGb6ZacRoji8YYMLHtQ2TSuuQFqLC',
   [ChainId.MAINNET]: 'AS1FJrNBtZ5oXK9y6Wcmiio5AV6rR2UopqqdQWhBH4Fss9JNMySm'
 }
+
+/**
+ * DEX governance SDK
+ */
+
+export const VOTING_ESCROW_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: 'AS1q76iSMJ8Dj5gVBVK26y11yuFi9eVzUmTzwf5ANgoypMVcNjXj'
+}
+
+export const VOTER_ADDRESS: AddressMap = {
+  [ChainId.BUILDNET]: '',
+  [ChainId.MAINNET]: 'AS1rg37d1cFXrSXbEaKbGPBKRXahshk6VgvwJXjg48MbyuwM1ea6'
+}
