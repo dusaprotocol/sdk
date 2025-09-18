@@ -76,7 +76,7 @@ export const VAULT_MANAGER_ADDRESS: AddressMap = {
 
 export const MULTICALL_ADDRESS: AddressMap = {
   [ChainId.BUILDNET]: 'AS1yphCWi7gychZWYPpqrKDiGb6ZacRoji8YYMLHtQ2TSuuQFqLC',
-  [ChainId.MAINNET]: 'AS1FJrNBtZ5oXK9y6Wcmiio5AV6rR2UopqqdQWhBH4Fss9JNMySm'
+  [ChainId.MAINNET]: 'AS1yqNTsEqFxofDmuTM2CLwNVeFYz7Ly6aLDdE3AF9R6j5Ec5W9X'
 }
 
 /**
