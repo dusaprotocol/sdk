@@ -5,6 +5,8 @@ import {
   PairV2,
   WMAS as _WMAS,
   DUSA as _DUSA,
+  USDC as _USDC,
+  WETH as _WETH,
   ILBPair,
   Percent,
   LB_ROUTER_ADDRESS
@@ -12,22 +14,25 @@ import {
 import { createClient, logEvents } from './utils'
 import { Account } from '@massalabs/massa-web3'
 
-export const removeLiquidity = async () => {
-  console.log('\n------- removeLiquidity() called -------\n')
+export const removeLiquidityBatch = async () => {
+  console.log('\n------- removeLiquidityBatch() called -------\n')
 
   const privateKey = process.env.PRIVATE_KEY
   if (!privateKey) throw new Error('Missing PRIVATE_KEY in .env file')
   const account = await Account.fromPrivateKey(privateKey)
-  const address = 'O1uaHz9ceJT6UX5zrRz71AifQSkuLtNe67d5DJUdJG2vzNF1vMp'
+  const address = account.address.toString()
   if (!address) throw new Error('Missing address in account')
-  const client = createClient(account, true)
-  const CHAIN_ID = ChainId.MAINNET
+  const isBuildnet = false
+  const client = createClient(account, isBuildnet)
+  const CHAIN_ID = isBuildnet ? ChainId.BUILDNET : ChainId.MAINNET
 
   // initialize tokens
   const WMAS = _WMAS[CHAIN_ID]
   const DUSA = _DUSA[CHAIN_ID]
+  const USDC = _USDC[CHAIN_ID]
+  const WETH = _WETH[CHAIN_ID]
 
-  const router = LB_ROUTER_ADDRESS[CHAIN_ID]
+  const router = V2_LB_ROUTER_ADDRESS[CHAIN_ID]
 
   // set amount slippage tolerance
   const allowedAmountSlippage = 50 // in bips, 0.5% in this case
@@ -38,7 +43,7 @@ export const removeLiquidity = async () => {
 
   // const binSteps = await
 
-  const pair = new PairV2(DUSA, WMAS)
+  const pair = new PairV2(USDC, WMAS)
   const binStep = 20
   const pairAddress = await pair
     .fetchV2Pair(binStep, client, CHAIN_ID)
@@ -49,14 +54,14 @@ export const removeLiquidity = async () => {
   const tokens = await pairContract.getTokens()
   const activeBinId = lbPairData.activeId
 
+  const userPositionIds = await pairContract.getUserBinIds(address)
+  console.log('userPositionIds', address, userPositionIds.length)
+
   const approved = await pairContract.isApprovedForAll(address, router)
   if (!approved) {
     const txApprove = await pairContract.setApprovalForAll(router, true)
     console.log('txIdApprove', txApprove.id)
   }
-
-  const userPositionIds = await pairContract.getUserBinIds(address)
-  console.log('userPositionIds', address, userPositionIds.length)
 
   // Split bins into chunks of 10
   const CHUNK_SIZE = 10
@@ -79,9 +84,9 @@ export const removeLiquidity = async () => {
 
     // Get bins and balances for this chunk
     const bins = await pairContract.getBins(chunkIds)
-    const chunkBalances = await Promise.all(
-      chunkIds.map((id) => pairContract.balanceOf(address, id))
-    )
+
+    const addresses = Array(chunkIds.length).fill(address)
+    const chunkBalances = await pairContract.balanceOfBatch(addresses, chunkIds)
 
     // Filter out zero amounts
     const nonZeroIndices = chunkBalances
@@ -135,10 +140,8 @@ export const removeLiquidity = async () => {
     const tx = await new IRouter(router, client).remove(params)
     console.log(`Chunk ${chunkIndex + 1}: Transaction sent with ID: ${tx.id}`)
 
-    // Wait for confirmation and log events
-    await tx.waitSpeculativeExecution()
-    console.log(`Chunk ${chunkIndex + 1}: Transaction confirmed`)
-    logEvents(client, tx.id)
+    // Wait 1s
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   console.log('\n✅ All chunks processed successfully!')
