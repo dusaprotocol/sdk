@@ -10,7 +10,8 @@ import {
   USDC as _USDC,
   parseUnits,
   Percent,
-  ILBPair
+  ILBPair,
+  getLiquidityConfig
 } from '@dusalabs/sdk'
 import { createClient, logEvents } from './utils'
 import { Account } from '@massalabs/massa-web3'
@@ -47,10 +48,12 @@ export const addLiquidity = async () => {
 
   // increase allowance for the router
   const approveTxId1 = await new IERC20(USDC.address, client).approve(
+    account.address.toString(),
     router,
     tokenAmountUSDC.raw
   )
   const approveTxId2 = await new IERC20(WMAS.address, client).approve(
+    account.address.toString(),
     router,
     tokenAmountWMAS.raw
   )
@@ -73,6 +76,7 @@ export const addLiquidity = async () => {
   const lbPairData = await new ILBPair(lbPair.LBPair, client).getReservesAndId()
 
   // declare liquidity parameters
+  const liquidityDistribution = getLiquidityConfig(LiquidityDistribution.SPOT)
   const addLiquidityInput = await pair.addLiquidityParameters(
     lbPair.LBPair,
     binStep,
@@ -80,7 +84,7 @@ export const addLiquidity = async () => {
     tokenAmountWMAS,
     new Percent(BigInt(allowedAmountSlippage), 10_000n),
     new Percent(BigInt(allowedPriceSlippage), 10_000n),
-    LiquidityDistribution.SPOT,
+    liquidityDistribution,
     client
   )
 

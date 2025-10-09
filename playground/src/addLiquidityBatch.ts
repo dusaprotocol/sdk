@@ -12,7 +12,9 @@ import {
   WETH as _WETH,
   parseUnits,
   Percent,
-  ILBPair
+  ILBPair,
+  getLiquidityConfig,
+  getUniformDistributionFromBinRange
 } from '@dusalabs/sdk'
 import { createClient, logEvents } from './utils'
 import { Account } from '@massalabs/massa-web3'
@@ -146,6 +148,10 @@ export const addLiquidityBatch = async () => {
     )
 
     // Declare liquidity parameters for this chunk
+    const liquidityDistribution = getUniformDistributionFromBinRange(
+      activeBinId,
+      chunkBinIds
+    )
     const addLiquidityInput = await pair.addLiquidityParameters(
       lbPairAddress,
       binStep,
@@ -153,7 +159,7 @@ export const addLiquidityBatch = async () => {
       chunkTokenAmountWMAS,
       new Percent(BigInt(allowedAmountSlippage), 10_000n),
       new Percent(BigInt(allowedPriceSlippage), 10_000n),
-      LiquidityDistribution.SPOT, // You can change this to CURVE or UNIFORM
+      liquidityDistribution,
       client
     )
 
@@ -173,9 +179,7 @@ export const addLiquidityBatch = async () => {
     // console.log(`Chunk ${chunkIndex + 1}: Transaction confirmed`)
 
     // Wait 1s between chunks
-    if (chunkIndex < chunks.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-    }
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 
   console.log('\n✅ All chunks processed successfully!')

@@ -1,14 +1,17 @@
 import {
-  LiquidityDistribution,
   BinReserves,
   LBPair,
   AddLiquidityParameters,
   RemoveLiquidityParameters,
-  LiquidityParameters
+  LiquidityParameters,
+  LiquidityDistributionParams
 } from '../types'
-import { ChainId, LB_FACTORY_ADDRESS, V2_LB_FACTORY_ADDRESS } from '../constants'
+import {
+  ChainId,
+  LB_FACTORY_ADDRESS,
+  V2_LB_FACTORY_ADDRESS
+} from '../constants'
 import { Bin } from './bin'
-import { getLiquidityConfig } from '../utils/liquidityDistribution'
 import { Fraction, Percent, Token, TokenAmount } from '../v1entities'
 import { Args, ArrayTypes, Provider } from '@massalabs/massa-web3'
 import { IFactory, ILBPair } from '../contracts'
@@ -72,7 +75,7 @@ export class PairV2 {
     return LBPair
   }
 
-   /**
+  /**
    * Fetches V2Pair for token0, token1, and given binStep
    *
    * @param {number} binStep
@@ -239,7 +242,7 @@ export class PairV2 {
     token1Amount: TokenAmount,
     amountSlippage: Percent,
     priceSlippage: Percent,
-    liquidityDistribution: LiquidityDistribution,
+    liquidityDistribution: LiquidityDistributionParams,
     client: Provider
   ): Promise<PartialAddParams> {
     const tokenX = await new ILBPair(LBPair, client)
@@ -266,9 +269,7 @@ export class PairV2 {
       binStep
     )
 
-    const { deltaIds, distributionX, distributionY } = getLiquidityConfig(
-      liquidityDistribution
-    )
+    const { deltaIds, distributionX, distributionY } = liquidityDistribution
 
     return {
       token0,
