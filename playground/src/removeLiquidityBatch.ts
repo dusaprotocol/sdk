@@ -22,8 +22,9 @@ export const removeLiquidityBatch = async () => {
   const account = await Account.fromPrivateKey(privateKey)
   const address = account.address.toString()
   if (!address) throw new Error('Missing address in account')
-  const isBuildnet = false
-  const client = createClient(account, isBuildnet)
+  const isBuildnet = true
+  const isMainnet = !isBuildnet
+  const client = createClient(account, isMainnet)
   const CHAIN_ID = isBuildnet ? ChainId.BUILDNET : ChainId.MAINNET
 
   // initialize tokens
@@ -139,6 +140,10 @@ export const removeLiquidityBatch = async () => {
     // Execute transaction for this chunk
     const tx = await new IRouter(router, client).remove(params)
     console.log(`Chunk ${chunkIndex + 1}: Transaction sent with ID: ${tx.id}`)
+
+    // // Wait for transaction to be included
+    // await tx.waitSpeculativeExecution()
+    // console.log(`Chunk ${chunkIndex + 1}: Transaction confirmed`)
 
     // Wait 1s
     await new Promise((resolve) => setTimeout(resolve, 1000))
