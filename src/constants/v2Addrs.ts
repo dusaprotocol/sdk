@@ -60,7 +60,7 @@ export const DCA_MANAGER_ADDRESS: AddressMap = {
 }
 
 export const DCA_MANAGER_ADDRESS_V2: AddressMap = {
-  [ChainId.BUILDNET]: '',
+  [ChainId.BUILDNET]: 'AS12Sm9oqH2C26fx7v8ZYCwyKs9LmrmRGX2WRJT3aK7KnYtrMhq8n',
   [ChainId.MAINNET]: 'AS12kJwpTpNdXsAhpHY9FPJ5S75c97c5aKDqmUr2vHRJP95adxJYy'
 }
 
