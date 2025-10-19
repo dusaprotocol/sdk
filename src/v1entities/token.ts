@@ -202,7 +202,7 @@ const dusaDecimals = 18
 export const DUSA: { [chainId in ChainId]: Token } = {
   [ChainId.BUILDNET]: new Token(
     ChainId.BUILDNET,
-    '',
+    'AS12WBfwEXfV5WQ41cBcwL6EzDZgWt7QdaBQ6ENoshXigKLJrJ7WS',
     dusaDecimals,
     dusaSymbol,
     dusaName
