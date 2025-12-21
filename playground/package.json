@@ -8,6 +8,7 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
+    "@improbable-eng/grpc-web": "^0.15.0",
     "dotenv": "^16.0.1",
     "tsx": "^4.7.2"
   },
