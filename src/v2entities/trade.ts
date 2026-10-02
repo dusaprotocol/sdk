@@ -327,7 +327,7 @@ export class TradeV2 {
     client: Provider,
     chainId: ChainId,
     quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
-    checkLegacy: boolean = true
+    checkLegacy = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       true,
@@ -367,7 +367,7 @@ export class TradeV2 {
     client: Provider,
     chainId: ChainId,
     quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
-    checkLegacy: boolean = true
+    checkLegacy = true
   ): Promise<Array<TradeV2 | undefined>> {
     return TradeV2.getTrades(
       false,
@@ -393,7 +393,7 @@ export class TradeV2 {
     client: Provider,
     chainId: ChainId,
     quoterAddress = V2_LB_QUOTER_ADDRESS[chainId],
-    checkLegacy: boolean = true // checkLegacy = true to include legacy pairs
+    checkLegacy = true // checkLegacy = true to include legacy pairs
   ): Promise<(TradeV2 | undefined)[]> {
     const tokenIn = isExactIn ? tokenAmount.token : otherToken
     const tokenOut = isExactIn ? otherToken : tokenAmount.token

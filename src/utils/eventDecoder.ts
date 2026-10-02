@@ -285,7 +285,7 @@ export class EventDecoder {
 
     return {
       id: parseInt(id),
-      amount: EventDecoder.decodeU256(amount),
+      amount: EventDecoder.decodeU256(amount)
     }
   }
 

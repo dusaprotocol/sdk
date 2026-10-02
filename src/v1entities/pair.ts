@@ -213,7 +213,7 @@ export class Pair {
     token: Token,
     totalSupply: TokenAmount,
     liquidity: TokenAmount,
-    feeOn: boolean = false,
+    feeOn = false,
     kLast?: BigintIsh
   ): TokenAmount {
     invariant(this.involvesToken(token), 'TOKEN')

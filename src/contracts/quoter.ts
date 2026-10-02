@@ -7,7 +7,7 @@ export class IQuoter extends IBaseContract {
   async findBestPathFromAmountIn(
     route: string[],
     amountIn: BigintIsh,
-    checkLegacy: boolean = true
+    checkLegacy = true
   ): Promise<Quote> {
     return this.findBestPath(route, amountIn, true, checkLegacy)
   }
@@ -15,7 +15,7 @@ export class IQuoter extends IBaseContract {
   async findBestPathFromAmountOut(
     route: string[],
     amountOut: BigintIsh,
-    checkLegacy: boolean = true
+    checkLegacy = true
   ): Promise<Quote> {
     return this.findBestPath(route, amountOut, false, checkLegacy)
   }
