@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@massalabs/massa-web3':
-    specifier: 5.2.2
-    version: 5.2.2
+    specifier: 5.3.1-dev.20261001162419
+    version: 5.3.1-dev.20261001162419
   big.js:
     specifier: ~6.2.1
     version: 6.2.2
@@ -1728,8 +1728,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.4
     dev: true
 
-  /@massalabs/massa-web3@5.2.2:
-    resolution: {integrity: sha512-AXWeKRCDM4okolMlghUn0EIRoIxpLQzRGsovWer3Kh7FzbR01I0VYafFqiWo1VuW2WAmS/7BnpRd9mp/OSdsSQ==}
+  /@massalabs/massa-web3@5.3.1-dev.20261001162419:
+    resolution: {integrity: sha512-xf9Df/A68aWd7eZpR/6SrwokfgkaeNEYCmQiv4yidtDGxTxS84spgiKLAEAhsBYyj0MqTm4C4YNhO5LHjnQKiA==}
     dependencies:
       '@noble/ed25519': 1.7.5
       '@noble/hashes': 1.8.0
@@ -1739,7 +1739,6 @@ packages:
       google-protobuf: 3.21.4
       grpc-web: 1.5.0
       lodash.isequal: 4.5.0
-      secure-random: 1.1.2
       tslib: 2.8.1
       varint: 6.0.0
     optionalDependencies:
@@ -7696,10 +7695,6 @@ packages:
   /sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
     dev: true
-
-  /secure-random@1.1.2:
-    resolution: {integrity: sha512-H2bdSKERKdBV1SwoqYm6C0y+9EA94v6SUBOWO8kDndc4NoUih7Dv6Tsgma7zO1lv27wIvjlD0ZpMQk7um5dheQ==}
-    dev: false
 
   /semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
