@@ -15,7 +15,7 @@ export class QuoterHelper {
     baseClient: Provider,
     CHAIN_ID: ChainId,
     quoterAddress = LB_QUOTER_ADDRESS[CHAIN_ID],
-    checkLegacy: boolean = true
+    checkLegacy = true
   ) {
     if (!quoterAddress) {
       throw new Error(`Quoter address not available for chain ${CHAIN_ID}`)
