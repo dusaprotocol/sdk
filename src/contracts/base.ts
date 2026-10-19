@@ -49,8 +49,10 @@ export class IBaseContract {
   }
 
   public async call(params: BaseCallDataWithGas): Promise<Operation> {
+    // The estimate cannot see every storage cost (see estimateCoins): never send
+    // fewer coins than the caller computed.
     const coinsNeeded = this.shouldEstimateCoins
-      ? await this.estimateCoins(params)
+      ? bigIntMax(await this.estimateCoins(params), params.coins ?? 0n)
       : params.coins
     const gasNeeded = this.shouldEstimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
@@ -98,6 +100,15 @@ export class IBaseContract {
       .catch(() => MAX_GAS_CALL)
   }
 
+  /**
+   * Estimates the coins a call needs for storage by simulating it without coins and
+   * parsing `Storage__NotEnoughCoinsSent:<amount>` from the error.
+   *
+   * Contracts that reconcile coins with `transferRemaining`, such as MRC20 0.1.0 tokens
+   * (WMAS once MIP-0002 is active), revert with `SPENT_MORE_COINS_THAN_SENT` instead,
+   * which gives no amount: the estimate is then 0, and the caller has to pass the
+   * storage cost in `coins` (see IERC20).
+   */
   public async estimateCoins(params: BaseReadDataWithGas) {
     return this.simulate({ ...params, coins: 0n }, (this.client as any).address)
       .then((r) => {
@@ -124,6 +135,8 @@ export class IBaseContract {
 }
 
 export const coins = MassaUnits.oneMassa / 100n // storage cost
+
+const bigIntMax = (a: bigint, b: bigint): bigint => (a > b ? a : b)
 
 const insufficientBalanceKeyword = 'failed to transfer'
 export const decodeInsufficientBalance = (errMsg: string) => {
