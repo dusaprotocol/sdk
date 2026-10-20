@@ -1,8 +1,28 @@
-import { Args, bytesToStr, U256, U8 } from '@massalabs/massa-web3'
+import {
+  Args,
+  bytesToStr,
+  MRC20AllowanceCreationCost,
+  MRC20BalanceCreationCost,
+  U256,
+  U8
+} from '@massalabs/massa-web3'
 import { IBaseContract } from './base'
 import { validateAddress } from '../utils'
 
+/**
+ * Calls that create a balance or allowance entry pass its storage cost in
+ * `storageCoins`. At MIP-0002 activation, WMAS is replaced by MRC20 0.1.0, which
+ * reverts with `SPENT_MORE_COINS_THAN_SENT` when a new entry is not paid for: the
+ * cost is then sent, and the unused coins are refunded. Other tokens keep their
+ * code, pay for the entry themselves and receive no coins (see IBaseContract.call).
+ * MRC20 0.1.0 also deletes a balance entry when it reaches 0: the next transfer to
+ * that holder pays for the entry again.
+ */
 export class IERC20 extends IBaseContract {
+  private get caller(): string {
+    return (this.client as any).address
+  }
+
   async balanceOf(address: string): Promise<bigint> {
     if (!validateAddress(address)) {
       throw new Error(`Invalid address: ${address}`)
@@ -65,6 +85,10 @@ export class IERC20 extends IBaseContract {
     if (!validateAddress(spender)) {
       throw new Error(`Invalid spender address: ${spender}`)
     }
+    // increaseAllowance sets the allowance of the caller
+    if (owner !== this.caller) {
+      throw new Error(`Owner ${owner} is not the caller ${this.caller}`)
+    }
     const currentAllowance = await this.allowance(owner, spender)
 
     if (currentAllowance >= amount) return
@@ -72,7 +96,13 @@ export class IERC20 extends IBaseContract {
 
     return this.call({
       targetFunction: 'increaseAllowance',
-      parameter: new Args().addString(spender).addU256(amount).serialize()
+      parameter: new Args().addString(spender).addU256(amount).serialize(),
+      storageCoins: await MRC20AllowanceCreationCost(
+        this.client,
+        this.address,
+        owner,
+        spender
+      )
     })
   }
 
@@ -82,7 +112,13 @@ export class IERC20 extends IBaseContract {
     }
     return this.call({
       targetFunction: 'increaseAllowance',
-      parameter: new Args().addString(spender).addU256(amount).serialize()
+      parameter: new Args().addString(spender).addU256(amount).serialize(),
+      storageCoins: await MRC20AllowanceCreationCost(
+        this.client,
+        this.address,
+        this.caller,
+        spender
+      )
     })
   }
 
@@ -102,7 +138,12 @@ export class IERC20 extends IBaseContract {
     }
     return this.call({
       targetFunction: 'transfer',
-      parameter: new Args().addString(to).addU256(amount).serialize()
+      parameter: new Args().addString(to).addU256(amount).serialize(),
+      storageCoins: await MRC20BalanceCreationCost(
+        this.client,
+        this.address,
+        to
+      )
     })
   }
 
@@ -119,7 +160,12 @@ export class IERC20 extends IBaseContract {
         .addString(from)
         .addString(to)
         .addU256(amount)
-        .serialize()
+        .serialize(),
+      storageCoins: await MRC20BalanceCreationCost(
+        this.client,
+        this.address,
+        to
+      )
     })
   }
 
@@ -129,7 +175,12 @@ export class IERC20 extends IBaseContract {
     }
     return this.call({
       targetFunction: 'mint',
-      parameter: new Args().addString(to).addU256(amount).serialize()
+      parameter: new Args().addString(to).addU256(amount).serialize(),
+      storageCoins: await MRC20BalanceCreationCost(
+        this.client,
+        this.address,
+        to
+      )
     })
   }
 

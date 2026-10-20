@@ -21,6 +21,8 @@ type BaseCallData = Omit<
 }
 type BaseCallDataWithGas = BaseCallData & {
   maxGas?: bigint
+  /** Storage cost sent only if the contract charges it without giving the amount (see simulateCoins) */
+  storageCoins?: bigint
 }
 
 type BaseReadData = Omit<
@@ -49,9 +51,14 @@ export class IBaseContract {
   }
 
   public async call(params: BaseCallDataWithGas): Promise<Operation> {
+    // Never send fewer coins than the caller passed: a call sending MAS (e.g. a MAS
+    // swap) fails its 0-coin simulation for another reason, and the estimate is 0.
     const coinsNeeded = this.shouldEstimateCoins
-      ? await this.estimateCoins(params)
-      : params.coins
+      ? bigIntMax(
+          (await this.simulateCoins(params)) ?? params.storageCoins ?? 0n,
+          params.coins ?? 0n
+        )
+      : bigIntMax(params.coins ?? 0n, params.storageCoins ?? 0n)
     const gasNeeded = this.shouldEstimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
@@ -98,13 +105,32 @@ export class IBaseContract {
       .catch(() => MAX_GAS_CALL)
   }
 
-  public async estimateCoins(params: BaseReadDataWithGas) {
+  /**
+   * Estimates the coins a call needs for storage by simulating it without coins and
+   * parsing `Storage__NotEnoughCoinsSent:<amount>` from the error.
+   */
+  public async estimateCoins(params: BaseReadDataWithGas): Promise<bigint> {
+    return (await this.simulateCoins(params)) ?? 0n
+  }
+
+  /**
+   * Same as estimateCoins, but returns undefined when the call reverts with
+   * `SPENT_MORE_COINS_THAN_SENT`: MRC20 0.1.0 tokens (WMAS once MIP-0002 is active,
+   * other deployed tokens keep their code) charge the caller for a new entry without
+   * giving the amount, so the caller has to pass the storage cost in `storageCoins`
+   * (see IERC20). Tokens paying storage themselves simulate fine without coins, and
+   * keep receiving none.
+   */
+  private async simulateCoins(
+    params: BaseReadDataWithGas
+  ): Promise<bigint | undefined> {
     return this.simulate({ ...params, coins: 0n }, (this.client as any).address)
       .then((r) => {
         if (r.info.error) throw new Error(r.info.error)
         return 0n
       })
       .catch((err: Error) => {
+        if (err.message.includes('SPENT_MORE_COINS_THAN_SENT')) return undefined
         try {
           const errMsg = EventDecoder.decodeError(err.message)
           const coinErrorKeyword = 'Storage__NotEnoughCoinsSent:'
@@ -124,6 +150,8 @@ export class IBaseContract {
 }
 
 export const coins = MassaUnits.oneMassa / 100n // storage cost
+
+const bigIntMax = (a: bigint, b: bigint): bigint => (a > b ? a : b)
 
 const insufficientBalanceKeyword = 'failed to transfer'
 export const decodeInsufficientBalance = (errMsg: string) => {

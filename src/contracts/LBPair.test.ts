@@ -53,6 +53,10 @@ const pairWithDatastore = (keys: number[][]) => {
   ])
   connector.get_addresses_keys = getAddressesKeys
   connector.get_addresses = getAddresses
+  // massa-web3 reads the node page size from get_status
+  connector.get_status = vi.fn(async () => ({
+    max_datastore_keys_query: NODE_CAP
+  }))
 
   const pair = new ILBPair(PAIR, provider as unknown as Provider)
   return { pair, getAddressesKeys, getAddresses }
