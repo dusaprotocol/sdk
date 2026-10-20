@@ -21,6 +21,8 @@ type BaseCallData = Omit<
 }
 type BaseCallDataWithGas = BaseCallData & {
   maxGas?: bigint
+  /** Storage cost sent only if the contract charges it without giving the amount (see simulateCoins) */
+  storageCoins?: bigint
 }
 
 type BaseReadData = Omit<
@@ -49,11 +51,14 @@ export class IBaseContract {
   }
 
   public async call(params: BaseCallDataWithGas): Promise<Operation> {
-    // The estimate cannot see every storage cost (see estimateCoins): never send
-    // fewer coins than the caller computed.
+    // Never send fewer coins than the caller passed: a call sending MAS (e.g. a MAS
+    // swap) fails its 0-coin simulation for another reason, and the estimate is 0.
     const coinsNeeded = this.shouldEstimateCoins
-      ? bigIntMax(await this.estimateCoins(params), params.coins ?? 0n)
-      : params.coins
+      ? bigIntMax(
+          (await this.simulateCoins(params)) ?? params.storageCoins ?? 0n,
+          params.coins ?? 0n
+        )
+      : bigIntMax(params.coins ?? 0n, params.storageCoins ?? 0n)
     const gasNeeded = this.shouldEstimateGas
       ? await this.estimateGas({ ...params, coins: coinsNeeded })
       : params.maxGas
@@ -103,19 +108,29 @@ export class IBaseContract {
   /**
    * Estimates the coins a call needs for storage by simulating it without coins and
    * parsing `Storage__NotEnoughCoinsSent:<amount>` from the error.
-   *
-   * Contracts that reconcile coins with `transferRemaining`, such as MRC20 0.1.0 tokens
-   * (WMAS once MIP-0002 is active), revert with `SPENT_MORE_COINS_THAN_SENT` instead,
-   * which gives no amount: the estimate is then 0, and the caller has to pass the
-   * storage cost in `coins` (see IERC20).
    */
-  public async estimateCoins(params: BaseReadDataWithGas) {
+  public async estimateCoins(params: BaseReadDataWithGas): Promise<bigint> {
+    return (await this.simulateCoins(params)) ?? 0n
+  }
+
+  /**
+   * Same as estimateCoins, but returns undefined when the call reverts with
+   * `SPENT_MORE_COINS_THAN_SENT`: MRC20 0.1.0 tokens (WMAS once MIP-0002 is active,
+   * other deployed tokens keep their code) charge the caller for a new entry without
+   * giving the amount, so the caller has to pass the storage cost in `storageCoins`
+   * (see IERC20). Tokens paying storage themselves simulate fine without coins, and
+   * keep receiving none.
+   */
+  private async simulateCoins(
+    params: BaseReadDataWithGas
+  ): Promise<bigint | undefined> {
     return this.simulate({ ...params, coins: 0n }, (this.client as any).address)
       .then((r) => {
         if (r.info.error) throw new Error(r.info.error)
         return 0n
       })
       .catch((err: Error) => {
+        if (err.message.includes('SPENT_MORE_COINS_THAN_SENT')) return undefined
         try {
           const errMsg = EventDecoder.decodeError(err.message)
           const coinErrorKeyword = 'Storage__NotEnoughCoinsSent:'

@@ -5,7 +5,7 @@ import {
   Operation,
   Provider
 } from '@massalabs/massa-web3'
-import { IERC20 } from '..'
+import { IBaseContract, IERC20 } from '..'
 
 const TOKEN = 'AS12U4TZfNK7qoLyEERBBRDMu8nm5MKoRzPXDXans4v9wdATZedz9'
 const OWNER = 'AU12UBnqTHDQALpocVBnkPNy7y5CndUJQTLutaVDDFgMJcq5kQiKq'
@@ -103,5 +103,83 @@ describe('IERC20 storage coins', () => {
     await token.transfer(RECIPIENT, 10n)
 
     expect(sentCoins()).toBe(0n)
+  })
+})
+
+describe('IERC20 storage coins, other calls', () => {
+  it('transferFrom pays for a new recipient balance', async () => {
+    const { provider } = tokenWith([], 0n)
+    const cost = await MRC20BalanceCreationCost(provider, TOKEN, RECIPIENT)
+
+    const { token, sentCoins } = tokenWith([], cost)
+    await token.transferFrom(OWNER, RECIPIENT, 10n)
+
+    expect(sentCoins()).toBe(cost)
+  })
+
+  it('mint pays for a new recipient balance', async () => {
+    const { provider } = tokenWith([], 0n)
+    const cost = await MRC20BalanceCreationCost(provider, TOKEN, RECIPIENT)
+
+    const { token, sentCoins } = tokenWith([], cost)
+    await token.mint(RECIPIENT, 10n)
+
+    expect(sentCoins()).toBe(cost)
+  })
+
+  it('approve sends no coins for an existing allowance', async () => {
+    const { token, sentCoins } = tokenWith([`ALLOWANCE${OWNER}${SPENDER}`], 0n)
+    await token.approve(OWNER, SPENDER, 10n)
+
+    expect(sentCoins()).toBe(0n)
+  })
+
+  it('approve rejects an owner other than the caller', async () => {
+    const { token } = tokenWith([], 0n)
+
+    await expect(token.approve(RECIPIENT, SPENDER, 10n)).rejects.toThrow()
+  })
+
+  it('sends no coins to a token paying for its own storage', async () => {
+    // the 0-coin simulation succeeds: the token pays for the new entry
+    const { token, sentCoins } = tokenWith([], 0n)
+    await token.transfer(RECIPIENT, 10n)
+
+    expect(sentCoins()).toBe(0n)
+  })
+})
+
+describe('IBaseContract coins', () => {
+  const contractFailingWith = (error: string) => {
+    const callSC = vi.fn(async () => new Operation({} as Provider, 'O1'))
+    const provider = {
+      address: OWNER,
+      readSC: vi.fn(async ({ coins }: ReadOnlyCall) => ({
+        value: new Uint8Array(0),
+        info: { error: coins ? undefined : error, events: [], gasCost: 1 }
+      })),
+      callSC
+    } as unknown as Provider
+    const sentCoins = () => (callSC.mock.calls[0] as any)[0].coins as bigint
+    return { contract: new IBaseContract(TOKEN, provider), sentCoins }
+  }
+
+  it('keeps the coins passed when the 0-coin simulation fails otherwise', async () => {
+    // e.g. a MAS swap: SafeMath underflow on transferredCoins - masToSend
+    const { contract, sentCoins } = contractFailingWith(
+      'Runtime error: SafeMath: substraction overflow'
+    )
+    await contract.call({ targetFunction: 'f', parameter: [], coins: 5n })
+
+    expect(sentCoins()).toBe(5n)
+  })
+
+  it('sends the estimate when it is above the coins passed', async () => {
+    const { contract, sentCoins } = contractFailingWith(
+      'Runtime error: Storage__NotEnoughCoinsSent: 7, 0'
+    )
+    await contract.call({ targetFunction: 'f', parameter: [], coins: 5n })
+
+    expect(sentCoins()).toBe(7n)
   })
 })
